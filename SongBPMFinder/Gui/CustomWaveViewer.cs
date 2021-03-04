@@ -32,6 +32,9 @@ namespace SongBPMFinder.Gui
             this.Invalidate();
         }
 
+        Font textFont;
+        StringFormat format;
+
         /// <summary>
         /// Creates a new WaveViewer control
         /// </summary>
@@ -41,6 +44,10 @@ namespace SongBPMFinder.Gui
             InitializeComponent();
             this.ResizeRedraw = true;
             this.DoubleBuffered = true;
+
+            textFont = new Font(SystemFonts.DefaultFont.FontFamily, 12.0f, FontStyle.Regular);
+            format = new StringFormat();
+            format.Alignment = StringAlignment.Center;
         }
 
         /// <summary>
@@ -193,9 +200,13 @@ namespace SongBPMFinder.Gui
 
                 int mid = ClientRectangle.X + ClientRectangle.Width / 2;
                 e.Graphics.DrawLine(Pens.Yellow, mid, ClientRectangle.Top, mid, ClientRectangle.Bottom);
+
+                e.Graphics.DrawString(maxValue.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, ClientRectangle.Top);
+                e.Graphics.DrawString(minValue.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, ClientRectangle.Bottom - 20);
             }
 
-            if(timingPoints!= null)
+
+            if (timingPoints!= null)
             {
                 double lowerBound = audioData.PositionSeconds - WindowLengthSeconds / 2.0;
                 double upperBound = audioData.PositionSeconds + WindowLengthSeconds / 2.0;
@@ -213,15 +224,15 @@ namespace SongBPMFinder.Gui
                     double xD = ClientRectangle.X + ClientRectangle.Width * ((relativeTime - lowerBound)/WindowLengthSeconds);
                     float x = (float)xD;
 
-                    e.Graphics.DrawLine(Pens.Red, x, ClientRectangle.Top, x, ClientRectangle.Bottom);
+                    e.Graphics.DrawLine(Pens.Red, x, ClientRectangle.Top+40, x, ClientRectangle.Bottom-40);
+                    e.Graphics.DrawString("[" + tp.BPM.ToString("0.00") + "," + tp.OffsetSeconds.ToString("0.00") + "]", textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 20), format);
                 }
             }
 
-
+            e.Graphics.DrawString("" + audioData.PositionSeconds, textFont, Brushes.Blue, new PointF(ClientRectangle.X + ClientRectangle.Width / 2, ClientRectangle.Top));
 
             base.OnPaint(e);
         }
-
 
         #region Component Designer generated code
         /// <summary> 

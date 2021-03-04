@@ -127,20 +127,23 @@ namespace SongBPMFinder.Audio.Timing
 
             float[] data;
 
-			/*
+			//Delete this line in production
+			data = audioData.Data;
+
+			//keep this in production
+			//*
             data = new float[audioData.Data.Length];
 			Array.Copy(audioData.Data, 0, data, 0, data.Length);
-			*/
-			
-			//Testing. doing it like this makes the result visible, although we cant hear the audio at the same time
-			//data = audioData.Data;
+			//*/
+
 
             int len = data.Length;
             len = DownsampleAverage(data, len, audioData.Channels);
 
 
-			int instantSize = (int)(0.005f * audioData.SampleRate);
-			int averageSize = (int)(1f * audioData.SampleRate);
+            //int instantSize = (int)(0.005f * audioData.SampleRate);
+            int instantSize = 1024;
+            int averageSize = (int)(1f * audioData.SampleRate);
 
 
 			float[] averageEnergy = new float[len];
@@ -158,30 +161,36 @@ namespace SongBPMFinder.Audio.Timing
             int lenAverage = SlidingWindowAverage(averageEnergy, len, averageSize, 3);
 			int lenInstant = SlidingWindowAverage(instantEnergy, len, instantSize, 3);
 
-			int instantOffset = averageSize - instantSize/2;
+			int alignmentOffset = averageSize/2 - instantSize/2;
 			
 			for(int i = 0; i < lenAverage; i++){
+                if (i + alignmentOffset >= instantEnergy.Length) break;
+
                 float ae = averageEnergy[i];
-                float ie = instantEnergy[i + instantOffset];
-                float res = Math.Abs(ae - ie);
+                float ie = instantEnergy[i + alignmentOffset];
+                float res = Math.Abs(ie/(Math.Abs(ae)+1f));
                 data[i] = res;
 			}
 
+            float max = Max(data,len);
+
             len = lenAverage;
 
-            /*
+            
             for(int i = 0; i < len; i++)
             {
-                if (data[i] > 0.5f * max)
+                if (data[i] > 0.5 * max)
                 {
-                    timingPoints.Add(new TimingPoint(120, (i+instantOffset/2) / (double)audioData.SampleRate));
+                    timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(i+instantSize/2) * audioData.Channels));
+                    i += instantSize;
                 }
             }
-			*/
 
-            timingPoints = TimingPointList.RemoveDoubles(timingPoints, 2*instantSize / (double)audioData.SampleRate);
+
+            double tol = 0.001;
+            timingPoints = TimingPointList.RemoveDoubles(timingPoints, tol);
             timingPoints = TimingPointList.CalculateBpms(timingPoints);
-            timingPoints = TimingPointList.Simplify(timingPoints);
+            timingPoints = TimingPointList.Simplify(timingPoints, tol);
 
             return new TimingPointList(timingPoints);
         }
