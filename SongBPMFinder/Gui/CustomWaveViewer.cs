@@ -129,7 +129,9 @@ namespace SongBPMFinder.Gui
             if (audioData!= null)
             {
                 long position = audioData.Position -WindowLength/2;
-				float minValue = -1;
+
+                //actually need to start at -1 and 1
+                float minValue = -1;
 				float maxValue = 1;
 				
                 for (float x = e.ClipRectangle.X; x < e.ClipRectangle.Right; x += 1)
@@ -183,16 +185,27 @@ namespace SongBPMFinder.Gui
                             break;
                         }
 
-                        low = Math.Min(low, audioData.Data[index]);
-                        high= Math.Max(high, audioData.Data[index]);
+                        if (i == 0)
+                        {
+                            low = audioData.Data[index];
+                            high= audioData.Data[index];
+                        } 
+                        else
+                        {
+                            low = Math.Min(low, audioData.Data[index]);
+                            high = Math.Max(high, audioData.Data[index]);
+                        }
                     }
                     position += samplesPerPixel;
 
-                    float lowPercent = -0.5f * (low/Math.Abs(minValue)) + 0.5f;
-                    float highPercent = -0.5f * (high/Math.Abs(maxValue)) + 0.5f;
+                    float lowPercent = -0.5f * QuickMafs.Clamp(low / Math.Abs(minValue), -1, 1) + 0.5f;
+                    float highPercent = -0.5f * QuickMafs.Clamp(high / Math.Abs(maxValue), -1, 1) + 0.5f;
+                    //lowPercent = QuickMafs.Clamp(lowPercent, -1, 1);
+                   // highPercent = QuickMafs.Clamp(highPercent, -1, 1);
+
                     //float lowPercent = low;
                     //float highPercent = high;
-                    e.Graphics.DrawLine(Pens.Black, x, e.ClipRectangle.Y + this.Height * lowPercent - 1, x, e.ClipRectangle.Y + this.Height * highPercent);
+                    e.Graphics.DrawLine(Pens.Black, x, ClientRectangle.Top + this.Height * lowPercent - 1, x, ClientRectangle.Top + this.Height * highPercent);
 
                     if (reachedEnd)
                         break;
@@ -206,12 +219,14 @@ namespace SongBPMFinder.Gui
             }
 
 
-            if (timingPoints!= null)
+            if((timingPoints!= null)&& (timingPoints.List.Count > 0))
             {
                 double lowerBound = audioData.PositionSeconds - WindowLengthSeconds / 2.0;
                 double upperBound = audioData.PositionSeconds + WindowLengthSeconds / 2.0;
                 int startIndex = timingPoints.First(lowerBound);
-                
+
+                double prevTime = timingPoints.List[Math.Max(startIndex-1, 0)].OffsetSeconds;
+
                 for(int i = startIndex; i< timingPoints.List.Count; i++)
                 {
                     TimingPoint tp = timingPoints.List[i];
@@ -224,12 +239,16 @@ namespace SongBPMFinder.Gui
                     double xD = ClientRectangle.X + ClientRectangle.Width * ((relativeTime - lowerBound)/WindowLengthSeconds);
                     float x = (float)xD;
 
-                    e.Graphics.DrawLine(Pens.Red, x, ClientRectangle.Top+40, x, ClientRectangle.Bottom-40);
-                    e.Graphics.DrawString("[" + tp.BPM.ToString("0.00") + "," + tp.OffsetSeconds.ToString("0.00") + "]", textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 20), format);
+                    e.Graphics.DrawLine(Pens.Red, x, ClientRectangle.Top, x, ClientRectangle.Bottom-40);
+                    String desc = "[" + tp.BPM.ToString("0.00") + "," + tp.OffsetSeconds.ToString("0.00") + "]" +
+                            "(+ " +  (tp.OffsetSeconds - prevTime).ToString("0.000") +"s)";
+                    e.Graphics.DrawString(desc, textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 20), format);
+
+                    prevTime = tp.OffsetSeconds;
                 }
             }
 
-            e.Graphics.DrawString("" + audioData.PositionSeconds, textFont, Brushes.Blue, new PointF(ClientRectangle.X + ClientRectangle.Width / 2, ClientRectangle.Top));
+            e.Graphics.DrawString("" + audioData.PositionSeconds.ToString("0.000") + "s", textFont, Brushes.Blue, new PointF(ClientRectangle.X + ClientRectangle.Width / 2, ClientRectangle.Top));
 
             base.OnPaint(e);
         }

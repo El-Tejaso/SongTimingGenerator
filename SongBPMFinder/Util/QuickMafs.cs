@@ -17,5 +17,19 @@ namespace SongBPMFinder.Util
             return Math.Abs((a / b) % 1.0) < tolerance;
         }
 
+        public static float Lerp(float a, float b, float t)
+        {
+            return a + (t * (b - a));
+        }
+
+        public static float Clamp(float v, float l, float u)
+        {
+            return Math.Max(l, Math.Min(v, u));
+        }
+
+        public static float Clamp01(float v)
+        {
+            return Clamp(v, 0f, 1f);
+        }
     }
 }

@@ -39,20 +39,60 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        static int DownsampleAverage(float[] x, int len, int channels)
+        static int DownsampleAverage(float[] x, int len, int samples)
         {
-            for (int i = 0; i < len / channels; i++)
+            for (int i = 0; i < len / samples; i++)
             {
                 float sum = 0;
-                for(int j = 0; j < channels; j++)
+                for(int j = 0; j < samples; j++)
                 {
-                    sum += x[i*channels + j];
+                    if ((i * samples + j) > len)
+                        break;
+                    sum += x[i* samples + j];
                 }
 
-                x[i] = sum / (float)channels;
+                x[i] = sum / (float)samples;
             }
             
-            return len/channels;
+            return len/ samples;
+        }
+
+
+        static int DownsampleMax(float[] x, int len, int samples)
+        {
+            for (int i = 0; i < len / samples; i++)
+            {
+                float max = 0;
+                for (int j = 0; j < samples; j++)
+                {
+                    if ((i * samples + j) > len)
+                        break;
+                    max = Math.Max(max, x[i * samples + j]);
+                }
+
+                x[i] = max;
+            }
+
+            return len / samples;
+        }
+
+        static int UpsampleLinear(float[] x, int len, int multiple)
+        {
+            for (int i = len; i > 0; i--)
+            {
+                int a = ((i - 1) * multiple);
+                int b = i * multiple;
+                for (int j = a; j < b; j++)
+                {
+                    if (j > x.Length) break;
+
+                    float t = (j-a) / (float)(b - a);
+                    float val = QuickMafs.Lerp(x[i - 1], x[i], t);
+                    x[j] = val;
+                }
+            }
+
+            return Math.Min(len * multiple, x.Length);
         }
 
         static int Abs(float[] x, int len){
@@ -62,24 +102,41 @@ namespace SongBPMFinder.Audio.Timing
 			return len;
 		}
 
-        static float Max(float[] x, int len)
+        static float Max(float[] x, int len, bool abs = false)
         {
             float max = x[0];
             for (int i = 1; i < len; i++)
             {
-                if (x[i] > max) max = x[i];
+                float xi = x[i];
+                if (abs) xi = Math.Abs(xi);
+                if (xi > max) max = x[i];
             }
             return max;
         }
 
-        static float Min(float[] x, int len)
+        static float Min(float[] x, int len, bool abs = false)
         {
             float min = x[0];
             for (int i = 1; i < len; i++)
             {
-                if (x[i] < min) min = x[i];
+                float xi = x[i];
+                if (abs) xi = Math.Abs(xi);
+                if (xi < min) min = xi;
             }
             return min;
+        }
+
+
+        static float Average(float[] x, int len, bool abs = false)
+        {
+            float average = 0;
+            for (int i = 1; i < len; i++)
+            {
+                float xi = x[i];
+                if (abs) xi = Math.Abs(xi);
+                average += x[i] / (float)len;
+            }
+            return average;
         }
 
         /// <summary>
@@ -109,16 +166,71 @@ namespace SongBPMFinder.Audio.Timing
             return len - size + 1;
         }
 
-        public static int Differentiate(float[] x, int len, float XUnits)
+        public static int Differentiate(float[] x, int len, float notchesPerUnit)
         {
             for(int i = 0; i < len-1; i++)
             {
                 float x2 = x[i + 1];
                 float x1 = x[i];
                 float dX = x2 - x1;
-                x[i] = dX/ XUnits;
+                x[i] = notchesPerUnit * dX;
             }
             return len-1;
+        }
+
+        //Doesn't work for inflection points
+        public static int FindZeroes(float[] x, int len, bool upwards, bool downwards)
+        {
+            bool above = x[0] > 0;
+            int lastIndex = 0;
+            for (int i = 1; i < len; i++)
+            {
+                float x1 = x[i];
+                if ((above) && (x1 < 0))
+                {
+                    if (downwards)
+                    {
+                        x[lastIndex] = i; 
+                        lastIndex++;
+                    }
+                    above = false;
+                }
+                else if ((!above) && (x1 > 0))
+                {
+                    if (upwards)
+                    {
+                        x[lastIndex] = i;
+                        lastIndex++;
+                    }
+                    above = true;
+                }
+            }
+            return lastIndex;
+        }
+
+        public static int Divide(float[] x, int len, float value)
+        {
+            for (int i = 1; i < len - 1; i++)
+            {
+                x[i] = x[i] / value;
+            }
+
+            return len;
+        }
+
+        public static int Normalize(float[] x, int len)
+        {
+            float max = Max(x, len, true);
+            return Divide(x, len, max);
+        }
+
+        public static int CalculateRatio(float[] output, float[] bufferA, float[] bufferB, int offset, int len)
+        {
+            for(int i = 0; i < len; i++)
+            {
+                output[i] = bufferA[i+offset] / bufferB[i];
+            }
+            return len;
         }
 
         public static TimingPointList Analyze(AudioData audioData)
@@ -141,8 +253,8 @@ namespace SongBPMFinder.Audio.Timing
             len = DownsampleAverage(data, len, audioData.Channels);
 
 
-            //int instantSize = (int)(0.005f * audioData.SampleRate);
-            int instantSize = 1024;
+            int instantSize = (int)(0.02f * audioData.SampleRate);
+            //int instantSize = 1024;
             int averageSize = (int)(1f * audioData.SampleRate);
 
 
@@ -162,8 +274,9 @@ namespace SongBPMFinder.Audio.Timing
 			int lenInstant = SlidingWindowAverage(instantEnergy, len, instantSize, 3);
 
 			int alignmentOffset = averageSize/2 - instantSize/2;
-			
-			for(int i = 0; i < lenAverage; i++){
+
+            //*
+            for (int i = 0; i < lenAverage; i++){
                 if (i + alignmentOffset >= instantEnergy.Length) break;
 
                 float ae = averageEnergy[i];
@@ -171,24 +284,79 @@ namespace SongBPMFinder.Audio.Timing
                 float res = Math.Abs(ie/(Math.Abs(ae)+1f));
                 data[i] = res;
 			}
-
-            float max = Max(data,len);
+            //*/
 
             len = lenAverage;
 
-            
-            for(int i = 0; i < len; i++)
+            Normalize(data, len);
+
+            //Get envelope
+            //len = DownsampleMax(data, len, instantSize);
+
+            //Find peaks
+
+            //len = Differentiate(data, len, 0.001f);
+
+
+
+            len = DownsampleMax(data, len, 2 * instantSize);
+            len = UpsampleLinear(data, len, 2 * instantSize);
+
+
+            ///*
+            //Derivative loop
+
+            len = Differentiate(data, len, audioData.SampleRate);
+            bool above = data[0] > 0;
+            float derivativeTolerance = 0.2f;
+
+            for (int i = 1; i < len; i++)
             {
-                if (data[i] > 0.5 * max)
+                float x1 = data[i];
+
+                if (above)
                 {
-                    timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(i+instantSize/2) * audioData.Channels));
+                    if(x1 < -derivativeTolerance)
+                    {
+                        //- -> +
+                        above = false;
+                        timingPoints.Add(new TimingPoint(120, audioData.Channels * audioData.ToSeconds(((i + alignmentOffset)))));
+                    } 
+                }
+                else
+                {
+                    if(x1 > derivativeTolerance)
+                    {
+                        above = true;
+                    } 
+                }
+            }
+            //*/
+
+            /*
+            //Threshold loop
+            for (int i = 0; i < len; i++)
+            {
+                if (data[i] > 0.3f)
+                {
+                    timingPoints.Add(new TimingPoint(120, audioData.ToSeconds((int)(i*instantSize)+instantSize/2) * audioData.Channels));
                     i += instantSize;
                 }
             }
+            //*/
+
+
+            /*
+            for (int i = 0; i < len; i++)
+            {
+                timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(i + instantSize / 2) * audioData.Channels));
+                i += instantSize;
+            }
+			//*/
 
 
             double tol = 0.001;
-            timingPoints = TimingPointList.RemoveDoubles(timingPoints, tol);
+            timingPoints = TimingPointList.RemoveDoubles(timingPoints, 0.01);
             timingPoints = TimingPointList.CalculateBpms(timingPoints);
             timingPoints = TimingPointList.Simplify(timingPoints, tol);
 
