@@ -31,5 +31,20 @@ namespace SongBPMFinder.Util
         {
             return Clamp(v, 0f, 1f);
         }
+
+        public static int Pow(int x, int p)
+        {
+            if (p < 0) return x;
+
+            int res = 1;
+
+            while (p > 0)
+            {
+                res *= x;
+                p--;
+            }
+
+            return res;
+        }
     }
 }

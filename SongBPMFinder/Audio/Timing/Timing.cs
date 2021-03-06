@@ -31,33 +31,71 @@ namespace SongBPMFinder.Audio.Timing
         {
             List<TimingPoint> timingPoints = new List<TimingPoint>();
 
-            float[] data;
+            float[] dataArray;
 
 
-			//Delete this line in production
-			data = audioData.Data;
+            //Delete this line in production
+            dataArray = audioData.Data;
 
-			//keep this in production
-			/*
-            data = new float[audioData.Data.Length];
-			Array.Copy(audioData.Data, 0, data, 0, data.Length);
+            //keep this in production
+            /*
+            dataArray = new float[audioData.Data.Length];
+			Array.Copy(audioData.Data, 0, dataArray, 0, dataArray.Length);
 			//*/
 
-            int len = data.Length;
             //len = DownsampleAverage(data, len, audioData.Channels);
 
+            Slice<float> data = new Slice<float>(dataArray);
 
-            for(int i = 0, h = len; i < 4; i++, h /= 2)
+
+            int numLevels = 4;
+            Slice<float>[] dwtSlices = new Slice<float>[numLevels];
+            
+            for(int i = 0, h = data.Length; i < numLevels; i++, h/=2)
             {
-                HaarFWT(data, 0, h);
+                dwtSlices[i] = data.GetSlice(0, h);
+                FloatArrays.HaarFWT(dwtSlices[i]);
             }
 
-            //len = OnePoleLPF(data, len, -0.5f, 0.5f);
-            //len = Abs(data, len);
+            FloatArrays.Abs(data);
 
 
+            //Resize DWT slices so that they only keep their detail coefficients
+            for (int i = 0; i < numLevels; i++)
+            {
+                dwtSlices[i] = dwtSlices[i].GetSlice(dwtSlices[i].Length / 2, dwtSlices[i].Length);
+            }
+            
+            Slice<float>[] downsampleSlices = new Slice<float>[numLevels];
+            //Treat 1 millisecond as a downsampling unit
+            //Needs to be a power of two probably
+            int instantSize = 1024;
+            int sliceLen = data.Length / instantSize;
 
-            int instantSize = (int)(0.02f * audioData.SampleRate);
+            for (int i = 0; i < 1; i++)
+            {
+                downsampleSlices[i] = data.GetSlice(i*sliceLen, (i+1) * sliceLen);
+                timingPoints.Add(new TimingPoint(120, audioData.ToSeconds((i + 1) * sliceLen)));
+
+                FloatArrays.DownsampleAverage(dwtSlices[numLevels - i - 1], downsampleSlices[i], instantSize / (QuickMafs.Pow(2, numLevels - i)));
+                //float average = FloatArrays.Average(downsampleSlices[i]);
+                //FloatArrays.Sum(downsampleSlices[i], -average);
+            }
+            /*
+            //Add all envelopes onto each other
+            for (int i = 1; i < numLevels; i++)
+            {
+                FloatArrays.Sum(downsampleSlices[0], downsampleSlices[i]);
+            }
+
+            Slice<float> result = downsampleSlices[0];
+
+            for(int i = 0; i < result.Length; i++)
+            {
+
+            }
+            */
+
             //len = DownsampleAverage(data, len, instantSize);
             //len = UpsampleLinear(data, len, instantSize);
 

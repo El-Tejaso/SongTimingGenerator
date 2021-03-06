@@ -211,7 +211,7 @@ namespace SongBPMFinder.Gui
 
         float getWaveformX(long samples)
         {
-            return ClientRectangle.X + ((samples) / (float)WindowLength) * ClientRectangle.Width;
+            return ClientRectangle.X + ((samples-audioData.Position+WindowLength/2) / (float)WindowLength) * ClientRectangle.Width;
         }
 
         void drawIndividualSamples(PaintEventArgs e)
@@ -225,17 +225,16 @@ namespace SongBPMFinder.Gui
             long lower = Math.Max(0, audioData.Position - WindowLength / 2);
             long upper = Math.Min(audioData.Data.Length, audioData.Position + WindowLength / 2);
 
-            float prevX = 0;
-            float prevY = 0;
+
             for (long position = lower; position < upper; position++)
             {
-                float x = getWaveformX(position - lower);
+                float x = getWaveformX(position);
                 float y = getWaveformY(audioData.Data[position]);
                 e.Graphics.DrawLine(Pens.Black, x, getWaveformY(0), x, y);
 
                 if (position > lower)
                 {
-                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-lower-1), getWaveformY(audioData.Data[position-1]), x, y);
+                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(audioData.Data[position-1]), x, y);
                 }
             }
         }

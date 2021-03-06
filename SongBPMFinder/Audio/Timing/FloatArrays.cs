@@ -17,7 +17,19 @@ namespace SongBPMFinder.Audio.Timing
         public int Length => len;
 
         public T this[int index] {
-            get { return array[start + index]; }
+            get { 
+                if (start + index >= len)
+                {
+                    //breakpoint
+                }
+
+                if (start + index >= array.Length)
+                {
+                    //breakpoint
+                }
+
+                return array[start + index]; 
+            }
             set { array[start + index] = value; }
         }
 
@@ -28,16 +40,20 @@ namespace SongBPMFinder.Audio.Timing
             this.len = arr.Length;
         }
 
-        public Slice<T> GetSlice(int start, int len)
+        public Slice<T> GetSlice(int start, int end)
         {
-            return new Slice<T>(array, this.start + start, len);
+            if(end > array.Length)
+            {
+                //Breakpoint
+            }
+            return new Slice<T>(array, this.start + start, end);
         }
 
-        public Slice(T[] arr, int start, int len)
+        public Slice(T[] arr, int start, int end)
         {
             array = arr;
             this.start = start;
-            this.len = len;
+            this.len = end - start;
         }
 
         public Slice<T> DeepCopy()
@@ -81,28 +97,41 @@ namespace SongBPMFinder.Audio.Timing
                 data[i] = temp[i];
         }
 
-        static Slice<float> DownsampleAverage(Slice<float> x, int samples)
+        //Downsamples by an exact number of samples. (the last sample may not be exact)
+        //Src and dst may also overlap, as long as dst starts at or before where x starts
+        public static void DownsampleAverage(Slice<float> x, Slice<float> dst, int samples)
         {
-            for (int i = 0; i < x.Length; i++)
+            if(x.Length < dst.Length)
+            {
+                Logger.Log("This isnt downsampling");
+                return;
+            }
+            int n = Math.Min(x.Length, dst.Length);
+            for (int i = 0; i < n; i++)
             {
                 float sum = 0;
+                bool shouldEnd = false;
+
                 for (int j = 0; j < samples; j++)
                 {
-                    if ((i * samples + j) > x.Length)
+                    if ((i * samples + j) >= n)
+                    {
+                        shouldEnd = true;
                         break;
+                    }
+                    
                     sum += x[i * samples + j];
                 }
 
-                x[i] = sum / (float)samples;
+                if (shouldEnd)
+                    break;
+
+                dst[i] = sum / (float)samples;
             }
-
-            Slice<float> subarray = x.GetSlice(0, x.Length / samples);
-
-            return subarray;
         }
 
 
-        static Slice<float> DownsampleMax(Slice<float> x, int samples)
+        public static Slice<float> DownsampleMax(Slice<float> x, int samples)
         {
             for (int i = 0; i < x.Length / samples; i++)
             {
@@ -120,7 +149,25 @@ namespace SongBPMFinder.Audio.Timing
             return x.GetSlice(0, x.Length / samples);
         }
 
-        static void UpsampleLinear(Slice<float> x, Slice<float> dest, int multiple)
+        public static void Sum(Slice<float> src, Slice<float> dst)
+        {
+            for(int i = 0; i < src.Length; i++)
+            {
+                if (i > dst.Length) break;
+                src[i] += dst[i];
+            }
+        }
+
+        public static void Sum(Slice<float> dst, float value)
+        {
+            for (int i = 0; i < dst.Length; i++)
+            {
+                dst[i] -= value;
+            }
+        }
+
+
+        public static void UpsampleLinear(Slice<float> x, Slice<float> dest, int multiple)
         {
             for (int i = x.Length; i > 0; i--)
             {
@@ -137,7 +184,7 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        static void Abs(Slice<float> x)
+        public static void Abs(Slice<float> x)
         {
             for (int i = 0; i < x.Length; i++)
             {
@@ -145,7 +192,7 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        static float Max(Slice<float> x, bool abs = false)
+        public static float Max(Slice<float> x, bool abs = false)
         {
             float max = x[0];
             for (int i = 1; i < x.Length; i++)
@@ -157,7 +204,7 @@ namespace SongBPMFinder.Audio.Timing
             return max;
         }
 
-        static float Min(Slice<float> x, bool abs = false)
+        public static float Min(Slice<float> x, bool abs = false)
         {
             float min = x[0];
             for (int i = 1; i < x.Length; i++)
@@ -170,7 +217,7 @@ namespace SongBPMFinder.Audio.Timing
         }
 
 
-        static float Average(Slice<float> x, bool abs = false)
+        public static float Average(Slice<float> x, bool abs = false)
         {
             float average = 0;
             for (int i = 1; i < x.Length; i++)
@@ -190,7 +237,7 @@ namespace SongBPMFinder.Audio.Timing
         /// <param name="len">the length of the array</param>
         /// <param name="size">The size of the window</param>
         /// <returns></returns>
-        static void SlidingWindowAverage(Slice<float> x, Slice<float> dest, int size, float exponent)
+        public static void SlidingWindowAverage(Slice<float> x, Slice<float> dest, int size, float exponent)
         {
 			int newSize = x.Length - size - 1;
 			if(dest.Length != newSize) return;
