@@ -82,8 +82,8 @@ namespace SongBPMFinder
             {
                 audioViewer.SecondsPerPixel *= Math.Pow(2, -dir);
 
-                if (audioViewer.SecondsPerPixel < 0.00001f)
-                    audioViewer.SecondsPerPixel = 0.00001f;
+                if (audioViewer.SecondsPerPixel < 0.000001f)
+                    audioViewer.SecondsPerPixel = 0.000001f;
 
                 if (audioViewer.SecondsPerPixel > currentAudioFile.Duration / audioViewer.Width)
                     audioViewer.SecondsPerPixel = currentAudioFile.Duration / audioViewer.Width;

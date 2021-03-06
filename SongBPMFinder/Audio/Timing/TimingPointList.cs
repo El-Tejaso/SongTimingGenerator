@@ -127,11 +127,12 @@ namespace SongBPMFinder.Audio.Timing
             Logger.Log("" + doubles + " duplicate timing points removed");
 		}
 
-        public TimingPointList(List<TimingPoint> timingPointsIn)
+        public TimingPointList(List<TimingPoint> timingPointsIn, bool clean = true)
         {
             timingPoints = timingPointsIn;
             timingPoints.Sort();
-			RemoveDoubles();
+            if(clean)
+			    RemoveDoubles();
         }
 
         public string GetOsuString() {
