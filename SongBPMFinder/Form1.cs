@@ -192,7 +192,7 @@ namespace SongBPMFinder
         void calculateTiming()
         {
             var watch = Stopwatch.StartNew();
-            tpList = Timing.Analyze(currentAudioFile);
+            tpList = Timing.GenerateMultiBPMTiming(currentAudioFile);
 
             audioViewer.ShowTimingPoints(tpList);
 

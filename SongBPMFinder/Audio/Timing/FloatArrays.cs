@@ -49,7 +49,7 @@ namespace SongBPMFinder.Audio.Timing
             {
                 //Breakpoint
             }
-            return new Slice<T>(array, this.start + start, end);
+            return new Slice<T>(array, this.start + start, this.start + end);
         }
 
         public Slice(T[] arr, int start, int end)
@@ -241,6 +241,22 @@ namespace SongBPMFinder.Audio.Timing
                 average += x[i] / (float)x.Length;
             }
             return average;
+        }
+
+        public static float StdDev(Slice<float> x, bool abs = false)
+        {
+            float variance = 0;
+            float mean = Average(x, abs);
+
+            for (int i = 1; i < x.Length; i++)
+            {
+                float xi = x[i];
+                if (abs) xi = Math.Abs(xi);
+
+                variance += ((xi - mean) * (xi - mean))/(float)x.Length;
+            }
+
+            return (float)Math.Sqrt(variance);
         }
 
         /// <summary>

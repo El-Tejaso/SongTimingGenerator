@@ -10,21 +10,23 @@ namespace SongBPMFinder.Audio.Timing
 {
     public class Timing 
     {
-
         /// <summary>
-        /// Finds a beat within the given window.
+        /// Finds a beat within the given sample window.
         /// If there are multiple, it returns the 'most powerful'
         /// TBH this is very rng.
         /// I would reccomend doing a deep copy of the slice before passing it in,
         /// as all operations done are destructive
-        /// which is bad from a programming and software maintenance standpoint, but good from a space/performance one
+        /// and you may want to preserve other things in the original array (required if using this function multiple times)
         /// </summary>
-        /// <param name="data">input array</param>
-        /// <param name="len">length of the array to consider</param>
-        /// <param name="windowStartPos">start of the window</param>
-        /// <param name="windowLength">size of the window in samples aka array indices</param>
-        /// <returns>Where we found a beat, or -1 if we didnt find anything</returns>
-        public static long FindBeat(AudioData audioData, Slice<float> slice, int numLevels = 4)
+        /// <param name="audioData">the audio file where the slice originated</param>
+        /// <param name="slice">a slice of data from the audio file. 
+        /// **IMPORTANT**: the beat will only be searched for in the first half, as the second half will be used
+        /// for autocorrelation</param>
+        /// <param name="timingPoints">A debug parameter. delete later</param>
+        /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
+        /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
+        /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
+        public static int FindBeat(AudioData audioData, Slice<float> slice, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
         {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
 
@@ -46,7 +48,6 @@ namespace SongBPMFinder.Audio.Timing
             Slice<float>[] downsampleSlices = new Slice<float>[numLevels];
 
             //each index a the downsampled array will be equal to this amount of time in seconds
-            float instant = 0.001f;
             //convert to samples
             int instantSize = audioData.ToSamples(instant);
 
@@ -78,17 +79,17 @@ namespace SongBPMFinder.Audio.Timing
 
             Slice<float> result = downsampleSlices[0];
             Slice<float> autocorrelPlacement = downsampleSlices[1];
-            //timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start)));
-            //timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start + autocorrelPlacement.Length)));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start), Color.Blue));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start + autocorrelPlacement.Length), Color.Blue));
 
             //Autocorrelation
             //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
-            for (int i = 0; i < result.Length; i++)
+            for (int i = 0; i < result.Length/2; i++)
             {
                 float sum = 0;
                 float n = result.Length - i;
 
-                for (int j = 0; j < result.Length - i; j++)
+                for (int j = 0; j < result.Length/2; j++)
                 {
                     sum += result[i] * result[i + j];
                 }
@@ -96,13 +97,26 @@ namespace SongBPMFinder.Audio.Timing
                 autocorrelPlacement[i] = sum / n;
             }
 
-            long max = FloatArrays.ArgMax(autocorrelPlacement, true);
+            autocorrelPlacement = autocorrelPlacement.GetSlice(0, autocorrelPlacement.Length / 2);
+
+            int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, true);
+            float stdev = FloatArrays.StdDev(autocorrelPlacement, true);
+            float mean = FloatArrays.Average(autocorrelPlacement, true);
+            float max = autocorrelPlacement[maxIndex];
+            float ratio = (max - mean) / stdev;
+
+            if (ratio < 4)
+            {   
+                //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
+                return -1;
+            }
+
             //convert back to audio
-            long maxAudioPos = max * instantSize;
+            int maxAudioPos = maxIndex * instantSize;
             return maxAudioPos;
         }
 
-        public static TimingPointList Analyze(AudioData audioData)
+        public static TimingPointList GenerateMultiBPMTiming(AudioData audioData)
         {
             List<TimingPoint> timingPoints = new List<TimingPoint>();
 
@@ -112,34 +126,46 @@ namespace SongBPMFinder.Audio.Timing
             //Delete this line in production
             dataArray = audioData.Data;
 
-            //keep this in production
-            /*
-            dataArray = new float[audioData.Data.Length];
-			Array.Copy(audioData.Data, 0, dataArray, 0, dataArray.Length);
-			//*/
-
-            //len = DownsampleAverage(data, len, audioData.Channels);
-
             Slice<float> data = new Slice<float>(dataArray);
 
-            long pos = FindBeat(audioData, data.GetSlice(0, audioData.ToSamples(1.0)).DeepCopy());
-            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos)));
 
+            int doubleWindowLength = audioData.ToSamples(0.2) * 2;
+            int beatWindow = audioData.ToSamples(0.02);
 
+            float resolution = 0.001f;
 
+            //*
+            int pos = 0;
+            while(pos < data.Length)
+            {
+                int beatPosition = FindBeat(audioData, data.GetSlice(pos, Math.Min(pos + doubleWindowLength, data.Length)).DeepCopy(), timingPoints, resolution);
 
-            
+                if(beatPosition == -1)
+                {
+                    //There was no 'beat' in this position
+                    pos += doubleWindowLength / 4;
+                    continue;
+                }
 
-            //len = DownsampleAverage(data, len, instantSize);
-            //len = UpsampleLinear(data, len, instantSize);
+                timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos + beatPosition)));
+                pos += beatPosition + beatWindow;
+            }
+            //*/
 
             /*
+            double t = 3.8;
+            Slice<float> s = data.GetSlice(audioData.ToSamples(t), audioData.ToSamples(t) + windowLength);
+            int beatPosition = FindBeat(audioData, s, timingPoints);
+            //*/
+
+
+
+            //*
             double tol = 0.001;
             timingPoints = TimingPointList.RemoveDoubles(timingPoints, 0.01);
             timingPoints = TimingPointList.CalculateBpms(timingPoints);
             timingPoints = TimingPointList.Simplify(timingPoints, tol);
-            */
-
+            //*/
 
             return new TimingPointList(timingPoints, false);
         }
