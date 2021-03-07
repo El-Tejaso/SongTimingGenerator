@@ -154,6 +154,7 @@ namespace SongBPMFinder.Gui
             {
                 long a = waveformToDataX(x);
                 if (a < 0) continue;
+                if (a >= audioData.Data.Length) break;
 
                 int samplesPerPixel = audioData.ToSamples(SecondsPerPixel);
                 long b = a + samplesPerPixel;
@@ -285,6 +286,8 @@ namespace SongBPMFinder.Gui
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
+            if (audioData == null) return;
+
             calculateExtents();
 
             int samplesPerPixel = audioData.ToSamples(SecondsPerPixel);

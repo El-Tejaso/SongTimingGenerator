@@ -7,81 +7,21 @@ using SongBPMFinder.Util;
 
 namespace SongBPMFinder.Audio.Timing
 {
-    //convenience class for working with arrays in place
-    public struct Slice<T>
-    {
-        int start;
-        int len;
-        T[] array;
-
-        public int Length => len;
-
-        //Mainly for debugging purposes
-        public int Start => start; 
-
-        public T this[int index] {
-            get { 
-                if (start + index >= len)
-                {
-                    //breakpoint
-                }
-
-                if (start + index >= array.Length)
-                {
-                    //breakpoint
-                }
-
-                return array[start + index]; 
-            }
-            set { array[start + index] = value; }
-        }
-
-        public Slice(T[] arr)
-        {
-            array = arr;
-            this.start = 0;
-            this.len = arr.Length;
-        }
-
-        public Slice<T> GetSlice(int start, int end)
-        {
-            if(end > array.Length)
-            {
-                //Breakpoint
-            }
-            return new Slice<T>(array, this.start + start, this.start + end);
-        }
-
-        public Slice(T[] arr, int start, int end)
-        {
-            array = arr;
-            this.start = start;
-            this.len = end - start;
-        }
-
-        public Slice<T> DeepCopy()
-        {
-            T[] arr = new T[len];
-            for(int i = 0; i < arr.Length; i++)
-            {
-                arr[i] = array[start + i];
-            }
-
-            return new Slice<T>(arr);
-        }
-    }
-
     /// <summary>
     /// A static class for performing operations on large arrays in-place.
     /// As we can be working with GB-size arrays, we should perform as few copys as possible
     /// </summary>
     class FloatArrays
     {
-        //Taken from https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
-        public static void HaarFWT(Slice<float> data)
+        /// <summary>
+        /// This implementation was taken from the Accord.Net framework and adapted to use floats as well as allocate less memory
+        /// https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
+        /// </summary>
+        /// <param name="data">The data to be transforming</param>
+        /// <param name="temp">A temp buffer the same size as data. If you are calling this function several times,
+        /// you can just allocate this buffer once and then keep passing it in</param>
+        public static void HaarFWT(Slice<float> data, Slice<float> temp)
         {
-            Slice<float> temp = data.DeepCopy();
-
             float w0 = 0.5f;
             float w1 = -0.5f;
             float s0 = 0.5f;
@@ -166,7 +106,7 @@ namespace SongBPMFinder.Audio.Timing
         {
             for (int i = 0; i < dst.Length; i++)
             {
-                dst[i] -= value;
+                dst[i] += value;
             }
         }
 
