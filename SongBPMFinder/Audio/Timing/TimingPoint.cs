@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using SongBPMFinder.Util;
 
 namespace SongBPMFinder.Audio.Timing
 {
-    public struct TimingPoint : IComparable<TimingPoint>
+    public class TimingPoint : IComparable<TimingPoint>
     {
+
+        public TimingPoint(double bpm, double offset, Color col)
+        {
+            BPM = bpm;
+            OffsetSeconds = offset;
+            Color = col;
+        }
+
         public TimingPoint(double bpm, double offset)
         {
             BPM = bpm;
@@ -17,6 +26,9 @@ namespace SongBPMFinder.Audio.Timing
 
         public double BPM;
         public double OffsetSeconds;
+        //Purely a debugging feature
+        public Color Color = Color.Red;
+
         public long OffsetMilliseconds {
             get => (long)(OffsetSeconds * 1000);
         }

@@ -16,6 +16,9 @@ namespace SongBPMFinder.Audio.Timing
 
         public int Length => len;
 
+        //Mainly for debugging purposes
+        public int Start => start; 
+
         public T this[int index] {
             get { 
                 if (start + index >= len)
@@ -106,7 +109,8 @@ namespace SongBPMFinder.Audio.Timing
                 Logger.Log("This isnt downsampling");
                 return;
             }
-            int n = Math.Min(x.Length, dst.Length);
+
+            int n = x.Length / samples;
             for (int i = 0; i < n; i++)
             {
                 float sum = 0;
@@ -114,7 +118,7 @@ namespace SongBPMFinder.Audio.Timing
 
                 for (int j = 0; j < samples; j++)
                 {
-                    if ((i * samples + j) >= n)
+                    if ((i * samples + j) >= x.Length)
                     {
                         shouldEnd = true;
                         break;
@@ -192,30 +196,40 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        public static float Max(Slice<float> x, bool abs = false)
+
+        public static int ArgMax(Slice<float> x, bool abs = false)
         {
-            float max = x[0];
+            int max = 0;
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
                 if (abs) xi = Math.Abs(xi);
-                if (xi > max) max = x[i];
+                if (xi > x[max]) max = i;
             }
             return max;
         }
 
-        public static float Min(Slice<float> x, bool abs = false)
+        public static float Max(Slice<float> x, bool abs = false)
         {
-            float min = x[0];
+            return x[ArgMax(x, abs)];
+        }
+
+        public static int ArgMin(Slice<float> x, bool abs = false)
+        {
+            int min = 0;
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
                 if (abs) xi = Math.Abs(xi);
-                if (xi < min) min = xi;
+                if (xi < x[min]) min = i;
             }
             return min;
         }
 
+        public static float Min(Slice<float> x, bool abs = false)
+        {
+            return x[ArgMin(x, abs)];
+        }
 
         public static float Average(Slice<float> x, bool abs = false)
         {
