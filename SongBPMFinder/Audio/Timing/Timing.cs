@@ -30,6 +30,9 @@ namespace SongBPMFinder.Audio.Timing
         {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
 
+            int origSliceStart = slice.Start;
+            slice = slice.DeepCopy();
+
             for (int i = 0, h = slice.Length; i < numLevels; i++, h /= 2)
             {
                 dwtSlices[i] = slice.GetSlice(0, h);
@@ -53,6 +56,7 @@ namespace SongBPMFinder.Audio.Timing
 
             int sliceLen = (slice.Length / instantSize);
 
+
             for (int i = 0; i < numLevels; i++)
             {
                 downsampleSlices[i] = slice.GetSlice(i * sliceLen, (i + 1) * sliceLen);
@@ -64,52 +68,101 @@ namespace SongBPMFinder.Audio.Timing
                 FloatArrays.DownsampleAverage(dwtSlices[numLevels - i - 1], downsampleSlices[i], downsampleFactor);
             }
 
-            //Subtract means
-            for (int i = 1; i < numLevels; i++)
+            for (int i = 0; i < numLevels; i++)
             {
-                float average = FloatArrays.Average(downsampleSlices[i], true);
-                FloatArrays.Sum(downsampleSlices[i], -average);
-            }
+                //Subtract means
+                float average = FloatArrays.Average(downsampleSlices[i], false);
+                FloatArrays.Sum(downsampleSlices[i], average);
 
-            //Add all envelopes onto each other
+                //remove negative values
+                //FloatArrays.Max(downsampleSlices[i], 0);
+            }
+            
+
+            //Add all envelopes onto each other at slices[0]
             for (int i = 1; i < numLevels; i++)
             {
                 FloatArrays.Sum(downsampleSlices[0], downsampleSlices[i]);
             }
 
-            Slice<float> result = downsampleSlices[0];
-
-            //Can't do downsampleSlices[1] if numLevels == 1
-            Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, 2 * sliceLen);
-
-            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start), Color.Blue));
-            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(autocorrelPlacement.Start + autocorrelPlacement.Length), Color.Blue));
 
             //Autocorrelation
-            //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
-            for (int i = 0; i < result.Length/2; i++)
-            {
-                float sum = 0;
-                float n = result.Length - i;
+            Slice<float> result = downsampleSlices[0];
+            Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, sliceLen + sliceLen / 2);
+            FloatArrays.Autocorrelate(result, autocorrelPlacement);
 
-                for (int j = 0; j < result.Length/2; j++)
-                {
-                    sum += result[i] * result[i + j];
-                }
 
-                autocorrelPlacement[i] = sum / n;
-            }
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart), Color.Blue));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart + sliceLen), Color.Blue));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart + 2*sliceLen), Color.Blue));
 
-            autocorrelPlacement = autocorrelPlacement.GetSlice(0, autocorrelPlacement.Length / 2);
 
-            int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, true);
-            float stdev = FloatArrays.StdDev(autocorrelPlacement, true);
-            float mean = FloatArrays.Average(autocorrelPlacement, true);
+            float mean = FloatArrays.Average(autocorrelPlacement, false);
+            FloatArrays.Sum(autocorrelPlacement, -mean);
+
+            int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, false);
             float max = autocorrelPlacement[maxIndex];
-            float ratio = (max - mean) / stdev;
+
+            float stdev = FloatArrays.StdDev(autocorrelPlacement, false);
+            float ratio = max / stdev;
 
             if (ratio < 4)
             {   
+                //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
+                //return -1;
+            }
+
+            //convert back to audio
+            int maxAudioPos = maxIndex * instantSize;
+            return maxAudioPos;
+        }
+
+
+        public static int FindBeatNoDWT(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
+        {
+            int origSliceStart = slice.Start;
+            //slice = slice.DeepCopy();
+
+            //FWR
+            FloatArrays.Abs(slice);
+
+
+            //DOWNSAMPLE
+            int instantSize = audioData.ToSamples(instant);
+            int downsampleFactor = instantSize;
+            int downsampledSize= slice.Length / downsampleFactor;
+
+            Slice<float> downsampleSlice = slice.GetSlice(0, downsampledSize);
+            FloatArrays.DownsampleAverage(slice, downsampleSlice, downsampleFactor);
+
+           
+            //NORMALIZE
+            float average = FloatArrays.Average(downsampleSlice, false);
+            FloatArrays.Sum(downsampleSlice, -average);
+
+
+            Slice<float> autocorrelPlacement = slice.GetSlice(downsampledSize, 2 * downsampledSize);
+            FloatArrays.Autocorrelate(downsampleSlice, autocorrelPlacement);
+
+            autocorrelPlacement = autocorrelPlacement.GetSlice(0, autocorrelPlacement.Length / 2);
+
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart), Color.Blue));
+
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart + autocorrelPlacement.Start), Color.Blue));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(origSliceStart + autocorrelPlacement.Start + autocorrelPlacement.Length), Color.Blue));
+
+
+            float mean = FloatArrays.Average(autocorrelPlacement, false);
+            FloatArrays.Sum(autocorrelPlacement, -mean);
+
+            int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, false);
+            float max = autocorrelPlacement[maxIndex];
+
+            float stdev = FloatArrays.StdDev(autocorrelPlacement, false);
+            float ratio = max / stdev;
+
+            if (ratio < 4)
+            {
                 //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
                 //return -1;
             }
@@ -141,7 +194,7 @@ namespace SongBPMFinder.Audio.Timing
             Slice<float> data = new Slice<float>(dataArray);
 
 
-            int doubleWindowLength = audioData.ToSamples(2) * 2;
+            int doubleWindowLength = audioData.ToSamples(0.2) * 2;
             int beatWindow = audioData.ToSamples(0.01);
 
             float[] windowBuffer = new float[doubleWindowLength];
@@ -153,6 +206,11 @@ namespace SongBPMFinder.Audio.Timing
             int pos = 0;
             while(pos < data.Length)
             {
+                if(audioData.ToSeconds(pos) > 2.4)
+                {
+
+                }
+
                 Slice<float> windowSlice = data.GetSlice(pos, Math.Min(pos + doubleWindowLength, data.Length)).DeepCopy(windowBuffer);
                 int beatPosition = FindBeat(audioData, windowSlice, tempBuffer, timingPoints, resolution, 4);
 
@@ -168,10 +226,26 @@ namespace SongBPMFinder.Audio.Timing
             }
             //*/
 
-            //*
-            double t = 0.0;
-            //Slice<float> s = data.GetSlice(audioData.ToSamples(t), audioData.ToSamples(t) + doubleWindowLength);
-            int beatPosition = FindBeat(audioData, data, data.DeepCopy(), timingPoints, resolution, 4);
+            
+
+            /*
+            //double t = 0.52;
+            //double t = 0.3;
+            //double t = 22.85;
+            int pos = audioData.ToSamples(0);
+            //Slice<float> s = data.GetSlice(pos, pos + doubleWindowLength);
+            Slice<float> s = data;
+
+            //timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(s.Start), Color.Blue));
+            //timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(s.Start + s.Length), Color.Blue));
+
+            int beatPosition = FindBeat(audioData, s, s.DeepCopy(), timingPoints, resolution, 4);
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos + beatPosition), Color.Green));
+
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos + 0)));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos + doubleWindowLength/2)));
+            timingPoints.Add(new TimingPoint(120, audioData.ToSeconds(pos + doubleWindowLength)));
+
             //*/
 
 

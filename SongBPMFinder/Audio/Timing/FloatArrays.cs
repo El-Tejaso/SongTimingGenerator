@@ -93,12 +93,12 @@ namespace SongBPMFinder.Audio.Timing
             return x.GetSlice(0, x.Length / samples);
         }
 
-        public static void Sum(Slice<float> src, Slice<float> dst)
+        public static void Sum(Slice<float> x, Slice<float> other)
         {
-            for(int i = 0; i < src.Length; i++)
+            for(int i = 0; i < x.Length; i++)
             {
-                if (i > dst.Length) break;
-                src[i] += dst[i];
+                if (i > other.Length) break;
+                x[i] += other[i];
             }
         }
 
@@ -109,6 +109,15 @@ namespace SongBPMFinder.Audio.Timing
                 dst[i] += value;
             }
         }
+
+        public static void Max(Slice<float> dst, float value)
+        {
+            for (int i = 0; i < dst.Length; i++)
+            {
+                if(value > dst[i]) dst[i] = value;
+            }
+        }
+
 
 
         public static void UpsampleLinear(Slice<float> x, Slice<float> dest, int multiple)
@@ -227,15 +236,40 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        public static void Differentiate(Slice<float> x, int len, float notchesPerUnit)
+        public static void Differentiate(Slice<float> x, float notchesPerUnit)
         {
-            for (int i = 0; i < len - 1; i++)
+            for (int i = 0; i < x.Length - 1; i++)
             {
                 float x2 = x[i + 1];
                 float x1 = x[i];
                 float dX = x2 - x1;
                 x[i] = notchesPerUnit * dX;
             }
+        }
+
+        /// <summary>
+        /// Performs autocorellation.
+        /// you must ensure that src and dst must not be overlapping
+        /// </summary>
+        /// <param name="src">ideally must be twice as large as dst.</param>
+        /// <param name="dst">ideally must be half as large as src</param>
+        public static void Autocorrelate(Slice<float> src, Slice<float> dst)
+        {
+            //Autocorrelation
+            //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
+            for (int i = 0; i < src.Length / 2; i++)
+            {
+                float sum = 0;
+                float n = src.Length - dst.Length;
+
+                for (int j = 0; j < n / 2; j++)
+                {
+                    sum += src[i] * src[i + j];
+                }
+
+                dst[i] = sum / n;
+            }
+
         }
 
         public static void Divide(Slice<float> x, float value)
@@ -260,5 +294,40 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
+        //Taken from https://github.com/accord-net/framework/blob/development/Sources/Accord.Audio/Filters/HighPassFilter.cs
+        //and adapted
+        public static void HighPassFilter(Slice<float> src, double frequency, double sampleRate)
+        {
+            double rc = 1 / (2 * Math.PI * frequency);
+            double dt = 1 / (sampleRate);
+
+            float alpha = (float)(rc / (rc + dt));
+
+            // memorize the previous sample
+            float x0 = src[0];
+
+            for (int i = 1; i < src.Length; i++)
+            {
+                float temp = src[i];
+                src[i] = alpha * (src[i-1] + src[i] - x0);
+                x0 = temp;
+            }
+        }
+
+
+        //Taken from Accord.Audio same as HighPassFilter but LowPassFilter
+        //and adapted
+        public static void LowPassFilter(Slice<float> src, double frequency, double sampleRate)
+        {
+            double rc = 1 / (2 * Math.PI * frequency);
+            double dt = 1 / (sampleRate);
+
+            float alpha = (float)(rc / (rc + dt));
+
+            for (int i = 1; i < src.Length; i++)
+            {
+                src[i] = src[i - 1] + alpha * (src[i] - src[i-1]);
+            }
+        }
     }
 }

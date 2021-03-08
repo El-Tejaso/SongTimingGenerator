@@ -46,7 +46,8 @@ namespace SongBPMFinder
             //TESTING
 
             //loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
-			loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
+			loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
+			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
             calculateTiming();            
         }
 
