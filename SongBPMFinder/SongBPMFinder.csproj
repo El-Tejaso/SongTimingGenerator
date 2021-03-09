@@ -93,6 +93,7 @@
     <Compile Include="Audio\AudioData.cs" />
     <Compile Include="Audio\AudioDataStream.cs" />
     <Compile Include="Audio\AudioPlayer.cs" />
+    <Compile Include="Audio\Timing\BeatFinder.cs" />
     <Compile Include="Audio\Timing\FloatArrays.cs" />
     <Compile Include="Audio\Timing\FourierTransform.cs" />
     <Compile Include="Audio\Timing\Slice.cs" />

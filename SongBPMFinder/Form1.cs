@@ -11,6 +11,7 @@ using SongBPMFinder.Util;
 using SongBPMFinder.Audio;
 using SongBPMFinder.Audio.Timing;
 using System.Diagnostics;
+using SongBPMFinder.Gui;
 
 namespace SongBPMFinder
 {
@@ -23,9 +24,29 @@ namespace SongBPMFinder
 
         MethodInvoker updateSBPos;
 
+        #region shitCode
+        //Delete these in production
+        static Form1 singletoninstance;
+        public static Form1 Instance => singletoninstance;
+
+        public CustomWaveViewer Viewer;
+        #endregion
+
         public Form1()
         {
             InitializeComponent();
+
+            #region shitCode
+
+            Viewer = this.audioViewer;
+
+            if (singletoninstance == null)
+            {
+                singletoninstance = this;
+            }
+
+            #endregion
+
             audioViewer.MouseWheel += audioViewer_OnScroll;
 
             songPositionChangedInterrupt.Stop();
@@ -45,8 +66,8 @@ namespace SongBPMFinder
 
             //TESTING
 
-            //loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
-			loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
+            loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
+			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
             calculateTiming();            
         }
@@ -190,6 +211,7 @@ namespace SongBPMFinder
             }
         }
 
+        
 
         void calculateTiming()
         {

@@ -27,7 +27,7 @@ namespace SongBPMFinder.Audio
 
         public double PositionSeconds {
             get {
-                return ToSeconds(Position);
+                return IndexToSeconds(Position);
             }
         }
 
@@ -46,20 +46,30 @@ namespace SongBPMFinder.Audio
         }
 
         public double Duration {
-            get => ToSeconds(data.Length);
+            get => IndexToSeconds(data.Length);
         }
 
         public WaveFormat WaveFormat {
             get => metadata;
         }
 
-		public double ToSeconds(long samples){
-			return (samples/(double)Channels)/(double)SampleRate;
+        public double SampleToSeconds(int sample)
+        {
+            return sample / (double)SampleRate;
+        }
+
+        public double IndexToSeconds(int arrayIndex){
+			return (arrayIndex / (double)Channels)/(double)SampleRate;
 		}
 
-		public int ToSamples(double seconds){
+		public int ToArrayIndex(double seconds){
 			return (int)(seconds * SampleRate * Channels);
 		}
+
+        public int ToSample(double seconds)
+        {
+            return (int)(seconds * SampleRate);
+        }
 
         public AudioData(string filepath) 
         {

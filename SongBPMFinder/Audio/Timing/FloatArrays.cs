@@ -74,6 +74,14 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
+        public static void ExtractChannel(Slice<float> data, Slice<float> dst, int totalChannels, int channel)
+        {
+            int n = data.Length / totalChannels;
+            for (int i = 0; i < n; i++)
+            {
+                dst[i] = data[i * totalChannels + channel];
+            }
+        }
 
         public static Slice<float> DownsampleMax(Slice<float> x, int samples)
         {
@@ -117,8 +125,6 @@ namespace SongBPMFinder.Audio.Timing
                 if(value > dst[i]) dst[i] = value;
             }
         }
-
-
 
         public static void UpsampleLinear(Slice<float> x, Slice<float> dest, int multiple)
         {
@@ -285,6 +291,13 @@ namespace SongBPMFinder.Audio.Timing
             float max = Max(x, true);
             Divide(x, max);
         }
+
+        public static void NormalizeAv(Slice<float> x)
+        {
+            float av= Average(x, true);
+            Divide(x, av);
+        }
+
 
         public static void OnePoleLPF(Slice<float> x, float a1, float b0 = 1)
         {

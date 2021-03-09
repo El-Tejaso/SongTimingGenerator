@@ -85,11 +85,12 @@ namespace SongBPMFinder.Gui
         public double StartTime{
             get {
                 if (audioData == null) return 0.0;
-                return audioData.ToSeconds(audioData.Position);
+                return audioData.IndexToSeconds(audioData.Position);
             }
             set {
                 if (audioData == null) return;
-                audioData.Position = audioData.ToSamples(value * audioData.SampleRate);
+                int pos = audioData.ToArrayIndex(value);
+                audioData.Position = pos;
                 this.Invalidate();
             }
         }
@@ -98,7 +99,10 @@ namespace SongBPMFinder.Gui
         /// The length of the visible window in samples
         /// </summary>
         public int WindowLength {
-            get => (int)(audioData.ToSamples(WindowLengthSeconds));
+            get => (int)(audioData.ToArrayIndex(WindowLengthSeconds));
+            set {
+                WindowLengthSeconds = audioData.IndexToSeconds(value);
+            }
         }
 
         /// <summary>
@@ -106,6 +110,9 @@ namespace SongBPMFinder.Gui
         /// </summary>
         public double WindowLengthSeconds {
             get => (this.SecondsPerPixel * this.ClientRectangle.Width);
+            set {
+                this.SecondsPerPixel = value / ClientRectangle.Width;
+            }
         }
 
 
@@ -156,7 +163,7 @@ namespace SongBPMFinder.Gui
                 if (a < 0) continue;
                 if (a >= audioData.Data.Length) break;
 
-                int samplesPerPixel = audioData.ToSamples(SecondsPerPixel);
+                int samplesPerPixel = audioData.ToArrayIndex(SecondsPerPixel);
                 long b = a + samplesPerPixel;
 
                 float low = audioData.Data[a];
@@ -199,7 +206,7 @@ namespace SongBPMFinder.Gui
 
         float getWaveformX(double time)
         {
-            return getWaveformX(audioData.ToSamples(time));
+            return getWaveformX(audioData.ToArrayIndex(time));
         }
 
         long waveformToDataX(float waveformX)
@@ -212,19 +219,20 @@ namespace SongBPMFinder.Gui
             return ClientRectangle.X + ((samples-audioData.Position+WindowLength/2) / (float)WindowLength) * ClientRectangle.Width;
         }
 
+
         void drawIndividualSamples(PaintEventArgs e)
         {
             if (audioData == null)
                 return;
-            int samplesPerPixel = audioData.ToSamples(SecondsPerPixel);
+            int samplesPerPixel = audioData.ToArrayIndex(SecondsPerPixel);
 
             if (samplesPerPixel > 1) return;
 
-            long lower = Math.Max(0, audioData.Position - WindowLength / 2);
-            long upper = Math.Min(audioData.Data.Length, audioData.Position + WindowLength / 2);
+            int lower = Math.Max(0, audioData.Position - WindowLength / 2);
+            int upper = Math.Min(audioData.Data.Length, audioData.Position + WindowLength / 2);
 
 
-            for (long position = lower; position < upper; position++)
+            for (int position = lower; position < upper; position++)
             {
                 float x = getWaveformX(position);
                 float y = getWaveformY(audioData.Data[position]);
@@ -235,6 +243,17 @@ namespace SongBPMFinder.Gui
                     e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(audioData.Data[position-1]), x, y);
                 }
             }
+
+            Slice<float> range = new Slice<float>(audioData.Data, lower, upper);
+            float mean = FloatArrays.Average(range, false);
+            float stdev = FloatArrays.StdDev(range, false);
+
+            //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
+            //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
+            float meanY = getWaveformY(mean);
+            float stdevY = getWaveformY(mean+stdev);
+            e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, meanY, ClientRectangle.Right, meanY);
+            e.Graphics.DrawLine(Pens.Aqua, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
         }
 
 
@@ -290,7 +309,7 @@ namespace SongBPMFinder.Gui
 
             calculateExtents();
 
-            int samplesPerPixel = audioData.ToSamples(SecondsPerPixel);
+            int samplesPerPixel = audioData.ToArrayIndex(SecondsPerPixel);
 
             if (samplesPerPixel > 1)
             {

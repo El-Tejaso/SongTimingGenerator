@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace SongBPMFinder.Audio
 {
-    class AudioPlayer
+    public class AudioPlayer
     {
         WaveOut output = null;
         WaveProvider32 audio;

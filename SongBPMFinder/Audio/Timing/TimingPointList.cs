@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using SongBPMFinder.Util;
 
 namespace SongBPMFinder.Audio.Timing
@@ -26,6 +27,21 @@ namespace SongBPMFinder.Audio.Timing
                     return i;
             }
             return timingPoints.Count;
+        }
+
+        public static List<TimingPoint> RemoveDebugPoints(List<TimingPoint> timingPoints)
+        {
+            List<TimingPoint> cleanList = new List<TimingPoint>();
+
+            for(int i = 0; i < timingPoints.Count; i++)
+            {
+                if(timingPoints[i].Color == Color.Red)
+                {
+                    cleanList.Add(timingPoints[i]);
+                }
+            }
+
+            return cleanList;
         }
 
         public static List<TimingPoint> RemoveDoubles(List<TimingPoint> timingPoints, double tolerance = 0.0001)
@@ -67,16 +83,6 @@ namespace SongBPMFinder.Audio.Timing
                 
 
                 double bpm = 60.0/ (t1 - t0);
-
-                while(bpm > 300)
-                {
-                    bpm /= 2;
-                }
-
-                while (bpm < 30)
-                {
-                    bpm *= 2;
-                }
 
                 tp0.BPM = bpm;
 
