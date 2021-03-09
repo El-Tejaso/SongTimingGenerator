@@ -26,6 +26,7 @@ namespace SongBPMFinder.Audio
             isPlaying = true;
             output.Play();
         }
+
         public void Pause()
         {
             if (!isPlaying) return;

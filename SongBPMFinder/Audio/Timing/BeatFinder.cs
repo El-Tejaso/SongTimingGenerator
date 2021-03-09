@@ -28,6 +28,23 @@ namespace SongBPMFinder.Audio.Timing
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
         public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
         {
+            int instantSize = audioData.ToArrayIndex(instant);
+
+            int try1 = findBeatInternal(audioData, slice.GetSlice(0, slice.Length - instantSize), tempBuffer, timingPoints, instant, numLevels);
+            int try2 = findBeatInternal(audioData, slice.GetSlice(instantSize, slice.Length), tempBuffer, timingPoints, instant, numLevels);
+
+            if ((try1 == -1) || (try2 == -1))
+                return -1;
+
+            if(Math.Abs(audioData.SampleToSeconds(try1) - audioData.SampleToSeconds(try2)) > instant / 2.0)
+            {
+                return -1;
+            }
+
+            return try1 + (try2 - try1) / 2;
+        }
+        public static int findBeatInternal(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
+        {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
 
             int origSliceStart = slice.Start;
@@ -96,8 +113,8 @@ namespace SongBPMFinder.Audio.Timing
 
             #region shitCode
 
-            Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
-            Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
+            //Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
+            //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
 
             #endregion
 

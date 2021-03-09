@@ -24,6 +24,9 @@ namespace SongBPMFinder
 
         MethodInvoker updateSBPos;
 
+        //m
+        Playback currentPlayback = Playback.Realtime;
+
         #region shitCode
         //Delete these in production
         static Form1 singletoninstance;
@@ -114,8 +117,19 @@ namespace SongBPMFinder
             }
             else
             {
-                currentAudioFile.Position -= dir * audioViewer.WindowLength / 10;
+                if(ModifierKeys == Keys.Shift)
+                {
+                    currentAudioFile.Position -= dir * audioViewer.WindowLength / 100;
+                } 
+                else
+                {
+                    currentAudioFile.Position -= dir * audioViewer.WindowLength / 10;
+                }
+
                 audioViewer.Invalidate();
+
+                //TESTING
+                //calculateTiming();
             }
 
 
@@ -211,8 +225,6 @@ namespace SongBPMFinder
             }
         }
 
-        
-
         void calculateTiming()
         {
             var watch = Stopwatch.StartNew();
@@ -242,5 +254,24 @@ namespace SongBPMFinder
             Logger.Log("Copied the following to the clipboard:\n\"" + s + "\n\"");
         }
 
+        private void buttonSpeed1x_Click(object sender, EventArgs e)
+        {
+            audioStream.Playback = Playback.Realtime;
+        }
+
+        private void buttonSpeed075x_Click(object sender, EventArgs e)
+        {
+            audioStream.Playback = Playback.ThreeFourths;
+        }
+
+        private void buttonSpeed050x_Click(object sender, EventArgs e)
+        {
+            audioStream.Playback = Playback.Halftime;
+        }
+
+        private void buttonSpeed025x_Click(object sender, EventArgs e)
+        {
+            audioStream.Playback = Playback.Quartertime;
+        }
     }
 }

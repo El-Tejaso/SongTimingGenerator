@@ -99,8 +99,14 @@ namespace SongBPMFinder.Gui
         /// The length of the visible window in samples
         /// </summary>
         public int WindowLength {
-            get => (int)(audioData.ToArrayIndex(WindowLengthSeconds));
+            get {
+                if (audioData == null) return 0;
+
+                return (int)(audioData.ToArrayIndex(WindowLengthSeconds));
+            }
             set {
+                if (audioData == null) return;
+
                 WindowLengthSeconds = audioData.IndexToSeconds(value);
             }
         }

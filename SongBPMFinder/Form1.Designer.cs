@@ -33,9 +33,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textOutput = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.playPauseButton = new System.Windows.Forms.Button();
-            this.playbackScrollbar = new System.Windows.Forms.HScrollBar();
             this.toolPanel = new System.Windows.Forms.Panel();
             this.copyTimingButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -47,12 +45,18 @@
             this.openButton = new System.Windows.Forms.Button();
             this.openFileDialogue = new System.Windows.Forms.OpenFileDialog();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
+            this.playbackScrollbar = new System.Windows.Forms.HScrollBar();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.audioViewer = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.buttonSpeed1x = new System.Windows.Forms.Button();
+            this.buttonSpeed075x = new System.Windows.Forms.Button();
+            this.buttonSpeed050x = new System.Windows.Forms.Button();
+            this.buttonSpeed025x = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
             this.toolPanel.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -102,57 +106,32 @@
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.audioViewer, 0, 0);
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.playbackScrollbar, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.audioViewer, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 68F));
+            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(918, 451);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.1639F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 88.83611F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.Controls.Add(this.playPauseButton, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.playbackScrollbar, 1, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 386);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(912, 62);
-            this.tableLayoutPanel4.TabIndex = 1;
-            // 
             // playPauseButton
             // 
-            this.playPauseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.playPauseButton.Font = new System.Drawing.Font("Webdings", 16F);
-            this.playPauseButton.Location = new System.Drawing.Point(7, 7);
-            this.playPauseButton.Margin = new System.Windows.Forms.Padding(7);
+            this.playPauseButton.Location = new System.Drawing.Point(0, 0);
+            this.playPauseButton.Margin = new System.Windows.Forms.Padding(0);
             this.playPauseButton.Name = "playPauseButton";
-            this.playPauseButton.Size = new System.Drawing.Size(87, 48);
+            this.playPauseButton.Size = new System.Drawing.Size(69, 40);
             this.playPauseButton.TabIndex = 0;
             this.playPauseButton.Text = "4";
             this.playPauseButton.UseVisualStyleBackColor = true;
             this.playPauseButton.Click += new System.EventHandler(this.playPauseButton_Click);
-            // 
-            // playbackScrollbar
-            // 
-            this.playbackScrollbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playbackScrollbar.Location = new System.Drawing.Point(101, 0);
-            this.playbackScrollbar.Name = "playbackScrollbar";
-            this.playbackScrollbar.Size = new System.Drawing.Size(811, 62);
-            this.playbackScrollbar.TabIndex = 1;
-            this.playbackScrollbar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.playbackScrollbar_Scroll);
             // 
             // toolPanel
             // 
@@ -270,16 +249,88 @@
             // 
             this.songPositionChangedInterrupt.Tick += new System.EventHandler(this.songPositionChangedInterrupt_Tick);
             // 
+            // playbackScrollbar
+            // 
+            this.playbackScrollbar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playbackScrollbar.Location = new System.Drawing.Point(0, 427);
+            this.playbackScrollbar.Name = "playbackScrollbar";
+            this.playbackScrollbar.Size = new System.Drawing.Size(918, 24);
+            this.playbackScrollbar.TabIndex = 5;
+            this.playbackScrollbar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.playbackScrollbar_Scroll);
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.playPauseButton);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSpeed1x);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSpeed075x);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSpeed050x);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSpeed025x);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(912, 40);
+            this.flowLayoutPanel1.TabIndex = 6;
+            // 
             // audioViewer
             // 
             this.audioViewer.Data = null;
             this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audioViewer.Location = new System.Drawing.Point(3, 3);
+            this.audioViewer.Location = new System.Drawing.Point(3, 49);
             this.audioViewer.Name = "audioViewer";
             this.audioViewer.SecondsPerPixel = 0D;
-            this.audioViewer.Size = new System.Drawing.Size(912, 377);
+            this.audioViewer.Size = new System.Drawing.Size(912, 375);
             this.audioViewer.StartTime = 0D;
-            this.audioViewer.TabIndex = 2;
+            this.audioViewer.TabIndex = 4;
+            this.audioViewer.WindowLength = 0;
+            this.audioViewer.WindowLengthSeconds = 0D;
+            // 
+            // buttonSpeed1x
+            // 
+            this.buttonSpeed1x.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSpeed1x.Location = new System.Drawing.Point(69, 0);
+            this.buttonSpeed1x.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonSpeed1x.Name = "buttonSpeed1x";
+            this.buttonSpeed1x.Size = new System.Drawing.Size(110, 40);
+            this.buttonSpeed1x.TabIndex = 1;
+            this.buttonSpeed1x.Text = "1x";
+            this.buttonSpeed1x.UseVisualStyleBackColor = true;
+            this.buttonSpeed1x.Click += new System.EventHandler(this.buttonSpeed1x_Click);
+            // 
+            // buttonSpeed075x
+            // 
+            this.buttonSpeed075x.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSpeed075x.Location = new System.Drawing.Point(179, 0);
+            this.buttonSpeed075x.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonSpeed075x.Name = "buttonSpeed075x";
+            this.buttonSpeed075x.Size = new System.Drawing.Size(110, 40);
+            this.buttonSpeed075x.TabIndex = 2;
+            this.buttonSpeed075x.Text = "0.75x";
+            this.buttonSpeed075x.UseVisualStyleBackColor = true;
+            this.buttonSpeed075x.Click += new System.EventHandler(this.buttonSpeed075x_Click);
+            // 
+            // buttonSpeed050x
+            // 
+            this.buttonSpeed050x.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSpeed050x.Location = new System.Drawing.Point(289, 0);
+            this.buttonSpeed050x.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonSpeed050x.Name = "buttonSpeed050x";
+            this.buttonSpeed050x.Size = new System.Drawing.Size(110, 40);
+            this.buttonSpeed050x.TabIndex = 3;
+            this.buttonSpeed050x.Text = "0.5x";
+            this.buttonSpeed050x.UseVisualStyleBackColor = true;
+            this.buttonSpeed050x.Click += new System.EventHandler(this.buttonSpeed050x_Click);
+            // 
+            // buttonSpeed025x
+            // 
+            this.buttonSpeed025x.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSpeed025x.Location = new System.Drawing.Point(399, 0);
+            this.buttonSpeed025x.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonSpeed025x.Name = "buttonSpeed025x";
+            this.buttonSpeed025x.Size = new System.Drawing.Size(110, 40);
+            this.buttonSpeed025x.TabIndex = 4;
+            this.buttonSpeed025x.Text = "0.25x";
+            this.buttonSpeed025x.UseVisualStyleBackColor = true;
+            this.buttonSpeed025x.Click += new System.EventHandler(this.buttonSpeed025x_Click);
             // 
             // Form1
             // 
@@ -294,9 +345,9 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
             this.toolPanel.ResumeLayout(false);
             this.toolPanel.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -312,16 +363,20 @@
         private System.Windows.Forms.Button clearOutputButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button playPauseButton;
-        private Gui.CustomWaveViewer audioViewer;
         private System.Windows.Forms.Timer songPositionChangedInterrupt;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button calcTimingButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.HScrollBar playbackScrollbar;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button copyTimingButton;
+        private System.Windows.Forms.HScrollBar playbackScrollbar;
+        private Gui.CustomWaveViewer audioViewer;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button buttonSpeed1x;
+        private System.Windows.Forms.Button buttonSpeed075x;
+        private System.Windows.Forms.Button buttonSpeed050x;
+        private System.Windows.Forms.Button buttonSpeed025x;
     }
 }
 
