@@ -69,8 +69,8 @@ namespace SongBPMFinder
 
             //TESTING
 
-            loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
-			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
+            //loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
+			loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
             calculateTiming();            
         }
@@ -129,7 +129,7 @@ namespace SongBPMFinder
                 audioViewer.Invalidate();
 
                 //TESTING
-                //calculateTiming();
+                calculateTiming();
             }
 
 
@@ -186,6 +186,8 @@ namespace SongBPMFinder
 
             calcTimingButton.Enabled = true;
             copyTimingButton.Enabled = false;
+            setActiveSpeedButton(buttonSpeed1x);
+
             tpList = null;
 
             UpdateScrollExtents();
@@ -254,24 +256,47 @@ namespace SongBPMFinder
             Logger.Log("Copied the following to the clipboard:\n\"" + s + "\n\"");
         }
 
+        Button currentSpeedButton = null;
+        Color initBackColor;
+
+        void setActiveSpeedButton(Button b)
+        {
+            if(currentSpeedButton == null)
+            {
+                initBackColor = b.BackColor;
+            } 
+            else
+            {
+                currentSpeedButton.BackColor = initBackColor;
+            }
+
+            currentSpeedButton = b;
+            b.BackColor = Color.Aqua;
+        }
+
         private void buttonSpeed1x_Click(object sender, EventArgs e)
         {
             audioStream.Playback = Playback.Realtime;
+            setActiveSpeedButton(buttonSpeed1x);
         }
 
         private void buttonSpeed075x_Click(object sender, EventArgs e)
         {
             audioStream.Playback = Playback.ThreeFourths;
+            setActiveSpeedButton(buttonSpeed075x);
+
         }
 
         private void buttonSpeed050x_Click(object sender, EventArgs e)
         {
             audioStream.Playback = Playback.Halftime;
+            setActiveSpeedButton(buttonSpeed050x);
         }
 
         private void buttonSpeed025x_Click(object sender, EventArgs e)
         {
             audioStream.Playback = Playback.Quartertime;
+            setActiveSpeedButton(buttonSpeed025x);
         }
     }
 }

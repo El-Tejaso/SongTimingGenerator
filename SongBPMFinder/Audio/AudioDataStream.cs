@@ -71,14 +71,15 @@ namespace SongBPMFinder.Audio
 
             for (int i = 0; i < count; i+=audioData.Channels)
             {
-                int currentIndex = (int)((double)i * slowdown);
-                int nextIndex = Math.Min(currentIndex + audioData.Channels, data.Length);
+                int currentIndex = audioData.Position + (int)((double)i * slowdown);
+                int nextIndex = Math.Min(currentIndex + audioData.Channels, data.Length - audioData.Channels);
+
                 float t = (float)(((double)i * slowdown) % 1.0);
 
                 for (int j = 0; j < audioData.Channels; j++)
                 {
-                    float thisSample = data[audioData.Position + currentIndex + j];
-                    float nextSample = data[audioData.Position + nextIndex + j];
+                    float thisSample = data[currentIndex + j];
+                    float nextSample = data[nextIndex + j];
 
                     buffer[offset + i + j] = QuickMafs.Lerp(thisSample, nextSample, t);
                 }

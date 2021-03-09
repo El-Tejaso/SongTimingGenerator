@@ -94,17 +94,17 @@ namespace SongBPMFinder.Audio.Timing
 
             #region shitCode
 
-            Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
-            Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
+            //Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
+            //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
 
             #endregion
 
 
             float mean = FloatArrays.Average(autocorrelPlacement, false);
-            //FloatArrays.Sum(autocorrelPlacement, -mean);
+            FloatArrays.Sum(autocorrelPlacement, -mean);
 
             //Normalization step here
-            //FloatArrays.Normalize(autocorrelPlacement);
+            FloatArrays.Normalize(autocorrelPlacement);
 
             int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, false);
             int maxAudioPos = maxIndex * instantSize;

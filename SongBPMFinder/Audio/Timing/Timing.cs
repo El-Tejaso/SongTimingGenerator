@@ -132,12 +132,12 @@ namespace SongBPMFinder.Audio.Timing
             //*/
 
             //*
-            //double t = audioData.PositionSeconds;
+            double t = audioData.PositionSeconds;
             
-            double t = 0.31471655328798187;
+            //double t = 0.31471655328798187;
             //double t = 0.30471655328798187;
 
-            bool destructive = true;
+            bool destructive = false;
             TestBeatfinding(destructive, timingPoints, audioData, t, 0.2, 0.01, 0.0005f);
 
             if (!destructive)
