@@ -83,9 +83,9 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        public static Slice<float> DownsampleMax(Slice<float> x, int samples)
+        public static void DownsampleMax(Slice<float> x, Slice<float> dst, int samples)
         {
-            for (int i = 0; i < x.Length / samples; i++)
+            for (int i = 0; i < dst.Length; i++)
             {
                 float max = 0;
                 for (int j = 0; j < samples; j++)
@@ -95,10 +95,8 @@ namespace SongBPMFinder.Audio.Timing
                     max = Math.Max(max, x[i * samples + j]);
                 }
 
-                x[i] = max;
+                dst[i] = max;
             }
-
-            return x.GetSlice(0, x.Length / samples);
         }
 
         public static void Sum(Slice<float> x, Slice<float> other)
@@ -255,27 +253,33 @@ namespace SongBPMFinder.Audio.Timing
 
         /// <summary>
         /// Performs autocorellation.
-        /// you must ensure that src and dst must not be overlapping
+        /// it does this with wrapping.
+        /// dst and src must not overlap.
         /// </summary>
-        /// <param name="src">ideally must be twice as large as dst.</param>
-        /// <param name="dst">ideally must be half as large as src</param>
+        /// <param name="src">must be the same length as dst, and musn't overlap</param>
+        /// <param name="dst">must be the same length as src, and musn't overlap</param>
         public static void Autocorrelate(Slice<float> src, Slice<float> dst)
         {
+            if(src.Length != dst.Length)
+            {
+                //bruh
+                return;
+            }
+
             //Autocorrelation
             //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
-            for (int i = 0; i < src.Length / 2; i++)
+            int n = dst.Length;
+            for (int i = 0; i < n; i++)
             {
                 float sum = 0;
-                float n = src.Length - dst.Length;
 
-                for (int j = 0; j < n / 2; j++)
+                for (int j = 0; j < n; j++)
                 {
-                    sum += src[i] * src[i + j];
+                    sum += src[i] * src[(i + j) % src.Length];
                 }
 
                 dst[i] = sum / n;
             }
-
         }
 
         public static void Divide(Slice<float> x, float value)

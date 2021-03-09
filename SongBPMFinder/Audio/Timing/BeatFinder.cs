@@ -19,31 +19,12 @@ namespace SongBPMFinder.Audio.Timing
         /// and you may want to preserve other things in the original array (required if using this function multiple times)
         /// </summary>
         /// <param name="audioData">the audio file where the slice originated</param>
-        /// <param name="slice">a slice of data from the audio file. 
-        /// **IMPORTANT**: the beat will only be searched for in the first half, as the second half will be used
-        /// for autocorrelation</param>
+        /// <param name="slice">a slice of data from the audio file. </param>
         /// <param name="timingPoints">A debug parameter. delete later</param>
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
         /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
         public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
-        {
-            int instantSize = audioData.ToArrayIndex(instant);
-
-            int try1 = findBeatInternal(audioData, slice.GetSlice(0, slice.Length - instantSize), tempBuffer, timingPoints, instant, numLevels);
-            int try2 = findBeatInternal(audioData, slice.GetSlice(instantSize, slice.Length), tempBuffer, timingPoints, instant, numLevels);
-
-            if ((try1 == -1) || (try2 == -1))
-                return -1;
-
-            if(Math.Abs(audioData.SampleToSeconds(try1) - audioData.SampleToSeconds(try2)) > instant / 2.0)
-            {
-                return -1;
-            }
-
-            return try1 + (try2 - try1) / 2;
-        }
-        public static int findBeatInternal(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
         {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
 
@@ -113,22 +94,24 @@ namespace SongBPMFinder.Audio.Timing
 
             #region shitCode
 
-            //Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
-            //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
+            Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
+            Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
 
             #endregion
 
 
             float mean = FloatArrays.Average(autocorrelPlacement, false);
-            FloatArrays.Sum(autocorrelPlacement, -mean);
+            //FloatArrays.Sum(autocorrelPlacement, -mean);
 
             //Normalization step here
-            FloatArrays.Normalize(autocorrelPlacement);
+            //FloatArrays.Normalize(autocorrelPlacement);
 
             int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, false);
+            int maxAudioPos = maxIndex * instantSize;
+
             float max = autocorrelPlacement[maxIndex];
 
-            timingPoints.Add(new TimingPoint(120, audioData.IndexToSeconds(origSliceStart + sliceLen + maxIndex), Color.Pink));
+            timingPoints.Add(new TimingPoint(audioData.SampleToSeconds(maxAudioPos), audioData.IndexToSeconds(origSliceStart + sliceLen + maxIndex), Color.Pink));
 
             float stdev = FloatArrays.StdDev(autocorrelPlacement, false);
             float ratio = max / stdev;
@@ -140,7 +123,7 @@ namespace SongBPMFinder.Audio.Timing
             }
 
             //convert back to audio
-            int maxAudioPos = maxIndex * instantSize;
+            
             return maxAudioPos;
         }
     }
