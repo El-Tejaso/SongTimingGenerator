@@ -24,7 +24,7 @@ namespace SongBPMFinder.Audio.Timing
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
         /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
-        public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, List<TimingPoint> timingPoints, float instant = 0.001f, int numLevels = 4)
+        public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, float instant, int numLevels = 4, bool debug = false)
         {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
 
@@ -50,16 +50,20 @@ namespace SongBPMFinder.Audio.Timing
 
             //each index a the downsampled array will be equal to this amount of time in seconds
             //convert to samples
-            int instantSize = audioData.ToArrayIndex(instant);
+            int instantSize = audioData.ToSample(instant);
+			//Ensure that I can divide this by 2 a certain number of times
+			instantSize = QuickMafs.NearestDivisor(instantSize, QuickMafs.Pow(2, numLevels));
 
             int sliceLen = (slice.Length / instantSize);
 
+			Logger.Log("instantSize: " + instantSize);
 
             for (int i = 0; i < numLevels; i++)
             {
                 downsampleSlices[i] = slice.GetSlice(i * sliceLen, (i + 1) * sliceLen);
 
                 int downsampleFactor = instantSize / (QuickMafs.Pow(2, numLevels - i));
+				
                 //debug breakpoint
                 //int predictedSize = dwtSlices[numLevels - i - 1].Length / downsampleFactor ;
 
@@ -86,37 +90,46 @@ namespace SongBPMFinder.Audio.Timing
 
             //Autocorrelation
             Slice<float> result = downsampleSlices[0];
-            Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, sliceLen + sliceLen / 2);
+            Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, sliceLen + sliceLen);
             FloatArrays.Autocorrelate(result, autocorrelPlacement);
-
-            timingPoints.Add(new TimingPoint(120, audioData.IndexToSeconds(origSliceStart + sliceLen), Color.Blue));
-            timingPoints.Add(new TimingPoint(120, audioData.IndexToSeconds(origSliceStart + sliceLen + sliceLen/2), Color.Blue));
-
-            #region shitCode
 
             //Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
             //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
 
-            #endregion
-
-
             float mean = FloatArrays.Average(autocorrelPlacement, false);
-            FloatArrays.Sum(autocorrelPlacement, -mean);
+            //FloatArrays.Sum(autocorrelPlacement, -mean);
 
             //Normalization step here
             FloatArrays.Normalize(autocorrelPlacement);
+            mean = FloatArrays.Average(autocorrelPlacement, false);
+
 
             int maxIndex = FloatArrays.ArgMax(autocorrelPlacement, false);
             int maxAudioPos = maxIndex * instantSize;
 
+            #region shitCode2
+
+            if (debug)
+            {
+                Form1.Instance.Plot(autocorrelPlacement.DeepCopy());
+
+                List<TimingPoint> debugPoints = new List<TimingPoint>();
+                double maxT = audioData.IndexToSeconds(maxIndex);
+                debugPoints.Add(new TimingPoint(maxT, maxT, Color.Pink));
+
+                Form1.Instance.AddLines(debugPoints);
+            }
+
+            #endregion
+
+
             float max = autocorrelPlacement[maxIndex];
 
-            timingPoints.Add(new TimingPoint(audioData.SampleToSeconds(maxAudioPos), audioData.IndexToSeconds(origSliceStart + sliceLen + maxIndex), Color.Pink));
 
             float stdev = FloatArrays.StdDev(autocorrelPlacement, false);
-            float ratio = max / stdev;
+            float ratio = (max-mean) / stdev;
 
-            if (ratio < 4.5)
+            if (ratio < 4)
             {
                 //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
                 return -1;

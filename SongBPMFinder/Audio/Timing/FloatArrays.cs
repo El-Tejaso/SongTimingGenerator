@@ -79,7 +79,7 @@ namespace SongBPMFinder.Audio.Timing
             int n = data.Length / totalChannels;
             for (int i = 0; i < n; i++)
             {
-                dst[i] = data[i * totalChannels + channel];
+                dst[i] = data[(i * totalChannels) + channel];
             }
         }
 
@@ -278,7 +278,7 @@ namespace SongBPMFinder.Audio.Timing
                     sum += src[i] * src[(i + j) % src.Length];
                 }
 
-                dst[i] = sum / n;
+                dst[i] = sum / (float)n;
             }
         }
 

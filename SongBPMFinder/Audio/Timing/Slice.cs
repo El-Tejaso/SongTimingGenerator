@@ -14,6 +14,11 @@ namespace SongBPMFinder.Audio.Timing
         int len;
         T[] array;
 
+        public T[] GetArray()
+        {
+            return array;
+        }
+
         public int Length => len;
 
         //Mainly for debugging purposes

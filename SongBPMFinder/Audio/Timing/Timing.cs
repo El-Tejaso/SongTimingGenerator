@@ -33,21 +33,24 @@ namespace SongBPMFinder.Audio.Timing
 
             if (copy)
             {
+				//A fresh slice
                 data = new Slice<float>(new float[dataOrig.Length / audioData.Channels]);
             } 
             else
             {
+				//Points to half of the original data array
                 data = dataOrig.GetSlice(0, dataOrig.Length / audioData.Channels);
             }
 
-            //use just one channel
+            //extract 1 channel from original data to a buffer half the length
             FloatArrays.ExtractChannel(dataOrig, data, audioData.Channels, 0);
+
             //FloatArrays.DownsampleMax(dataOrig, data, audioData.Channels);
             //FloatArrays.DownsampleAverage(dataOrig, data, audioData.Channels);
             return data;
         }
 
-        static List<TimingPoint> FindAllBeats(AudioData audioData, double windowSize, double beatSize, float resolution = 0.001f)
+        static List<TimingPoint> FindAllBeats(AudioData audioData, double windowSize, double beatSize, float resolution)
         {
             Slice<float> data = PrepareData(audioData, true);
 
@@ -66,7 +69,7 @@ namespace SongBPMFinder.Audio.Timing
                 double currentTime = audioData.SampleToSeconds(pos);
                 
                 Slice<float> windowSlice = data.GetSlice(pos, Math.Min(pos + windowLength, data.Length)).DeepCopy(windowBuffer);
-                int beatPosition = BeatFinder.FindBeat(audioData, windowSlice, tempBuffer, timingPoints, resolution, 4);
+                int beatPosition = BeatFinder.FindBeat(audioData, windowSlice, tempBuffer, resolution, 4, false);
                 double beatTime = audioData.SampleToSeconds(pos + beatPosition);
 
                 if (beatTime > 1.2)
@@ -89,34 +92,31 @@ namespace SongBPMFinder.Audio.Timing
             return timingPoints;
         }
 
-        static List<TimingPoint> TestBeatfinding(bool destructive, List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution = 0.001f)
+        static List<TimingPoint> TestBeatfinding(bool destructive, List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution)
         {
             Slice<float> data = PrepareData(audioData, !destructive);
 
-            int windowLength = audioData.ToSample(windowSize) * 2;
+            int windowLength = audioData.ToSample(windowSize);
             int beatWindowLength = audioData.ToSample(beatSize);
 
             int pos = audioData.ToSample(t);
             Slice<float> s = data.GetSlice(pos, pos + windowLength);
 
-
             //Window bounds
-            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos/2)), Color.Cyan));
-            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos + windowLength / 4) / 2), Color.Cyan));
-            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos+windowLength/2)/2), Color.Cyan));
-            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos+windowLength)/2), Color.Cyan));
+            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(pos), Color.Cyan));
+            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(pos+windowLength), Color.Cyan));
 
 
             //Final beat position
-            int beatPosition = BeatFinder.FindBeat(audioData, s, s.DeepCopy(), timingPoints, resolution, 4);
+            int beatPosition = BeatFinder.FindBeat(audioData, s, s.DeepCopy(), resolution, 4, true);
 
             if(beatPosition == -1)
             {
-                timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos + beatPosition) / 2), Color.Lime));
+                timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(pos + beatPosition), Color.Lime));
             }
             else
             {
-                timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds((pos + beatPosition) / 2), Color.Red));
+                timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(pos + beatPosition), Color.Red));
             }
 
             return timingPoints;
@@ -125,33 +125,38 @@ namespace SongBPMFinder.Audio.Timing
         public static TimingPointList GenerateMultiBPMTiming(AudioData audioData)
         {
             List<TimingPoint> timingPoints = new List<TimingPoint>();
+			float res = 0.001f;
 
             /*
-            timingPoints = FindAllBeats(audioData, 0.2, 0.01, 0.0005f);
+			Form1.Instance.IsTesting = false;
+
+            timingPoints = FindAllBeats(audioData, 0.2, 0.01, res);
             timingPoints = TimingPointList.RemoveDebugPoints(timingPoints);
             //*/
 
             //*
+			Form1.Instance.IsTesting = true;
+			
             double t = audioData.PositionSeconds;
             
             //double t = 0.31471655328798187;
             //double t = 0.30471655328798187;
 
             bool destructive = false;
-            TestBeatfinding(destructive, timingPoints, audioData, t, 0.2, 0.01, 0.0005f);
+            TestBeatfinding(destructive, timingPoints, audioData, t, 0.2, 0.01, res);
 
-            if (!destructive)
+            if (destructive)
             {
                 for (int i = 0; i < timingPoints.Count; i++)
                 {
-                    timingPoints[i].OffsetSeconds *= 2;
+                    timingPoints[i].OffsetSeconds /= 2.0;
                 }
             }
 
             //*/
 
             /*
-            double tol = 0.001;
+            double tol = res/2.0;
             timingPoints = TimingPointList.RemoveDoubles(timingPoints, 0.01);
             timingPoints = TimingPointList.CalculateBpms(timingPoints);
             timingPoints = TimingPointList.Simplify(timingPoints, tol);

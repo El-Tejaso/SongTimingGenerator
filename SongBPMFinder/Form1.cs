@@ -33,6 +33,8 @@ namespace SongBPMFinder
         public static Form1 Instance => singletoninstance;
 
         public CustomWaveViewer Viewer;
+
+		public bool IsTesting = false;
         #endregion
 
         public Form1()
@@ -50,13 +52,15 @@ namespace SongBPMFinder
 
             #endregion
 
-            audioViewer.MouseWheel += audioViewer_OnScroll;
+            waveformTabs.MouseWheel += audioViewer_OnScroll;
 
             songPositionChangedInterrupt.Stop();
             songPositionChangedInterrupt.Interval = 3;
 
             Logger.SetOutput(textOutput);
             audioViewer.SecondsPerPixel = 0.1;
+
+            plotWaveViewer.Data = new AudioData(new float[0], 1, 1);
 
             updateSBPos = new MethodInvoker(delegate ()
             {
@@ -69,11 +73,23 @@ namespace SongBPMFinder
 
             //TESTING
 
-            //loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
-			loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
+            loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
+			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
-            calculateTiming();            
+			calculateTiming();            
         }
+
+        //Testing
+		public void Plot(Slice<float> data){
+            plotWaveViewer.Data = new AudioData(data.GetArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
+			plotWaveViewer.WindowLength = data.Length;
+			plotWaveViewer.Data.Position = data.Length/2;
+        }
+
+		//Testing
+		public void AddLines(List<TimingPoint> timingPoints){
+			plotWaveViewer.ShowTimingPoints(new TimingPointList(timingPoints));
+		}
 
         private void clearOutputButton_Click(object sender, EventArgs e)
         {
@@ -129,7 +145,9 @@ namespace SongBPMFinder
                 audioViewer.Invalidate();
 
                 //TESTING
-                calculateTiming();
+				if(IsTesting){
+                	calculateTiming();
+				}
             }
 
 

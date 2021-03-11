@@ -31,8 +31,6 @@ namespace SongBPMFinder.Audio
             }
         }
 
-        WaveFormat metadata;
-
         public float[] Data {
             get => data;
         }
@@ -49,6 +47,7 @@ namespace SongBPMFinder.Audio
             get => IndexToSeconds(data.Length);
         }
 
+        WaveFormat metadata;
         public WaveFormat WaveFormat {
             get => metadata;
         }
@@ -71,6 +70,19 @@ namespace SongBPMFinder.Audio
             return (int)(seconds * SampleRate);
         }
 
+        private void initialize(float[] data, int sampleRate, int numChannels)
+        {
+            this.data = data;
+            this.sampleRate = sampleRate;
+            this.channels = numChannels;
+            this.metadata = new WaveFormat(sampleRate, numChannels);
+        }
+
+        public AudioData(float[] data, int sampleRate, int numChannels)
+        {
+            initialize(data, sampleRate, numChannels);
+        }
+
         public AudioData(string filepath) 
         {
             //Cheers https://stackoverflow.com/questions/42483778/how-to-get-float-array-of-samples-from-audio-file
@@ -80,23 +92,13 @@ namespace SongBPMFinder.Audio
                 sampleRate = metadata.SampleRate;
                 channels = metadata.Channels;
 
-                //Experiment, delete later
-                metadata = new WaveFormat(2 * sampleRate, metadata.Channels);
-
                 ISampleProvider isp = media.ToSampleProvider();
 
                 int numSamples = (int)(media.TotalTime.TotalSeconds * sampleRate * channels);
                 data = new float[numSamples];
                 isp.Read(data, 0, data.Length);
 
-                float min = 30000;
-                float max = -30000;
-                foreach(float f in data)
-                {
-                    min = Math.Min(f, min);
-                    max= Math.Max(f, max);
-                }
-                //Logger.Log("Sample mimmax: " + min + "/" + max);
+                initialize(data, sampleRate, channels);
             }
 
             Logger.Log("Opened [" + filepath + "]");

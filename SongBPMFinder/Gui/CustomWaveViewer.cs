@@ -257,9 +257,17 @@ namespace SongBPMFinder.Gui
             //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
             //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
             float meanY = getWaveformY(mean);
-            float stdevY = getWaveformY(mean+stdev);
+            
             e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, meanY, ClientRectangle.Right, meanY);
-            e.Graphics.DrawLine(Pens.Aqua, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
+			
+			for(int i = 1; i <= 6; i++){
+				float stdevY = getWaveformY(mean+(float)i*stdev);
+                if (stdevY < ClientRectangle.Top+10) break;
+                if (stdevY > ClientRectangle.Bottom-10) break;
+
+                e.Graphics.DrawLine(Pens.Aqua, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
+				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Aqua, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 40, stdevY));
+			}
         }
 
 
