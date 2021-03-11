@@ -99,6 +99,18 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
+		public static float Sum(Slice<float> x, bool abs = false)
+        {
+			float sum = 0;
+            for(int i = 0; i < x.Length; i++)
+            {
+				float xi = x[i];
+				if(abs) xi = (float)Math.Abs(xi);
+                sum += xi;
+            }
+			return sum;
+        }
+
         public static void Sum(Slice<float> x, Slice<float> other)
         {
             for(int i = 0; i < x.Length; i++)
@@ -152,19 +164,30 @@ namespace SongBPMFinder.Audio.Timing
 
         public static int ArgMax(Slice<float> x, bool abs = false)
         {
-            int max = 0;
+            int maxIndex = 0;
+
+            float max = x[0];
+            if (abs) max = Math.Abs(max);
+
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
                 if (abs) xi = Math.Abs(xi);
-                if (xi > x[max]) max = i;
+
+                if (xi > max)
+                {
+                    max = xi;
+                    maxIndex = i;
+                }
             }
-            return max;
+
+            return maxIndex;
         }
 
         public static float Max(Slice<float> x, bool abs = false)
         {
-            return x[ArgMax(x, abs)];
+            if(abs) return Math.Abs(x[ArgMax(x, true)]);
+            return x[ArgMax(x, false)];
         }
 
         public static int ArgMin(Slice<float> x, bool abs = false)
@@ -181,45 +204,58 @@ namespace SongBPMFinder.Audio.Timing
 
         public static float Min(Slice<float> x, bool abs = false)
         {
-            return x[ArgMin(x, abs)];
+            int minIndex = 0;
+
+            float min = x[0];
+            if (abs) min = Math.Abs(min);
+
+            for (int i = 1; i < x.Length; i++)
+            {
+                float xi = x[i];
+                if (abs) xi = Math.Abs(xi);
+
+                if (xi < min)
+                {
+                    min = xi;
+                    minIndex = i;
+                }
+            }
+
+            return minIndex;
         }
 
         public static float Average(Slice<float> x, bool abs = false)
         {
-            float average = 0;
-            for (int i = 1; i < x.Length; i++)
-            {
-                float xi = x[i];
-                if (abs) xi = Math.Abs(xi);
-                average += x[i] / (float)x.Length;
-            }
-            return average;
+            return Sum(x,abs)/(float)x.Length;
         }
 
-        public static float StdDev(Slice<float> x, bool abs = false)
-        {
+		public static float VarianceSum(Slice<float> x){
             float variance = 0;
-            float mean = Average(x, abs);
+            float mean = Average(x, false);
 
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
-                if (abs) xi = Math.Abs(xi);
 
-                variance += ((xi - mean) * (xi - mean))/(float)x.Length;
+                variance += ((xi - mean) * (xi - mean));
             }
 
-            return (float)Math.Sqrt(variance);
+			return variance;
+		}
+
+        public static float StdDev(Slice<float> x)
+        {
+            return (float)Math.Sqrt(VarianceSum(x)/(float)x.Length);
         }
 
         /// <summary>
         /// Generates a Sliding window average in place.
         /// Returns the new length of the array
         /// </summary>
-        /// <param name="x">The array to operate on</param>
-        /// <param name="len">the length of the array</param>
+        /// <param name="x">The array to operate on. Can overlap with dest</param>
+        /// <param name="dest">the destination array, ideally of size x.Length - size. Can overlap with x</param>
         /// <param name="size">The size of the window</param>
-        /// <returns></returns>
+		/// <param name="exponent">The exponent to use</param>
         public static void SlidingWindowAverage(Slice<float> x, Slice<float> dest, int size, float exponent)
         {
 			int newSize = x.Length - size - 1;
@@ -231,7 +267,7 @@ namespace SongBPMFinder.Audio.Timing
                 sum += x[i];
             }
 
-            for (int i = size; i < x.Length - size; i++)
+            for (int i = size; i <= x.Length - size; i++)
             {
                 float temp = x[i - size];
                 dest[i-size] = (float)Math.Pow(sum, exponent) / (float)size;
@@ -266,6 +302,9 @@ namespace SongBPMFinder.Audio.Timing
                 return;
             }
 
+			float mean = Average(src, false);
+			float varianceSum = VarianceSum(src);
+
             //Autocorrelation
             //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
             int n = dst.Length;
@@ -275,7 +314,7 @@ namespace SongBPMFinder.Audio.Timing
 
                 for (int j = 0; j < n; j++)
                 {
-                    sum += src[i] * src[(i + j) % src.Length];
+                    sum += (src[i]) * (src[(i + j) % src.Length]);
                 }
 
                 dst[i] = sum / (float)n;

@@ -24,6 +24,8 @@ namespace SongBPMFinder.Audio.Timing
         //Mainly for debugging purposes
         public int Start => start;
 
+		public int End => (Start + Length);
+
         public T this[int index] {
             get {
                 if (start + index >= len)

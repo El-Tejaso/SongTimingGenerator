@@ -82,14 +82,14 @@ namespace SongBPMFinder.Audio.Timing
 
 
             //Add all envelopes onto each other at slices[0]
+            Slice<float> result = downsampleSlices[0];
+
             for (int i = 1; i < numLevels; i++)
             {
-                FloatArrays.Sum(downsampleSlices[0], downsampleSlices[i]);
+                FloatArrays.Sum(result, downsampleSlices[i]);
             }
 
-
             //Autocorrelation
-            Slice<float> result = downsampleSlices[0];
             Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, sliceLen + sliceLen);
             FloatArrays.Autocorrelate(result, autocorrelPlacement);
 
@@ -97,7 +97,7 @@ namespace SongBPMFinder.Audio.Timing
             //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
 
             float mean = FloatArrays.Average(autocorrelPlacement, false);
-            //FloatArrays.Sum(autocorrelPlacement, -mean);
+            FloatArrays.Sum(autocorrelPlacement, -mean);
 
             //Normalization step here
             FloatArrays.Normalize(autocorrelPlacement);
@@ -126,7 +126,7 @@ namespace SongBPMFinder.Audio.Timing
             float max = autocorrelPlacement[maxIndex];
 
 
-            float stdev = FloatArrays.StdDev(autocorrelPlacement, false);
+            float stdev = FloatArrays.StdDev(autocorrelPlacement);
             float ratio = (max-mean) / stdev;
 
             if (ratio < 4)

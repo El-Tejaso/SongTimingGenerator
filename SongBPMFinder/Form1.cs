@@ -157,6 +157,11 @@ namespace SongBPMFinder
         private void songPositionChangedInterrupt_Tick(object sender, EventArgs e)
         {
             updateSBPos();
+
+			//TESTING
+			if(IsTesting){
+				calculateTiming();
+			}
         }
 
         private void playbackScrollbar_Scroll(object sender, ScrollEventArgs e)

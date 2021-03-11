@@ -251,8 +251,8 @@ namespace SongBPMFinder.Gui
             }
 
             Slice<float> range = new Slice<float>(audioData.Data, lower, upper);
-            float mean = FloatArrays.Average(range, false);
-            float stdev = FloatArrays.StdDev(range, false);
+            float mean = FloatArrays.Average(range, true);
+            float stdev = FloatArrays.StdDev(range);
 
             //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
             //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
@@ -278,7 +278,7 @@ namespace SongBPMFinder.Gui
             e.Graphics.DrawLine(Pens.Yellow, mid, ClientRectangle.Top, mid, ClientRectangle.Bottom);
 
             e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, ClientRectangle.Top);
-            e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, ClientRectangle.Bottom - 20);
+            e.Graphics.DrawString(viewportMin.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, ClientRectangle.Bottom - 20);
         }
 
 
