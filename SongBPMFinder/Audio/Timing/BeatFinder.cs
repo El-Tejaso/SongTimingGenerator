@@ -123,19 +123,15 @@ namespace SongBPMFinder.Audio.Timing
                 Array.Sort(plotArrayAbsSorted.GetInternalArray());
                 Form1.Instance.Plot("Acl ABS sorted", plotArrayAbsSorted, 2);
 
-                Slice<float> plotArraySortedTail = plotArraySorted.DeepCopy();
-                int index = plotArraySortedTail.Length;
-                for(int i = 0; i < plotArraySortedTail.Length; i++)
-                {
-                    if(plotArraySortedTail[i] > 0)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
+				Slice<float> plotArrayDx = plotArray.DeepCopy();
+				FloatArrays.Differentiate(plotArrayDx, audioData.SampleRate/instantSize);
+				//FloatArrays.Normalize(plotArrayDx);
+                Form1.Instance.Plot("Acl dx", plotArrayDx, 3);
 
-                plotArraySortedTail = plotArraySortedTail.GetSlice(index, plotArraySortedTail.Length).DeepCopy();
-                Form1.Instance.Plot("Acl sorted - nonzero tail", plotArraySortedTail, 3);
+				Slice<float> plotArrayDDx = plotArrayDx.DeepCopy();
+				FloatArrays.Differentiate(plotArrayDDx, audioData.SampleRate/instantSize);
+				//FloatArrays.Normalize(plotArrayDDx);
+                Form1.Instance.Plot("Acl ddx", plotArrayDDx, 4);
             }
 
             #endregion

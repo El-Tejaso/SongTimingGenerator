@@ -358,7 +358,8 @@ namespace SongBPMFinder
             for (int i = 0; i < currentAudioFile.Channels; i++)
             {
                 Slice<float> channelSlice = currentAudioFile.GetChannel(i);
-                FloatArrays.HighPassFilter(channelSlice, 5000, currentAudioFile.SampleRate);
+                FloatArrays.Differentiate(channelSlice, currentAudioFile.SampleRate);
+				FloatArrays.Normalize(channelSlice);
             }
         }
     }

@@ -182,14 +182,24 @@ namespace SongBPMFinder.Util
 
         public static int ArgMin(Slice<float> x, bool abs = false)
         {
-            int min = 0;
+            int minIndex = 0;
+
+            float min = x[0];
+            if (abs) min = Math.Abs(min);
+
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
                 if (abs) xi = Math.Abs(xi);
-                if (xi < x[min]) min = i;
+
+                if (xi < min)
+                {
+                    min = xi;
+                    minIndex = i;
+                }
             }
-            return min;
+
+            return minIndex;
         }
 
         public static float Min(Slice<float> x, bool abs = false)
@@ -223,7 +233,7 @@ namespace SongBPMFinder.Util
             float variance = 0;
             float mean = Average(x, false);
 
-            for (int i = 1; i < x.Length; i++)
+            for (int i = 0; i < x.Length; i++)
             {
                 float xi = x[i];
 
@@ -266,14 +276,14 @@ namespace SongBPMFinder.Util
             }
         }
 
-        public static void Differentiate(Slice<float> x, float notchesPerUnit)
+        public static void Differentiate(Slice<float> x, float OneOverDt)
         {
             for (int i = 0; i < x.Length - 1; i++)
             {
                 float x2 = x[i + 1];
                 float x1 = x[i];
                 float dX = x2 - x1;
-                x[i] = notchesPerUnit * dX;
+                x[i] = dX * OneOverDt;
             }
         }
 
@@ -318,7 +328,7 @@ namespace SongBPMFinder.Util
 		
 		public static void Mult(Slice<float> x, float value)
         {
-			for (int i = 1; i < x.Length - 1; i++)
+			for (int i = 0; i < x.Length; i++)
             {
                 x[i] = x[i] * value;
             }
