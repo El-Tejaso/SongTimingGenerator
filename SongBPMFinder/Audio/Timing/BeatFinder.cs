@@ -112,8 +112,7 @@ namespace SongBPMFinder.Audio.Timing
                 //Draw autocorrelated array
                 Slice<float> plotArray = autocorrelPlacement.DeepCopy();
 
-                Form1.Instance.Plot(plotArray, 0);
-
+                Form1.Instance.Plot("Autocorrelated", plotArray, 0);
                 List<TimingPoint> debugPoints = new List<TimingPoint>();
                 double maxT = audioData.IndexToSeconds(maxIndex);
                 debugPoints.Add(new TimingPoint(maxT, maxT, Color.Pink));
@@ -124,12 +123,26 @@ namespace SongBPMFinder.Audio.Timing
                 Slice<float> plotArraySorted = plotArray.DeepCopy();
                 Array.Sort(plotArraySorted.GetArray());
 
-                Form1.Instance.Plot(plotArraySorted, 1);
+                Form1.Instance.Plot("Acl sorted", plotArraySorted, 1);
 
-                List<TimingPoint> debugPoints2 = new List<TimingPoint>();
-                double maxT2 = audioData.IndexToSeconds(FloatArrays.ArgMax(plotArraySorted));
-                debugPoints2.Add(new TimingPoint(maxT2, maxT2, Color.Pink));
-                Form1.Instance.AddLines(debugPoints2, 1);
+                Slice<float> plotArrayAbsSorted = plotArraySorted.DeepCopy();
+                FloatArrays.Abs(plotArrayAbsSorted);
+                Array.Sort(plotArrayAbsSorted.GetArray());
+                Form1.Instance.Plot("Acl ABS sorted", plotArrayAbsSorted, 2);
+
+                Slice<float> plotArraySortedTail = plotArraySorted.DeepCopy();
+                int index = plotArraySortedTail.Length;
+                for(int i = 0; i < plotArraySortedTail.Length; i++)
+                {
+                    if(plotArraySortedTail[i] > 0)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                plotArraySortedTail = plotArraySortedTail.GetSlice(index, plotArraySortedTail.Length).DeepCopy();
+                Form1.Instance.Plot("Acl sorted - nonzero tail", plotArraySortedTail, 3);
             }
 
             #endregion
@@ -139,9 +152,11 @@ namespace SongBPMFinder.Audio.Timing
 
 
             float stdev = FloatArrays.StdDev(autocorrelPlacement);
-            float ratio = (max-mean) / stdev;
+			float meanAbs = FloatArrays.Average(autocorrelPlacement, true);
 
-            if (ratio < 4)
+            float ratio = (max-mean) / meanAbs;
+
+            if (ratio < 8)
             {
                 //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
                 return -1;

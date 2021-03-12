@@ -91,10 +91,24 @@ namespace SongBPMFinder
             }
         }
 
-        //Testing
-		public void Plot(Slice<float> data, int graph){
-            CustomWaveViewer viewer = getViewer(graph);
+        TabPage getPage(int graph)
+        {
+            switch (graph)
+            {
+                case 1: return testWaveformTab2;
+                case 2: return testWaveformTab3;
+                case 3: return testWaveformTab4;
+                case 4: return testWaveformTab5;
+                default: return testWaveformTab;
+            }
+        }
 
+        //Testing
+        public void Plot(string name, Slice<float> data, int graph){
+            CustomWaveViewer viewer = getViewer(graph);
+            TabPage page = getPage(graph);
+
+            page.Text = name;
             viewer.Data = new AudioData(data.GetArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
             viewer.WindowLength = data.Length;
             viewer.Data.Position = data.Length/2;

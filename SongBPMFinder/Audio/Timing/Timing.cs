@@ -28,6 +28,9 @@ namespace SongBPMFinder.Audio.Timing
             //Slice<float> data = PrepareData(audioData, !destructive);
             int a = audioData.ToArrayIndex(t);
             int b = audioData.ToArrayIndex(t + windowSize);
+            if (b >= audioData.Data.Length)
+                return new List<TimingPoint>();
+
             Slice<float> data = new Slice<float>(audioData.Data).GetSlice(a, b);
             data = data.DeepCopy();
 

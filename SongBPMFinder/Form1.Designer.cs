@@ -47,11 +47,11 @@
             this.plotWaveViewer = new SongBPMFinder.Gui.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
             this.plotWaveViewer2 = new SongBPMFinder.Gui.CustomWaveViewer();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.testWaveformTab3 = new System.Windows.Forms.TabPage();
             this.plotWaveViewer3 = new SongBPMFinder.Gui.CustomWaveViewer();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.testWaveformTab4 = new System.Windows.Forms.TabPage();
             this.plotWaveViewer4 = new SongBPMFinder.Gui.CustomWaveViewer();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.testWaveformTab5 = new System.Windows.Forms.TabPage();
             this.plotWaveViewer5 = new SongBPMFinder.Gui.CustomWaveViewer();
             this.toolPanel = new System.Windows.Forms.Panel();
             this.copyTimingButton = new System.Windows.Forms.Button();
@@ -72,9 +72,9 @@
             this.songWaveformTab.SuspendLayout();
             this.testWaveformTab.SuspendLayout();
             this.testWaveformTab2.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.testWaveformTab3.SuspendLayout();
+            this.testWaveformTab4.SuspendLayout();
+            this.testWaveformTab5.SuspendLayout();
             this.toolPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -227,9 +227,9 @@
             this.waveformTabs.Controls.Add(this.songWaveformTab);
             this.waveformTabs.Controls.Add(this.testWaveformTab);
             this.waveformTabs.Controls.Add(this.testWaveformTab2);
-            this.waveformTabs.Controls.Add(this.tabPage1);
-            this.waveformTabs.Controls.Add(this.tabPage2);
-            this.waveformTabs.Controls.Add(this.tabPage3);
+            this.waveformTabs.Controls.Add(this.testWaveformTab3);
+            this.waveformTabs.Controls.Add(this.testWaveformTab4);
+            this.waveformTabs.Controls.Add(this.testWaveformTab5);
             this.waveformTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.waveformTabs.Location = new System.Drawing.Point(3, 49);
             this.waveformTabs.Name = "waveformTabs";
@@ -312,16 +312,16 @@
             this.plotWaveViewer2.WindowLength = 0;
             this.plotWaveViewer2.WindowLengthSeconds = 0D;
             // 
-            // tabPage1
+            // testWaveformTab3
             // 
-            this.tabPage1.Controls.Add(this.plotWaveViewer3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(904, 349);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "Debug plot 3";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.testWaveformTab3.Controls.Add(this.plotWaveViewer3);
+            this.testWaveformTab3.Location = new System.Drawing.Point(4, 22);
+            this.testWaveformTab3.Name = "testWaveformTab3";
+            this.testWaveformTab3.Padding = new System.Windows.Forms.Padding(3);
+            this.testWaveformTab3.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab3.TabIndex = 3;
+            this.testWaveformTab3.Text = "Debug plot 3";
+            this.testWaveformTab3.UseVisualStyleBackColor = true;
             // 
             // plotWaveViewer3
             // 
@@ -337,16 +337,16 @@
             this.plotWaveViewer3.WindowLength = 0;
             this.plotWaveViewer3.WindowLengthSeconds = 0D;
             // 
-            // tabPage2
+            // testWaveformTab4
             // 
-            this.tabPage2.Controls.Add(this.plotWaveViewer4);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(904, 349);
-            this.tabPage2.TabIndex = 4;
-            this.tabPage2.Text = "Debug plot 4";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.testWaveformTab4.Controls.Add(this.plotWaveViewer4);
+            this.testWaveformTab4.Location = new System.Drawing.Point(4, 22);
+            this.testWaveformTab4.Name = "testWaveformTab4";
+            this.testWaveformTab4.Padding = new System.Windows.Forms.Padding(3);
+            this.testWaveformTab4.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab4.TabIndex = 4;
+            this.testWaveformTab4.Text = "Debug plot 4";
+            this.testWaveformTab4.UseVisualStyleBackColor = true;
             // 
             // plotWaveViewer4
             // 
@@ -362,16 +362,16 @@
             this.plotWaveViewer4.WindowLength = 0;
             this.plotWaveViewer4.WindowLengthSeconds = 0D;
             // 
-            // tabPage3
+            // testWaveformTab5
             // 
-            this.tabPage3.Controls.Add(this.plotWaveViewer5);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(904, 349);
-            this.tabPage3.TabIndex = 5;
-            this.tabPage3.Text = "Debug plot 5";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.testWaveformTab5.Controls.Add(this.plotWaveViewer5);
+            this.testWaveformTab5.Location = new System.Drawing.Point(4, 22);
+            this.testWaveformTab5.Name = "testWaveformTab5";
+            this.testWaveformTab5.Padding = new System.Windows.Forms.Padding(3);
+            this.testWaveformTab5.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab5.TabIndex = 5;
+            this.testWaveformTab5.Text = "Debug plot 5";
+            this.testWaveformTab5.UseVisualStyleBackColor = true;
             // 
             // plotWaveViewer5
             // 
@@ -521,9 +521,9 @@
             this.songWaveformTab.ResumeLayout(false);
             this.testWaveformTab.ResumeLayout(false);
             this.testWaveformTab2.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
+            this.testWaveformTab3.ResumeLayout(false);
+            this.testWaveformTab4.ResumeLayout(false);
+            this.testWaveformTab5.ResumeLayout(false);
             this.toolPanel.ResumeLayout(false);
             this.toolPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -561,11 +561,11 @@
         private Gui.CustomWaveViewer plotWaveViewer;
         private System.Windows.Forms.TabPage testWaveformTab2;
         private Gui.CustomWaveViewer plotWaveViewer2;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage testWaveformTab3;
         private Gui.CustomWaveViewer plotWaveViewer3;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage testWaveformTab4;
         private Gui.CustomWaveViewer plotWaveViewer4;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage testWaveformTab5;
         private Gui.CustomWaveViewer plotWaveViewer5;
     }
 }
