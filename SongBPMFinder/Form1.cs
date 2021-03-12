@@ -81,13 +81,13 @@ namespace SongBPMFinder
 
         CustomWaveViewer getViewer(int graph)
         {
-            if (graph == 1)
+            switch (graph)
             {
-                return plotWaveViewer2;
-            }
-            else
-            {
-                return plotWaveViewer;
+                case 1: return plotWaveViewer2;
+                case 2: return plotWaveViewer3;
+                case 3: return plotWaveViewer4;
+                case 4: return plotWaveViewer5;
+                default: return plotWaveViewer;
             }
         }
 

@@ -26,6 +26,10 @@ namespace SongBPMFinder.Gui
         private double secondsPerPixel;
         private TimingPointList timingPoints;
 
+        public bool ForceIndividualView {
+            get; set;
+        }
+
         public void ShowTimingPoints(TimingPointList timingPointsIn)
         {
             timingPoints = timingPointsIn;
@@ -339,13 +343,22 @@ namespace SongBPMFinder.Gui
 
             int samplesPerPixel = audioData.ToArrayIndex(SecondsPerPixel);
 
-            if (samplesPerPixel > 1)
-            {
-                drawWaveform(e);
-            } else
+            if (ForceIndividualView)
             {
                 drawIndividualSamples(e);
             }
+            else
+            {
+                if (samplesPerPixel > 1)
+                {
+                    drawWaveform(e);
+                }
+                else
+                {
+                    drawIndividualSamples(e);
+                }
+            }
+
 
 
             drawTimingPoints(e);

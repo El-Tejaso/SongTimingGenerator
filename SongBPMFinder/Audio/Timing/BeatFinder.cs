@@ -128,8 +128,8 @@ namespace SongBPMFinder.Audio.Timing
 
                 List<TimingPoint> debugPoints2 = new List<TimingPoint>();
                 double maxT2 = audioData.IndexToSeconds(FloatArrays.ArgMax(plotArraySorted));
-                debugPoints.Add(new TimingPoint(maxT2, maxT2, Color.Pink));
-                Form1.Instance.AddLines(debugPoints, 1);
+                debugPoints2.Add(new TimingPoint(maxT2, maxT2, Color.Pink));
+                Form1.Instance.AddLines(debugPoints2, 1);
             }
 
             #endregion
