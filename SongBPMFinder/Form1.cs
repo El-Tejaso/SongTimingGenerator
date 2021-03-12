@@ -66,7 +66,7 @@ namespace SongBPMFinder
             {
                 if (this.IsDisposed)
                     return;
-                playbackScrollbar.Value = currentAudioFile.Position + playbackScrollbar.Minimum;
+                playbackScrollbar.Value = currentAudioFile.CurrentSample + playbackScrollbar.Minimum;
                 audioViewer.Invalidate();
             });
 
@@ -76,6 +76,7 @@ namespace SongBPMFinder
             loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
+
 			calculateTiming();            
         }
 
@@ -109,9 +110,9 @@ namespace SongBPMFinder
             TabPage page = getPage(graph);
 
             page.Text = name;
-            viewer.Data = new AudioData(data.GetInternalArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
+            viewer.Data = new AudioData(data.GetInternalArray(), currentAudioFile.SampleRate, 1);
             viewer.WindowLength = data.Length;
-            viewer.Data.Position = data.Length/2;
+            viewer.Data.CurrentSample = data.Length/2;
         }
 
 		//Testing
@@ -165,11 +166,11 @@ namespace SongBPMFinder
             {
                 if(ModifierKeys == Keys.Shift)
                 {
-                    currentAudioFile.Position -= dir * audioViewer.WindowLength / 100;
+                    currentAudioFile.CurrentSample -= dir * audioViewer.WindowLength / 200;
                 } 
                 else
                 {
-                    currentAudioFile.Position -= dir * audioViewer.WindowLength / 10;
+                    currentAudioFile.CurrentSample -= dir * audioViewer.WindowLength / 20;
                 }
 
                 audioViewer.Invalidate();
@@ -250,7 +251,7 @@ namespace SongBPMFinder
       
         void UpdateViewerScroll()
         {
-            currentAudioFile.Position = playbackScrollbar.Value - playbackScrollbar.Minimum;
+            currentAudioFile.CurrentSample = playbackScrollbar.Value - playbackScrollbar.Minimum;
             audioViewer.Invalidate();
         }
 
@@ -259,7 +260,7 @@ namespace SongBPMFinder
             int windowLength = audioViewer.WindowLength;
             playbackScrollbar.Minimum = -windowLength / 2;
             playbackScrollbar.Maximum = Math.Max(0, currentAudioFile.Data.Length - windowLength / 2);
-            playbackScrollbar.Value = playbackScrollbar.Minimum + currentAudioFile.Position;
+            playbackScrollbar.Value = playbackScrollbar.Minimum + currentAudioFile.CurrentSample;
         }
 
         void playPause()
@@ -350,6 +351,15 @@ namespace SongBPMFinder
         {
             audioStream.Playback = Playback.Quartertime;
             setActiveSpeedButton(buttonSpeed025x);
+        }
+
+        private void testButton_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < currentAudioFile.Channels; i++)
+            {
+                Slice<float> channelSlice = currentAudioFile.GetChannel(i);
+                FloatArrays.HighPassFilter(channelSlice, 5000, currentAudioFile.SampleRate);
+            }
         }
     }
 }

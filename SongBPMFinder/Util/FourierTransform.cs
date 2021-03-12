@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 
-namespace SongBPMFinder.Audio.Timing
+namespace SongBPMFinder.Util
 {
     //This class is untested. further testing is requried before use
     class FourierTransform

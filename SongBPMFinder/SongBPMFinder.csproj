@@ -94,9 +94,9 @@
     <Compile Include="Audio\AudioDataStream.cs" />
     <Compile Include="Audio\AudioPlayer.cs" />
     <Compile Include="Audio\Timing\BeatFinder.cs" />
-    <Compile Include="Audio\Timing\FloatArrays.cs" />
-    <Compile Include="Audio\Timing\FourierTransform.cs" />
-    <Compile Include="Audio\Timing\Slice.cs" />
+    <Compile Include="Util\FloatArrays.cs" />
+    <Compile Include="Util\FourierTransform.cs" />
+    <Compile Include="Util\Slice.cs" />
     <Compile Include="Audio\Timing\Timing.cs" />
     <Compile Include="Audio\Timing\TimingPoint.cs" />
     <Compile Include="Audio\Timing\TimingPointList.cs" />

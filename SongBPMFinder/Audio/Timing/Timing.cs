@@ -26,17 +26,13 @@ namespace SongBPMFinder.Audio.Timing
             int beatWindowLength = audioData.ToSample(beatSize);
 
             //Slice<float> data = PrepareData(audioData, !destructive);
-            int a = audioData.ToArrayIndex(t);
-            int b = audioData.ToArrayIndex(t + windowSize);
+            int a = audioData.ToSample(t) ;
+            int b = audioData.ToSample(t + windowSize);
 
-            if (b >= audioData.Data.Length)
+            if (b >= audioData.Length)
                 return new List<TimingPoint>();
 
-            Slice<float> dataTwoChannel = new Slice<float>(audioData.Data).GetSlice(a, b);
-            Slice<float> data = FloatArrays.ExtractChannelInPlace(dataTwoChannel, audioData.Channels, 0).DeepCopy();
-
-            a /= audioData.Channels;
-            b /= audioData.Channels;
+            Slice<float> data = audioData.GetChannel(0).GetSlice(a, b).DeepCopy();
 
             //Window bounds
             timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(a), Color.Cyan));
@@ -79,7 +75,7 @@ namespace SongBPMFinder.Audio.Timing
             //*
 			Form1.Instance.IsTesting = true;
 			
-            double t = audioData.PositionSeconds;
+            double t = audioData.CurrentSampleSeconds;
             
             //double t = 0.31471655328798187;
             //double t = 0.30471655328798187;

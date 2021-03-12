@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SongBPMFinder.Util;
 
-namespace SongBPMFinder.Audio.Timing
+namespace SongBPMFinder.Util
 {
     /// <summary>
     /// A static class for performing operations on large arrays in-place.
@@ -72,11 +71,6 @@ namespace SongBPMFinder.Audio.Timing
 
                 dst[i] = sum / (float)samples;
             }
-        }
-
-        public static Slice<float> ExtractChannelInPlace(Slice<float> data, int totalChannels, int channel)
-        {
-            return data.GetSlice(channel%totalChannels, data.Length, totalChannels);
         }
 
         public static void DownsampleMax(Slice<float> x, Slice<float> dst, int samples)

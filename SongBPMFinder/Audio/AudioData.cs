@@ -11,28 +11,42 @@ namespace SongBPMFinder.Audio
 {
     public class AudioData 
     {
-        float[] data;
+        float[] rawData;
+        Slice<float> data;
         int sampleRate;
         int channels;
-        private int playbackPosition = 0;
 
-        public int Position {
-            get => playbackPosition;
+        private int currentSample = 0;
+        private int len;
+
+        public int Length => len;
+
+        public int CurrentSample {
+            get => currentSample;
             set {
-                playbackPosition = value;
-                if (playbackPosition < 0) playbackPosition = 0;
-                if (playbackPosition >= Data.Length) playbackPosition = Data.Length - 1;
+                currentSample = value;
+                if (currentSample < 0) currentSample = 0;
+                if (currentSample >= Length) currentSample = Length - 1;
             }
         }
 
-        public double PositionSeconds {
+        public double CurrentSampleSeconds {
             get {
-                return IndexToSeconds(Position);
+                return SampleToSeconds(CurrentSample);
             }
         }
 
-        public float[] Data {
+        public float[] RawData {
+            get => data.GetInternalArray();
+        }
+
+        public Slice<float> Data {
             get => data;
+        }
+
+        public Slice<float> GetChannel(int c)
+        {
+            return data.GetSlice(c % Channels, data.Length, Channels);
         }
 
         public int SampleRate {
@@ -44,7 +58,7 @@ namespace SongBPMFinder.Audio
         }
 
         public double Duration {
-            get => IndexToSeconds(data.Length);
+            get => SampleToSeconds(Length);
         }
 
         WaveFormat metadata;
@@ -57,25 +71,24 @@ namespace SongBPMFinder.Audio
             return sample / (double)SampleRate;
         }
 
-        public double IndexToSeconds(int arrayIndex){
-			return (arrayIndex / (double)Channels)/(double)SampleRate;
-		}
-
-		public int ToArrayIndex(double seconds){
-			return (int)(seconds * SampleRate * Channels);
-		}
-
         public int ToSample(double seconds)
         {
             return (int)(seconds * SampleRate);
         }
 
+		public float GetSample(int sample, int channel){
+            return data[channel % Channels + sample * Channels];
+		}
+
         private void initialize(float[] data, int sampleRate, int numChannels)
         {
-            this.data = data;
+            this.rawData = data;
+            this.data = new Slice<float>(data);
+
             this.sampleRate = sampleRate;
             this.channels = numChannels;
             this.metadata = new WaveFormat(sampleRate, numChannels);
+            this.len = data.Length / numChannels;
         }
 
         public AudioData(float[] data, int sampleRate, int numChannels)
@@ -95,10 +108,10 @@ namespace SongBPMFinder.Audio
                 ISampleProvider isp = media.ToSampleProvider();
 
                 int numSamples = (int)(media.TotalTime.TotalSeconds * sampleRate * channels);
-                data = new float[numSamples];
-                isp.Read(data, 0, data.Length);
+                rawData = new float[numSamples];
+                isp.Read(rawData, 0, rawData.Length);
 
-                initialize(data, sampleRate, channels);
+                initialize(rawData, sampleRate, channels);
             }
 
             Logger.Log("Opened [" + filepath + "]");

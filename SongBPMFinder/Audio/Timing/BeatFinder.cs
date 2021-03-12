@@ -88,9 +88,6 @@ namespace SongBPMFinder.Audio.Timing
             Slice<float> autocorrelPlacement = slice.GetSlice(sliceLen, sliceLen + sliceLen);
             FloatArrays.Autocorrelate(result, autocorrelPlacement);
 
-            //Form1.Instance.Viewer.StartTime = audioData.IndexToSeconds((origSliceStart + sliceLen + sliceLen/4));
-            //Form1.Instance.Viewer.WindowLengthSeconds = audioData.IndexToSeconds(sliceLen / 2);
-
             float mean = FloatArrays.Average(autocorrelPlacement, false);
             FloatArrays.Sum(autocorrelPlacement, -mean);
 
@@ -111,10 +108,9 @@ namespace SongBPMFinder.Audio.Timing
 
                 Form1.Instance.Plot("Autocorrelated", plotArray, 0);
                 List<TimingPoint> debugPoints = new List<TimingPoint>();
-                double maxT = audioData.IndexToSeconds(maxIndex);
+                double maxT = audioData.SampleToSeconds(maxIndex);
                 debugPoints.Add(new TimingPoint(maxT, maxT, Color.Pink));
                 Form1.Instance.AddLines(debugPoints, 0);
-
 
                 //Draw autocorrelated array again, sorted
                 Slice<float> plotArraySorted = plotArray.DeepCopy();
@@ -166,15 +162,7 @@ namespace SongBPMFinder.Audio.Timing
 
 		public static Slice<float> PrepareData(AudioData audioData, bool copy = true)
         {
-            float[] dataArray;
-
-            //Delete this line in production
-            dataArray = audioData.Data;
-
-            Slice<float> dataOrig = new Slice<float>(dataArray);
-
-            //extract 1 channel from original data to a buffer half the length
-            Slice<float> data = FloatArrays.ExtractChannelInPlace(dataOrig, audioData.Channels, 0);
+            Slice<float> data = audioData.GetChannel(0);
 
             if (copy)
             {

@@ -54,6 +54,7 @@
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
             this.plotWaveViewer5 = new SongBPMFinder.Gui.CustomWaveViewer();
             this.toolPanel = new System.Windows.Forms.Panel();
+            this.testButton = new System.Windows.Forms.Button();
             this.copyTimingButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -390,6 +391,7 @@
             // toolPanel
             // 
             this.toolPanel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.toolPanel.Controls.Add(this.testButton);
             this.toolPanel.Controls.Add(this.copyTimingButton);
             this.toolPanel.Controls.Add(this.label4);
             this.toolPanel.Controls.Add(this.label3);
@@ -404,6 +406,19 @@
             this.toolPanel.Size = new System.Drawing.Size(177, 579);
             this.toolPanel.TabIndex = 1;
             // 
+            // testButton
+            // 
+            this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.testButton.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.testButton.Location = new System.Drawing.Point(6, 275);
+            this.testButton.Name = "testButton";
+            this.testButton.Size = new System.Drawing.Size(165, 29);
+            this.testButton.TabIndex = 8;
+            this.testButton.Text = "TestButton";
+            this.testButton.UseVisualStyleBackColor = false;
+            this.testButton.Click += new System.EventHandler(this.testButton_Click);
+            // 
             // copyTimingButton
             // 
             this.copyTimingButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -414,7 +429,7 @@
             this.copyTimingButton.Name = "copyTimingButton";
             this.copyTimingButton.Size = new System.Drawing.Size(165, 29);
             this.copyTimingButton.TabIndex = 7;
-            this.copyTimingButton.Text = "CopyTiming";
+            this.copyTimingButton.Text = "Copy timing";
             this.copyTimingButton.UseVisualStyleBackColor = false;
             this.copyTimingButton.Click += new System.EventHandler(this.copyTimingButton_Click);
             // 
@@ -465,7 +480,7 @@
             this.calcTimingButton.Size = new System.Drawing.Size(165, 29);
             this.calcTimingButton.TabIndex = 2;
             this.calcTimingButton.TabStop = false;
-            this.calcTimingButton.Text = "Calculate Timing";
+            this.calcTimingButton.Text = "Calculate timing";
             this.calcTimingButton.UseVisualStyleBackColor = false;
             this.calcTimingButton.Click += new System.EventHandler(this.calcTimingButton_Click);
             // 
@@ -567,6 +582,7 @@
         private Gui.CustomWaveViewer plotWaveViewer4;
         private System.Windows.Forms.TabPage testWaveformTab5;
         private Gui.CustomWaveViewer plotWaveViewer5;
+        private System.Windows.Forms.Button testButton;
     }
 }
 

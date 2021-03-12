@@ -57,11 +57,15 @@ namespace SongBPMFinder.Audio
 
         public override int Read(float[] buffer, int offset, int count)
         {
-            float[] data = audioData.Data;
+			//calculate in terms of the actual array
+			int channels = audioData.Channels;
+			int len = audioData.Length * channels;
+			int position = audioData.CurrentSample * channels;
+			
             //ensre we dont read past the end of our data buffer
-            if (audioData.Position + count >= data.Length)
+            if (position + count >= len)
             {
-                count = data.Length - 1 - audioData.Position;
+                count = len - 1 - position;
             }
 
             //return 0 if there is nothing to read
@@ -69,23 +73,23 @@ namespace SongBPMFinder.Audio
 
             double slowdown = GetCurrentSlowdown();
 
-            for (int i = 0; i < count; i+=audioData.Channels)
+            for (int i = 0; i < count; i+=channels)
             {
-                int currentIndex = audioData.Position + (int)((double)i * slowdown);
-                int nextIndex = Math.Min(currentIndex + audioData.Channels, data.Length - audioData.Channels);
+                int currentIndex = position + (int)((double)i * slowdown);
+                int nextIndex = Math.Min(currentIndex + channels, len - channels);
 
                 float t = (float)(((double)i * slowdown) % 1.0);
 
-                for (int j = 0; j < audioData.Channels; j++)
+                for (int j = 0; j < channels; j++)
                 {
-                    float thisSample = data[currentIndex + j];
-                    float nextSample = data[nextIndex + j];
+                    float thisSample = audioData.Data[currentIndex + j];
+                    float nextSample =  audioData.Data[nextIndex + j];
 
                     buffer[offset + i + j] = QuickMafs.Lerp(thisSample, nextSample, t);
                 }
             }
 
-            audioData.Position += (int)(slowdown*count);
+            audioData.CurrentSample += (int)(slowdown*(count/channels));
             return count;
         }
     }
