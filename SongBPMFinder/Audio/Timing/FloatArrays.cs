@@ -74,13 +74,9 @@ namespace SongBPMFinder.Audio.Timing
             }
         }
 
-        public static void ExtractChannel(Slice<float> data, Slice<float> dst, int totalChannels, int channel)
+        public static Slice<float> ExtractChannelInPlace(Slice<float> data, int totalChannels, int channel)
         {
-            int n = data.Length / totalChannels;
-            for (int i = 0; i < n; i++)
-            {
-                dst[i] = data[(i * totalChannels) + channel];
-            }
+            return data.GetSlice(channel%totalChannels, data.Length, totalChannels);
         }
 
         public static void DownsampleMax(Slice<float> x, Slice<float> dst, int samples)
@@ -323,9 +319,14 @@ namespace SongBPMFinder.Audio.Timing
 
         public static void Divide(Slice<float> x, float value)
         {
-            for (int i = 1; i < x.Length - 1; i++)
+			Mult(x, 1.0f/value);
+        }
+		
+		public static void Mult(Slice<float> x, float value)
+        {
+			for (int i = 1; i < x.Length - 1; i++)
             {
-                x[i] = x[i] / value;
+                x[i] = x[i] * value;
             }
         }
 

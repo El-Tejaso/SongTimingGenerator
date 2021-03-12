@@ -20,7 +20,7 @@ namespace SongBPMFinder.Audio.Timing
         }
         */
 
-        static List<TimingPoint> TestBeatfinding(bool destructive, List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution)
+        static List<TimingPoint> TestBeatfinding(List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution)
         {
             int windowLength = audioData.ToSample(windowSize);
             int beatWindowLength = audioData.ToSample(beatSize);
@@ -28,14 +28,13 @@ namespace SongBPMFinder.Audio.Timing
             //Slice<float> data = PrepareData(audioData, !destructive);
             int a = audioData.ToArrayIndex(t);
             int b = audioData.ToArrayIndex(t + windowSize);
+
             if (b >= audioData.Data.Length)
                 return new List<TimingPoint>();
 
-            Slice<float> data = new Slice<float>(audioData.Data).GetSlice(a, b);
-            data = data.DeepCopy();
+            Slice<float> dataTwoChannel = new Slice<float>(audioData.Data).GetSlice(a, b);
+            Slice<float> data = FloatArrays.ExtractChannelInPlace(dataTwoChannel, audioData.Channels, 0).DeepCopy();
 
-            FloatArrays.ExtractChannel(data, data, audioData.Channels, 0);
-            data = data.GetSlice(0, data.Length / audioData.Channels);
             a /= audioData.Channels;
             b /= audioData.Channels;
 
@@ -68,6 +67,8 @@ namespace SongBPMFinder.Audio.Timing
             /*
 			Form1.Instance.IsTesting = false;
 
+
+
             timingPoints = BeatFinder.FindAllBeats(audioData, 0.2, 0.01, res);
             //timingPoints = BeatFinder.FindAllBeatsCoalescing(audioData, 0.2, 0.01, res, coalesceWindow);
             timingPoints = TimingPointList.RemoveDebugPoints(timingPoints);
@@ -83,16 +84,7 @@ namespace SongBPMFinder.Audio.Timing
             //double t = 0.31471655328798187;
             //double t = 0.30471655328798187;
 
-            bool destructive = false;
-            TestBeatfinding(destructive, timingPoints, audioData, t, 0.2, 0.01, res);
-
-            if (destructive)
-            {
-                for (int i = 0; i < timingPoints.Count; i++)
-                {
-                    timingPoints[i].OffsetSeconds /= 2.0;
-                }
-            }
+            TestBeatfinding(timingPoints, audioData, t, 0.2, 0.01, res);
 
             //*/
 

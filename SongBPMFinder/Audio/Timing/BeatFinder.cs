@@ -18,7 +18,7 @@ namespace SongBPMFinder.Audio.Timing
         /// as all operations done are destructive
         /// and you may want to preserve other things in the original array (required if using this function multiple times)
         /// </summary>
-        /// <param name="audioData">the audio file where the slice originated</param>
+        /// <param name="audioData">the audio file where the slice originated. mainly used for conversion factors</param>
         /// <param name="slice">a slice of data from the audio file. </param>
         /// <param name="timingPoints">A debug parameter. delete later</param>
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
@@ -27,9 +27,6 @@ namespace SongBPMFinder.Audio.Timing
         public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, float instant, int numLevels = 4, bool debug = false)
         {
             Slice<float>[] dwtSlices = new Slice<float>[numLevels];
-
-            int origSliceStart = slice.Start;
-            //slice = slice.DeepCopy();
 
             for (int i = 0, h = slice.Length; i < numLevels; i++, h /= 2)
             {
@@ -121,13 +118,13 @@ namespace SongBPMFinder.Audio.Timing
 
                 //Draw autocorrelated array again, sorted
                 Slice<float> plotArraySorted = plotArray.DeepCopy();
-                Array.Sort(plotArraySorted.GetArray());
+                Array.Sort(plotArraySorted.GetInternalArray());
 
                 Form1.Instance.Plot("Acl sorted", plotArraySorted, 1);
 
                 Slice<float> plotArrayAbsSorted = plotArraySorted.DeepCopy();
                 FloatArrays.Abs(plotArrayAbsSorted);
-                Array.Sort(plotArrayAbsSorted.GetArray());
+                Array.Sort(plotArrayAbsSorted.GetInternalArray());
                 Form1.Instance.Plot("Acl ABS sorted", plotArrayAbsSorted, 2);
 
                 Slice<float> plotArraySortedTail = plotArraySorted.DeepCopy();
@@ -176,21 +173,13 @@ namespace SongBPMFinder.Audio.Timing
 
             Slice<float> dataOrig = new Slice<float>(dataArray);
 
-            Slice<float> data;
+            //extract 1 channel from original data to a buffer half the length
+            Slice<float> data = FloatArrays.ExtractChannelInPlace(dataOrig, audioData.Channels, 0);
 
             if (copy)
             {
-				//A fresh slice
-                data = new Slice<float>(new float[dataOrig.Length / audioData.Channels]);
-            } 
-            else
-            {
-				//Points to half of the original data array
-                data = dataOrig.GetSlice(0, dataOrig.Length / audioData.Channels);
+                data = data.DeepCopy();
             }
-
-            //extract 1 channel from original data to a buffer half the length
-            FloatArrays.ExtractChannel(dataOrig, data, audioData.Channels, 0);
 
             //FloatArrays.DownsampleMax(dataOrig, data, audioData.Channels);
             //FloatArrays.DownsampleAverage(dataOrig, data, audioData.Channels);
@@ -259,7 +248,9 @@ namespace SongBPMFinder.Audio.Timing
                 double currentTime = audioData.SampleToSeconds(pos);
                 
                 Slice<float> windowSlice = data.GetSlice(pos, Math.Min(pos + windowLength, data.Length)).DeepCopy(windowBuffer);
-                int beatPosition = BeatFinder.FindBeat(audioData, windowSlice, tempBuffer, resolution, 4, false);
+
+
+                int beatPosition = FindBeat(audioData, windowSlice, tempBuffer, resolution, 4, false);
                 double beatTime = audioData.SampleToSeconds(pos + beatPosition);
 
 				pos += windowLength / 6;

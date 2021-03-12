@@ -109,7 +109,7 @@ namespace SongBPMFinder
             TabPage page = getPage(graph);
 
             page.Text = name;
-            viewer.Data = new AudioData(data.GetArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
+            viewer.Data = new AudioData(data.GetInternalArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
             viewer.WindowLength = data.Length;
             viewer.Data.Position = data.Length/2;
         }
