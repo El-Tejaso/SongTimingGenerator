@@ -279,15 +279,6 @@ namespace SongBPMFinder.Gui
                 e.Graphics.DrawLine(Pens.Blue, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
 				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Blue, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 60, stdevY));
 			}
-
-			for(int i = 1; i <= 6; i++){
-				float stdevY = getWaveformY(mean+(float)i*mean);
-                if (stdevY < ClientRectangle.Top+10) break;
-                if (stdevY > ClientRectangle.Bottom-10) break;
-
-                e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
-				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Orange, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 80, stdevY));
-			}
         }
 
 
