@@ -10,6 +10,11 @@ namespace SongBPMFinder.Audio.Timing
 {
     public class TimingPoint : IComparable<TimingPoint>
     {
+		public double BPM;
+        public double OffsetSeconds;
+        //Purely a debugging feature
+        public Color Color = Color.Red;
+		public double Weight = 1;
 
         public TimingPoint(double bpm, double offset, Color col)
         {
@@ -24,10 +29,6 @@ namespace SongBPMFinder.Audio.Timing
             OffsetSeconds = offset;
         }
 
-        public double BPM;
-        public double OffsetSeconds;
-        //Purely a debugging feature
-        public Color Color = Color.Red;
 
         public long OffsetMilliseconds {
             get => (long)(OffsetSeconds * 1000);

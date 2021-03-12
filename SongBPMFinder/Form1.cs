@@ -79,16 +79,32 @@ namespace SongBPMFinder
 			calculateTiming();            
         }
 
+        CustomWaveViewer getViewer(int graph)
+        {
+            if (graph == 1)
+            {
+                return plotWaveViewer2;
+            }
+            else
+            {
+                return plotWaveViewer;
+            }
+        }
+
         //Testing
-		public void Plot(Slice<float> data){
-            plotWaveViewer.Data = new AudioData(data.GetArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
-			plotWaveViewer.WindowLength = data.Length;
-			plotWaveViewer.Data.Position = data.Length/2;
+		public void Plot(Slice<float> data, int graph){
+            CustomWaveViewer viewer = getViewer(graph);
+
+            viewer.Data = new AudioData(data.GetArray(), currentAudioFile.SampleRate, currentAudioFile.Channels);
+            viewer.WindowLength = data.Length;
+            viewer.Data.Position = data.Length/2;
         }
 
 		//Testing
-		public void AddLines(List<TimingPoint> timingPoints){
-			plotWaveViewer.ShowTimingPoints(new TimingPointList(timingPoints));
+		public void AddLines(List<TimingPoint> timingPoints, int graph){
+            CustomWaveViewer viewer = getViewer(graph);
+
+            viewer.ShowTimingPoints(new TimingPointList(timingPoints));
 		}
 
         private void clearOutputButton_Click(object sender, EventArgs e)

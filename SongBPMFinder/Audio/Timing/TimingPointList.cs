@@ -92,6 +92,96 @@ namespace SongBPMFinder.Audio.Timing
             return timingPoints;
         }
 
+		public static int FindInsertPoint(List<TimingPoint> timingPoints, double s){
+			if(timingPoints.Count == 0){
+				return 0;
+			}
+
+			int pos = 0;
+
+			for(int k = timingPoints.Count-1; k >= 1; k/=2){
+				while(pos+k < timingPoints.Count && timingPoints[pos+k].OffsetSeconds <= s){
+					pos += k;
+				}
+
+				if(k==1)
+					break;
+			}
+
+			return pos+1;
+		}
+
+		public static int FindClosest(List<TimingPoint> timingPoints, double s, double distance){
+			int pos = 0;
+
+			double bestDist = s;
+
+			for(int k = timingPoints.Count-1; k >= 1; k/=2){
+				while(pos+k < timingPoints.Count){
+					double dist = Math.Abs(timingPoints[pos+k].OffsetSeconds-s);
+
+					if(dist < bestDist){
+						pos+=k;
+						bestDist = dist;
+					}
+					else
+						break;
+				}
+
+				if(k==1)
+					break;
+			}
+
+			return pos;
+		}
+
+		public static int InsertSorted(List<TimingPoint> timingPoints, TimingPoint tp){
+			int pos = FindInsertPoint(timingPoints, tp.OffsetSeconds);
+			timingPoints.Insert(pos, tp);
+			return pos;
+		}
+
+		//Same as InsertSorted but cache friendly. should be faster if tp will be near the back of the list
+		public static int AddSorted(List<TimingPoint> timingPoints, TimingPoint tp)
+		{
+			int pos = timingPoints.Count;
+			timingPoints.Add(tp);
+
+			while(pos > 0 && (timingPoints[pos-1].OffsetSeconds > timingPoints[pos].OffsetSeconds))
+			{
+				TimingPoint temp = timingPoints[pos-1];
+				timingPoints[pos-1] = timingPoints[pos];
+				timingPoints[pos] = temp;
+				pos--;
+			}
+
+			return pos;
+		}
+
+		//Combine a new timing point with an existing one if they are close enough
+		public static void AddCoalescing(List<TimingPoint> timingPoints, TimingPoint tp, double windowSize)
+		{
+			if(timingPoints.Count == 0){
+				timingPoints.Add(tp);
+				return;
+			}
+
+			windowSize /= 2.0;
+
+			int pos = FindClosest(timingPoints, tp.OffsetSeconds, windowSize);
+			TimingPoint tpPos = timingPoints[pos];
+			if(Math.Abs(tpPos.OffsetSeconds - tp.OffsetSeconds) > windowSize){
+				AddSorted(timingPoints, tp);
+				return;
+			}
+
+			
+			tpPos.OffsetSeconds = ((tpPos.Weight*tpPos.OffsetSeconds) + tp.OffsetSeconds)/(tpPos.Weight+1);
+
+			tpPos.Weight++;
+		}
+
+
         public static List<TimingPoint> Simplify(List<TimingPoint> timingPoints, double tolerance)
         {
             if (timingPoints.Count == 0) return timingPoints;

@@ -56,8 +56,6 @@ namespace SongBPMFinder.Audio.Timing
 
             int sliceLen = (slice.Length / instantSize);
 
-			Logger.Log("instantSize: " + instantSize);
-
             for (int i = 0; i < numLevels; i++)
             {
                 downsampleSlices[i] = slice.GetSlice(i * sliceLen, (i + 1) * sliceLen);
@@ -111,13 +109,27 @@ namespace SongBPMFinder.Audio.Timing
 
             if (debug)
             {
-                Form1.Instance.Plot(autocorrelPlacement.DeepCopy());
+                //Draw autocorrelated array
+                Slice<float> plotArray = autocorrelPlacement.DeepCopy();
+
+                Form1.Instance.Plot(plotArray, 0);
 
                 List<TimingPoint> debugPoints = new List<TimingPoint>();
                 double maxT = audioData.IndexToSeconds(maxIndex);
                 debugPoints.Add(new TimingPoint(maxT, maxT, Color.Pink));
+                Form1.Instance.AddLines(debugPoints, 0);
 
-                Form1.Instance.AddLines(debugPoints);
+
+                //Draw autocorrelated array again, sorted
+                Slice<float> plotArraySorted = plotArray.DeepCopy();
+                Array.Sort(plotArraySorted.GetArray());
+
+                Form1.Instance.Plot(plotArraySorted, 1);
+
+                List<TimingPoint> debugPoints2 = new List<TimingPoint>();
+                double maxT2 = audioData.IndexToSeconds(FloatArrays.ArgMax(plotArraySorted));
+                debugPoints.Add(new TimingPoint(maxT2, maxT2, Color.Pink));
+                Form1.Instance.AddLines(debugPoints, 1);
             }
 
             #endregion
@@ -139,5 +151,118 @@ namespace SongBPMFinder.Audio.Timing
             
             return maxAudioPos;
         }
+
+		public static Slice<float> PrepareData(AudioData audioData, bool copy = true)
+        {
+            float[] dataArray;
+
+            //Delete this line in production
+            dataArray = audioData.Data;
+
+            Slice<float> dataOrig = new Slice<float>(dataArray);
+
+            Slice<float> data;
+
+            if (copy)
+            {
+				//A fresh slice
+                data = new Slice<float>(new float[dataOrig.Length / audioData.Channels]);
+            } 
+            else
+            {
+				//Points to half of the original data array
+                data = dataOrig.GetSlice(0, dataOrig.Length / audioData.Channels);
+            }
+
+            //extract 1 channel from original data to a buffer half the length
+            FloatArrays.ExtractChannel(dataOrig, data, audioData.Channels, 0);
+
+            //FloatArrays.DownsampleMax(dataOrig, data, audioData.Channels);
+            //FloatArrays.DownsampleAverage(dataOrig, data, audioData.Channels);
+            return data;
+        }
+
+
+        public static List<TimingPoint> FindAllBeats(AudioData audioData, double windowSize, double beatSize, float resolution)
+        {
+            Slice<float> data = PrepareData(audioData, true);
+
+            List<TimingPoint> timingPoints = new List<TimingPoint>();
+
+            int windowLength = audioData.ToSample(windowSize);
+            int beatWindowLength = audioData.ToSample(beatSize);
+
+            float[] windowBuffer = new float[windowLength];
+            Slice<float> tempBuffer = new Slice<float>(new float[windowLength]);
+
+            //*
+            int pos = 0;
+            while (pos < data.Length)
+            {
+                double currentTime = audioData.SampleToSeconds(pos);
+                
+                Slice<float> windowSlice = data.GetSlice(pos, Math.Min(pos + windowLength, data.Length)).DeepCopy(windowBuffer);
+                int beatPosition = BeatFinder.FindBeat(audioData, windowSlice, tempBuffer, resolution, 4, false);
+                double beatTime = audioData.SampleToSeconds(pos + beatPosition);
+
+                if (beatTime > 1.2)
+                {
+                    //Breakpoint
+                }
+
+                if (beatPosition == -1)
+                {
+                    //There was no 'beat' in this position
+                    pos += windowLength / 4;
+                    continue;
+                }
+
+                timingPoints.Add(new TimingPoint(120, beatTime));
+                pos += beatPosition + beatWindowLength;
+            }
+            //*/
+
+            return timingPoints;
+        }
+
+		public static List<TimingPoint> FindAllBeatsCoalescing(AudioData audioData, double windowSize, double beatSize, float resolution, double coalesceWindow)
+        {
+            Slice<float> data = PrepareData(audioData, true);
+
+            List<TimingPoint> timingPoints = new List<TimingPoint>();
+
+            int windowLength = audioData.ToSample(windowSize);
+            int beatWindowLength = audioData.ToSample(beatSize);
+
+            float[] windowBuffer = new float[windowLength];
+            Slice<float> tempBuffer = new Slice<float>(new float[windowLength]);
+
+            int pos = 0;
+            while (pos < data.Length)
+            {
+				//debug reasons
+                double currentTime = audioData.SampleToSeconds(pos);
+                
+                Slice<float> windowSlice = data.GetSlice(pos, Math.Min(pos + windowLength, data.Length)).DeepCopy(windowBuffer);
+                int beatPosition = BeatFinder.FindBeat(audioData, windowSlice, tempBuffer, resolution, 4, false);
+                double beatTime = audioData.SampleToSeconds(pos + beatPosition);
+
+				pos += windowLength / 6;
+
+                if (beatPosition == -1) continue;
+
+				TimingPointList.AddCoalescing(timingPoints, new TimingPoint(120, beatTime), coalesceWindow);
+            }
+
+			List<TimingPoint> cleanList = new List<TimingPoint>();
+			for(int i = 0; i < timingPoints.Count; i++){
+				if(timingPoints[i].Weight > 2.0){
+					cleanList.Add(timingPoints[i]);
+				}
+			}
+
+            return cleanList;
+        }
+
     }
 }

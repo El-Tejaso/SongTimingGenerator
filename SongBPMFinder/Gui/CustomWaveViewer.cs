@@ -251,7 +251,8 @@ namespace SongBPMFinder.Gui
             }
 
             Slice<float> range = new Slice<float>(audioData.Data, lower, upper);
-            float mean = FloatArrays.Average(range, true);
+            float mean = FloatArrays.Average(range, false);
+			float meanAbs = FloatArrays.Average(range, true);
             float stdev = FloatArrays.StdDev(range);
 
             //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
@@ -267,6 +268,25 @@ namespace SongBPMFinder.Gui
 
                 e.Graphics.DrawLine(Pens.Aqua, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
 				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Aqua, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 40, stdevY));
+			}
+
+
+			for(int i = 1; i <= 6; i++){
+				float stdevY = getWaveformY(mean+(float)i*meanAbs);
+                if (stdevY < ClientRectangle.Top+10) break;
+                if (stdevY > ClientRectangle.Bottom-10) break;
+
+                e.Graphics.DrawLine(Pens.Blue, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
+				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Blue, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 60, stdevY));
+			}
+
+			for(int i = 1; i <= 6; i++){
+				float stdevY = getWaveformY(mean+(float)i*mean);
+                if (stdevY < ClientRectangle.Top+10) break;
+                if (stdevY > ClientRectangle.Bottom-10) break;
+
+                e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
+				e.Graphics.DrawString(i.ToString(), textFont, Brushes.Orange, new PointF(ClientRectangle.X+ClientRectangle.Width/2 - 80, stdevY));
 			}
         }
 
@@ -302,12 +322,15 @@ namespace SongBPMFinder.Gui
                     float x = getWaveformX(tp.OffsetSeconds);
 
                     drawingPen.Color = tp.Color;
-                    e.Graphics.DrawLine(drawingPen, x, ClientRectangle.Top, x, ClientRectangle.Bottom - 40);
+
+                    e.Graphics.DrawLine(drawingPen, x, ClientRectangle.Top, x, ClientRectangle.Bottom - 60);
 
                     String desc = "[" + tp.BPM.ToString("0.00") + "," + tp.OffsetSeconds.ToString("0.00") + "]" +
                             "(+ " + (tp.OffsetSeconds - prevTime).ToString("0.000") + "s)";
 
                     e.Graphics.DrawString(desc, textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 20), format);
+
+					e.Graphics.DrawString("W:" + tp.Weight.ToString("0.000"), textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 40), format);
 
                     prevTime = tp.OffsetSeconds;
                 }
