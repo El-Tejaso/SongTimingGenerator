@@ -152,7 +152,7 @@ namespace SongBPMFinder.Gui
             int lower = Math.Max(0, audioData.CurrentSample - WindowLength / 2);
             int upper = Math.Min(audioData.Data.Length, audioData.CurrentSample + WindowLength / 2);
 
-            viewportMax = FloatArrays.Max(audioData.Data.GetSlice(lower, upper), true);
+            viewportMax = Math.Max(0.00001f, FloatArrays.Max(audioData.Data.GetSlice(lower, upper), true));
         }
 
         void drawWaveform(PaintEventArgs e, float rectTop, float rectBottom, int channel)
@@ -187,7 +187,7 @@ namespace SongBPMFinder.Gui
                     high = Math.Max(high, data[i]);
                 }
 
-                e.Graphics.DrawLine(Pens.Black, x, getWaveformY(low, rectBottom, rectTop), x,getWaveformY(high,rectBottom, rectTop));
+                e.Graphics.DrawLine(Pens.Black, x, getWaveformY(low, rectTop, rectBottom), x,getWaveformY(high,rectTop, rectBottom));
 
                 if (reachedEnd)
                     break;
@@ -197,7 +197,7 @@ namespace SongBPMFinder.Gui
 
         float getWaveformY(float sample, float rectTop, float rectBottom)
         {
-            float percent = 0.5f * QuickMafs.Clamp(sample / Math.Abs(viewportMax), -1, 1) + 0.5f;
+            float percent = -0.5f * QuickMafs.Clamp(sample / Math.Abs(viewportMax), -1, 1) + 0.5f;
 
             float y = rectTop + (rectBottom - rectTop) * percent;
 
@@ -236,12 +236,12 @@ namespace SongBPMFinder.Gui
             for (int position = lower; position < upper; position++)
             {
                 float x = getWaveformX(position);
-                float y = getWaveformY(audioData.Data[position], rectBottom, rectTop);
-                e.Graphics.DrawLine(Pens.Black, x, getWaveformY(0, rectBottom, rectTop), x, y);
+                float y = getWaveformY(audioData.Data[position], rectTop, rectBottom);
+                e.Graphics.DrawLine(Pens.Black, x, getWaveformY(0, rectTop, rectBottom), x, y);
 
                 if (position > lower)
                 {
-                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(audioData.Data[position-1], rectBottom, rectTop), x, y);
+                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(audioData.Data[position-1], rectTop, rectBottom), x, y);
                 }
             }
 
@@ -252,12 +252,12 @@ namespace SongBPMFinder.Gui
 
             //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
             //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
-            float meanY = getWaveformY(mean, rectBottom, rectTop);
+            float meanY = getWaveformY(mean, rectTop, rectBottom);
             
             e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, meanY, ClientRectangle.Right, meanY);
 			
 			for(int i = 1; i <= 6; i++){
-				float stdevY = getWaveformY(mean+(float)i*stdev, rectBottom, rectTop);
+				float stdevY = getWaveformY(mean+(float)i*stdev,rectTop, rectBottom);
                 if (stdevY < rectTop+10) break;
                 if (stdevY > rectBottom-10) break;
 
@@ -267,7 +267,7 @@ namespace SongBPMFinder.Gui
 
 
 			for(int i = 1; i <= 6; i++){
-				float stdevY = getWaveformY(mean+(float)i*meanAbs, rectBottom, rectTop);
+				float stdevY = getWaveformY(mean+(float)i*meanAbs, rectTop, rectBottom);
                 if (stdevY < rectTop + 10) break;
                 if (stdevY > rectBottom - 10) break;
 

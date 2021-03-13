@@ -12,14 +12,10 @@ namespace SongBPMFinder.Util
     /// </summary>
     class FloatArrays
     {
-        /// <summary>
-        /// This implementation was taken from the Accord.Net framework and adapted to use floats as well as allocate less memory
-        /// https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
-        /// </summary>
-        /// <param name="data">The data to be transforming</param>
-        /// <param name="temp">A temp buffer the same size as data. If you are calling this function several times,
-        /// you can just allocate this buffer once and then keep passing it in</param>
-        public static void HaarFWT(Slice<float> data, Slice<float> temp)
+        // This implementation was taken from the Accord.Net framework and adapted to use floats as well as allocate less memory
+        // https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
+		// The temp buffer is manually specified to reduce memory allocations
+        static void haarFWTSingle(Slice<float> data, Slice<float> temp)
         {
             float w0 = 0.5f;
             float w1 = -0.5f;
@@ -38,6 +34,55 @@ namespace SongBPMFinder.Util
             for (int i = 0; i < data.Length; i++)
                 data[i] = temp[i];
         }
+
+		public static Slice<float>[] GetDetailCoefficients(Slice<float>[] dwtSlices)
+		{
+			Slice<float>[] newSlices = new Slice<float>[dwtSlices.Length];
+			Array.Copy(dwtSlices, 0, newSlices, 0, dwtSlices.Length);
+
+			//Resize DWT slices so that they only keep their detail coefficients
+            for (int i = 0; i < dwtSlices.Length; i++)
+            {
+                newSlices[i] = dwtSlices[i].GetSlice(dwtSlices[i].Length / 2, dwtSlices[i].Length);
+            }
+			return newSlices;
+		}
+
+		//Performs a Haar DWT in the data numLevels times, and returns slices corresponding to each segment
+		public static Slice<float>[] HaarFWT(Slice<float> data, Slice<float> temp, int numLevels) {
+			Slice<float>[] dwtSlices = new Slice<float>[numLevels];
+
+            for (int i = 0, h = data.Length; i < numLevels; i++, h /= 2)
+            {
+                dwtSlices[i] = data.GetSlice(0, h);
+                haarFWTSingle(dwtSlices[i], temp);
+            }
+
+			dwtSlices = FloatArrays.GetDetailCoefficients(dwtSlices);
+
+			return dwtSlices;
+		}
+
+
+		public static Slice<float>[] DownsampleCoefficients(Slice<float>[] dwtSlices, Slice<float> original, int mainDownsampleFactor)
+        {
+			int numLevels = dwtSlices.Length;
+
+            Slice<float>[] downsampleSlices = new Slice<float>[numLevels];
+            int sliceLen = (original.Length / mainDownsampleFactor);
+
+            for (int i = 0; i < numLevels; i++)
+            {
+                downsampleSlices[i] = original.GetSlice(i * sliceLen, (i + 1) * sliceLen);
+
+                //dwtSlice[level] should have a length of original.Length / level
+                int downsampleFactor = mainDownsampleFactor / (original.Length/dwtSlices[numLevels - i - 1].Length);
+				
+                FloatArrays.DownsampleAverage(dwtSlices[numLevels - i - 1], downsampleSlices[i], downsampleFactor);
+            }
+
+			return downsampleSlices;
+		}
 
         //Downsamples by an exact number of samples. (the last sample may not be exact)
         //Src and dst may also overlap, as long as dst starts at or before where x starts
@@ -339,6 +384,15 @@ namespace SongBPMFinder.Util
             float max = Max(x, true);
             Divide(x, max);
         }
+
+		public static void NormalizeMeanStdDev(Slice<float> x){
+			//Subtract means
+			float average = Average(x, false);
+			Sum(x, -average);
+
+			float stdev = StdDev(x);
+			Mult(x, 1.0f/stdev);
+		}
 
         public static void NormalizeAv(Slice<float> x)
         {
