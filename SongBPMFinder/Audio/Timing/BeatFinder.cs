@@ -19,8 +19,8 @@ namespace SongBPMFinder.Audio.Timing
         /// and you may want to preserve other things in the original array (required if using this function multiple times)
         /// </summary>
         /// <param name="audioData">the audio file where the slice originated. mainly used for conversion factors</param>
-        /// <param name="slice">a slice of data from the audio file. </param>
-        /// <param name="timingPoints">A debug parameter. delete later</param>
+        /// <param name="slice">a slice of data from the audio file. The length must be divisable by 2^numLevels otherwise this might not work that well</param>
+        /// <param name="tempBuffer">a slice of data the same length as data, must not overlap with data. </param>
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
         /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
@@ -45,11 +45,11 @@ namespace SongBPMFinder.Audio.Timing
 			//Normalization
             for (int i = 0; i < numLevels; i++)
             {
-                //We are actually adding the average. It works for some reason
-                float meanI = FloatArrays.Average(downsampleSlices[i], false);
+                //We are actually adding the average. It works better for some reason
+                //float meanI = FloatArrays.Average(downsampleSlices[i], false);
                 //FloatArrays.Sum(downsampleSlices[i], meanI);
-
                 //FloatArrays.Normalize(downsampleSlices[i]);
+                //FloatArrays.Max(downsampleSlices[i], 0);
             }
 
             //Add all envelopes onto each other at downsampleSlices[0]
@@ -60,9 +60,10 @@ namespace SongBPMFinder.Audio.Timing
                 FloatArrays.Sum(summedEnvelopes, downsampleSlices[i]);
             }
 
-            //Autocorrelation
-            Slice<float> autocorrelPlacement = slice.GetSlice(summedEnvelopes.Length, 2 * summedEnvelopes.Length);
-            FloatArrays.Autocorrelate(summedEnvelopes, autocorrelPlacement);
+            //Autocorrelation (We no longer do this since it is unneccesary. Will be deleted when I know for sure it is useless)
+            Slice<float> autocorrelPlacement = summedEnvelopes;
+            //Slice<float> autocorrelPlacement = slice.GetSlice(summedEnvelopes.Length, 2 * summedEnvelopes.Length);
+            //FloatArrays.Autocorrelate(summedEnvelopes, autocorrelPlacement);
 
             //Do another normalization step
             float mean = FloatArrays.Average(autocorrelPlacement, false);
@@ -95,15 +96,14 @@ namespace SongBPMFinder.Audio.Timing
                 Array.Sort(plotArrayAbsSorted.GetInternalArray());
                 Form1.Instance.Plot("Acl ABS sorted", plotArrayAbsSorted, 2);
 
-				Slice<float> plotArrayDx = plotArray.DeepCopy();
-				FloatArrays.Differentiate(plotArrayDx, audioData.SampleRate/instantSize);
-				//FloatArrays.Normalize(plotArrayDx);
-                Form1.Instance.Plot("Acl dx", plotArrayDx, 3);
+				Slice<float> plotArrayNAcc = summedEnvelopes.DeepCopy();
+                //Do another normalization step
+                float mean2 = FloatArrays.Average(plotArrayNAcc, false);
+                FloatArrays.Sum(plotArrayNAcc, -mean2);
+                FloatArrays.Normalize(plotArrayNAcc);
 
-				Slice<float> plotArrayDDx = plotArrayDx.DeepCopy();
-				FloatArrays.Differentiate(plotArrayDDx, audioData.SampleRate/instantSize);
-				//FloatArrays.Normalize(plotArrayDDx);
-                Form1.Instance.Plot("Acl ddx", plotArrayDDx, 4);
+				//FloatArrays.Normalize(plotArrayDx);
+                Form1.Instance.Plot("Not Autocorrelated", plotArrayNAcc, 3);
             }
 
             #endregion

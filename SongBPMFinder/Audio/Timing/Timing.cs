@@ -22,25 +22,24 @@ namespace SongBPMFinder.Audio.Timing
 
         static List<TimingPoint> TestBeatfinding(List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution)
         {
+			int numLevels = 4;
+            int a = audioData.ToSample(t);
+
             int windowLength = audioData.ToSample(windowSize);
-            int beatWindowLength = audioData.ToSample(beatSize);
+            windowLength = QuickMafs.NearestDivisor(windowLength, QuickMafs.Pow(2, numLevels)); 
 
-            //Slice<float> data = PrepareData(audioData, !destructive);
-            int a = audioData.ToSample(t) ;
-            int b = audioData.ToSample(t + windowSize);
-
-            if (b >= audioData.Length)
+            if (a+windowLength >= audioData.Length)
                 return new List<TimingPoint>();
 
-            Slice<float> data = audioData.GetChannel(0).GetSlice(a, b).DeepCopy();
+            Slice<float> data = audioData.GetChannel(0).GetSlice(a, a+windowLength).DeepCopy();
 
             //Window bounds
             timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(a), Color.Cyan));
-            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(b), Color.Cyan));
+            timingPoints.Add(new TimingPoint(120, audioData.SampleToSeconds(a+windowLength), Color.Cyan));
 
 
             //Final beat position
-            int beatPosition = BeatFinder.FindBeat(audioData, data, data.DeepCopy(), resolution, 4, true);
+            int beatPosition = BeatFinder.FindBeat(audioData, data, data.DeepCopy(), resolution, numLevels, true);
 
             if(beatPosition == -1)
             {
