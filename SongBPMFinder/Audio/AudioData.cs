@@ -11,7 +11,6 @@ namespace SongBPMFinder.Audio
 {
     public class AudioData 
     {
-        float[] rawData;
         Slice<float> data;
         int sampleRate;
         int channels;
@@ -80,10 +79,9 @@ namespace SongBPMFinder.Audio
             return data[channel % Channels + sample * Channels];
 		}
 
-        private void initialize(float[] data, int sampleRate, int numChannels)
+        private void initialize(Slice<float> data, int sampleRate, int numChannels)
         {
-            this.rawData = data;
-            this.data = new Slice<float>(data);
+            this.data = data;
 
             this.sampleRate = sampleRate;
             this.channels = numChannels;
@@ -91,7 +89,12 @@ namespace SongBPMFinder.Audio
             this.len = data.Length / numChannels;
         }
 
-        public AudioData(float[] data, int sampleRate, int numChannels)
+        public AudioData(AudioData other)
+        {
+            initialize(other.Data.DeepCopy(), other.SampleRate, other.Channels);
+        }
+
+        public AudioData(Slice<float> data, int sampleRate, int numChannels)
         {
             initialize(data, sampleRate, numChannels);
         }
@@ -108,10 +111,10 @@ namespace SongBPMFinder.Audio
                 ISampleProvider isp = media.ToSampleProvider();
 
                 int numSamples = (int)(media.TotalTime.TotalSeconds * sampleRate * channels);
-                rawData = new float[numSamples];
+                float[] rawData = new float[numSamples];
                 isp.Read(rawData, 0, rawData.Length);
 
-                initialize(rawData, sampleRate, channels);
+                initialize(new Slice<float>(rawData), sampleRate, channels);
             }
 
             Logger.Log("Opened [" + filepath + "]");

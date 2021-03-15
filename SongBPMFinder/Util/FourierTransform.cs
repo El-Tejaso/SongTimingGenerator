@@ -4,54 +4,113 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using SongBPMFinder.Util;
 
 namespace SongBPMFinder.Util
 {
-    //This class is untested. further testing is requried before use
+    //This class is currently not working. Please do not use any of the methods contained in this class and instead use the AccordFourierTransform class
     class FourierTransform
     {
-
-        public static void Forward(Slice<float> timeseries, Slice<float> phases, Slice<float> amplitudes, int startingFrequency, int step)
+		//Performs the fourier transform.
+		//src and dst may not overlap unless they overlap perfectly (i.e in place transform)
+        public static void FFTForward(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
         {
-            DFT(timeseries, phases, amplitudes, startingFrequency, step, false);
+            fastFFT(srcR, srcI, dstR, dstI);
         }
 
-        public static void Inverse(Slice<float> timeseries, Slice<float> phases, Slice<float> amplitudes, int startingFrequency, int step)
+		//Performs the fourier transform backwards and applies inverse scaling
+		//src and dst may not overlap unless they overlap perfectly (i.e in place transform)
+        public static void FFTBackward(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
         {
-            DFT(timeseries, phases, amplitudes, startingFrequency, step, true);
+            fastFFT(srcI, srcR, dstR, dstI);
+
+            FloatArrays.Divide(dstR, dstR.Length);
+            FloatArrays.Divide(dstI, dstI.Length);
         }
 
-        /// <summary>
-        /// Performs a fourier transform without allocating any memory.
-        /// The length of the phases and amplitudes buffers must be the same
-        /// The number of steps taken will be determined by the length of the phase/amp buffer
-        /// </summary>
-        /// <param name="timeseries"></param>
-        /// <param name="phases"></param>
-        /// <param name="amplitudes"></param>
-        /// <param name="scale"></param>
-        private static void DFT(Slice<float> timeseries, Slice<float> phases, Slice<float> amplitudes, int startingFrequency, int step, bool scale)
+        //This implementation is based on this article: https://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
+		//and as such, may not be as efficient as possible
+        private static void fastFFT(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
         {
-            for (int i = 0; i < phases.Length; i++)
+            if(srcR.Length < 16)
             {
-                int k = startingFrequency + i * step;
-                float sumR = 0;
-                float sumi = 0;
-                for (int t = 0; t < timeseries.Length; t++)
-                {
-                    float xn = timeseries[t];
-                    //evaluate the trig functions with doubles for added precision. might be slower tho
-                    sumR += xn * (float)(Math.Cos(2.0 * Math.PI * (double)k * t / (double)timeseries.Length));
-                    sumi += xn * (float)(Math.Sin(2.0 * Math.PI * (double)k * t / (double)timeseries.Length));
-                }
+                slowFFT(srcR, srcI, dstR, dstI);
+                return;
+            }
 
-                amplitudes[i] = (float)Math.Sqrt(sumR * sumR + sumi * sumi);
-                if (scale)
-                    amplitudes[i] /= (float)timeseries.Length;
-                phases[i] = (float)Math.Atan2(sumi, sumR);
+			//split the source and destination arrays into 2 based on even indices
+            Slice<float> evenRSrc = srcR.GetSlice(0, srcR.Length - 1, 2);
+            Slice<float> evenRDst = dstR.GetSlice(0, srcR.Length - 1, 2);
+            Slice<float> evenISrc = srcI.GetSlice(0, srcI.Length - 1, 2);
+            Slice<float> evenIDst = dstI.GetSlice(0, srcI.Length - 1, 2);
+
+            fastFFT(evenRSrc, evenISrc, evenRDst, evenIDst);
+
+			//split the source and destination arrays into 2 again but based on odd indices this time
+			Slice<float> oddRSrc = srcR.GetSlice(1, srcR.Length, 2);
+            Slice<float> oddRDst = dstR.GetSlice(1, srcR.Length, 2);
+            Slice<float> oddISrc = srcI.GetSlice(1, srcI.Length, 2);
+            Slice<float> oddIDst = dstI.GetSlice(1, srcI.Length, 2);
+
+            fastFFT(oddRSrc, oddISrc, oddRDst, oddIDst);
+
+			//Calculate a factor
+            int n = srcR.Length;
+			int halfN = n/2;
+            for (int k = 0; k < halfN; k++)
+            {
+                double factorAngle = -2 * Math.PI * k / (double)n;
+                float factorR = (float)Math.Cos(factorAngle);
+                float factorI = (float)Math.Sin(factorAngle);
+
+				//Store these values here before they get overwritten
+                float evenRDstK = evenRDst[k];
+                float evenIDstK = evenIDst[k];
+                float oddRDstK = oddRDst[k];
+                float oddIDstK = oddIDst[k];
+			
+                dstR[k] = evenRDstK + factorR * oddRDstK;
+                dstI[k] = evenIDstK + factorI * oddIDstK;
+
+				//Reuse the values in the second half of the array in this for-loop itself
+				factorAngle = -2 * Math.PI * (k + halfN) / (double)n;
+                factorR = (float)Math.Cos(factorAngle);
+                factorI = (float)Math.Sin(factorAngle);
+
+                dstR[k + halfN] = evenRDstK + factorR * oddRDstK;
+                dstI[k + halfN] = evenIDstK + factorI * oddIDstK;
             }
         }
 
-        
+        //The source arrays and the destination arrays may not be the same
+        private static void slowFFT(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
+        {
+            int n = srcR.Length;
+
+            float[] resR = new float[dstR.Length];
+            float[] resI = new float[dstI.Length];
+
+            for (int k = 0; k < n; k++)
+            {
+                float R = 0;
+                float im = 0;
+
+                for(int t = 0; t < n; t++)
+                {
+                    double angle = 2 * Math.PI * t * k / (double)n;
+                    R += (float)(+srcR[t] * Math.Cos(angle) + srcI[t] * Math.Sin(angle));
+                    im += (float)(-srcR[t] * Math.Sin(angle) + srcI[t] * Math.Cos(angle));
+                }
+
+                resR[k] = R;
+                resI[k] = im;
+            }
+
+            for (int k = 0; k < n; k++)
+            {
+                dstR[k] = resR[k];
+                dstI[k] = resI[k];
+            }
+        }
     }
 }

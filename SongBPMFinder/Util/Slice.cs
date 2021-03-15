@@ -27,30 +27,15 @@ namespace SongBPMFinder.Util
         public int Length => len;
 
         //Mainly for debugging purposes, but do have their convenient uses
-        public int InternalStart => toIdx(0);
-		public int InternalEnd => toIdx(len);
+        public int InternalStart => start;
+		public int InternalEnd => start + len*stride;
 		public int InternalStride => stride;
-
-		int toIdx(int i){
-			return start + i*stride;
-		}
 
         public T this[int index] {
             get {
-				int finalIndex = toIdx(index);
-                if (finalIndex >= Length)
-                {
-                    //breakpoint
-                }
-
-                if (finalIndex >= array.Length)
-                {
-                    //breakpoint
-                }
-
-                return array[finalIndex];
+                return array[start + index * stride];
             }
-            set { array[toIdx(index)] = value; }
+            set { array[start + index*stride] = value; }
         }
 
         public Slice(T[] arr)
@@ -61,22 +46,22 @@ namespace SongBPMFinder.Util
 			this.stride = 1;
         }
 
-        public Slice<T> GetSlice(int start, int end, int newStride = 1)
+        public Slice<T> GetSlice(int newStart, int newEnd, int newStride = 1)
         {
-            if (end*stride > array.Length)
+            if (newEnd*stride > array.Length)
             {
                 //Breakpoint
             }
 
-			if (start*stride > array.Length)
+			if (newEnd * stride > array.Length)
             {
                 //Breakpoint
             }
 
             return new Slice<T>(
 				array, 
-				toIdx(start), 
-				toIdx(end), 
+				start + newStart*stride, 
+				start + newEnd*stride, 
 				stride*newStride
 			);
         }
@@ -91,15 +76,15 @@ namespace SongBPMFinder.Util
 
         public Slice<T> DeepCopy()
         {
-            T[] arr = new T[Length];
+            T[] arr = new T[len];
             return DeepCopy(arr);
         }
 
         public Slice<T> DeepCopy(T[] buffer)
         {
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i < len; i++)
             {
-                buffer[i] = array[toIdx(i)];
+                buffer[i] = array[start + i*stride];
             }
 
             return new Slice<T>(buffer);

@@ -18,6 +18,8 @@ namespace SongBPMFinder
     public partial class Form1 : Form
     {
         AudioData currentAudioFile = null;
+        AudioData currentAudioFileCopy = null;
+
         AudioDataStream audioStream;
         AudioPlayer player = new AudioPlayer();
         TimingPointList tpList;
@@ -34,7 +36,7 @@ namespace SongBPMFinder
 
         public CustomWaveViewer Viewer;
 
-		public bool IsTesting = false;
+		public bool IsTesting = true;
         #endregion
 
         public Form1()
@@ -60,7 +62,6 @@ namespace SongBPMFinder
             Logger.SetOutput(textOutput);
             audioViewer.SecondsPerPixel = 0.1;
 
-            plotWaveViewer.Data = new AudioData(new float[0], 1, 1);
 
             updateSBPos = new MethodInvoker(delegate ()
             {
@@ -74,10 +75,11 @@ namespace SongBPMFinder
             //TESTING
 
             loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
+			//loadFile("D:\\Archives\\Music\\Test\\Early Summer.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
 			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
 
-			calculateTiming();            
+			calculateTiming();           
         }
 
         CustomWaveViewer getViewer(int graph)
@@ -110,7 +112,7 @@ namespace SongBPMFinder
             TabPage page = getPage(graph);
 
             page.Text = name;
-            viewer.Data = new AudioData(data.GetInternalArray(), currentAudioFile.SampleRate, 1);
+            viewer.Data = new AudioData(data, currentAudioFile.SampleRate, 1);
             viewer.WindowLength = data.Length;
             viewer.Data.CurrentSample = data.Length/2;
         }
@@ -221,31 +223,52 @@ namespace SongBPMFinder
             }
         }
 
+        void setCurrentAudio(AudioData audioData)
+        {
+            currentAudioFile = audioData;
+
+            if (IsTesting)
+            {
+                if(audioData != currentAudioFileCopy)
+                {
+                    currentAudioFileCopy = new AudioData(audioData);
+                } 
+            }
+
+            audioViewer.Data = audioData;
+
+            audioStream = new AudioDataStream(currentAudioFile);
+            player.SetAudio(audioStream);
+
+            setActiveSpeedButton(buttonSpeed1x);
+
+            UpdateScrollExtents();
+            UpdateViewerScroll();
+        }
 
         void loadFile(string filename)
         {
             if (currentAudioFile != null)
             {
                 audioViewer.Data = null;
+
                 currentAudioFile = null;
+
+                if (IsTesting)
+                {
+                    currentAudioFileCopy = null;
+                }
+
                 audioStream = null;
                 GC.Collect();
             }
 
-            currentAudioFile = new AudioData(filename);
-            audioViewer.Data = currentAudioFile;
-
-            audioStream = new AudioDataStream(currentAudioFile);
-            player.SetAudio(audioStream);
+            setCurrentAudio(new AudioData(filename));
 
             calcTimingButton.Enabled = true;
             copyTimingButton.Enabled = false;
-            setActiveSpeedButton(buttonSpeed1x);
 
             tpList = null;
-
-            UpdateScrollExtents();
-            UpdateViewerScroll();
         }
 
       
@@ -284,11 +307,19 @@ namespace SongBPMFinder
         void calculateTiming()
         {
             var watch = Stopwatch.StartNew();
-            tpList = Timing.GenerateMultiBPMTiming(currentAudioFile);
+            if (IsTesting)
+            {
+                tpList = Timing.TestBeatFinding(currentAudioFile);
+            }
+            else
+            {
+                tpList = Timing.GenerateMultiBPMTiming(currentAudioFile);
+            }
+            
 
             audioViewer.ShowTimingPoints(tpList);
-
             watch.Stop();
+
             Logger.Log("Calculated timing in " + (watch.ElapsedMilliseconds / 1000.0).ToString("0.000") + " Seconds");
 			Logger.Log("" + tpList.List.Count + " timing points were generated.");
             copyTimingButton.Enabled = true;
@@ -355,12 +386,36 @@ namespace SongBPMFinder
 
         private void testButton_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < currentAudioFile.Channels; i++)
+            setCurrentAudio(currentAudioFileCopy);
+
+            int window = (int)(currentAudioFile.SampleRate);
+            window = QuickMafs.NearestPower(window, 2)*2;
+
+
+            var watch = Stopwatch.StartNew();
+
+            Slice<float> subsetL = currentAudioFile.GetChannel(0).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample+window);
+            Slice<float> imaginaryBufferL = FloatArrays.ZeroesLike(subsetL);
+
+            Slice<float> subsetR = currentAudioFile.GetChannel(1).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample + window);
+            Slice<float> imaginaryBufferR = FloatArrays.ZeroesLike(subsetR);
+
+            //AccordFourierTransform.FFT(subsetL, imaginaryBufferL);
+            //AccordFourierTransform.FFT(subsetR, imaginaryBufferR);
+
+            for(int i = 0; i < imaginaryBufferL.Length/2; i++)
             {
-                Slice<float> channelSlice = currentAudioFile.GetChannel(i);
-                FloatArrays.Differentiate(channelSlice, currentAudioFile.SampleRate);
-				FloatArrays.Normalize(channelSlice);
+                subsetL[i] *= subsetL[i];
+
+                subsetR[i] *= subsetR[i];
             }
+
+            AccordFourierTransform.IFFT(subsetR, imaginaryBufferR);
+            AccordFourierTransform.IFFT(subsetL, imaginaryBufferL);
+
+
+            watch.Stop();
+            Logger.Log("Did FFT and IFFT with w=" + window + " in " + watch.ElapsedMilliseconds + "ms");
         }
     }
 }

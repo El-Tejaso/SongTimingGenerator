@@ -24,10 +24,10 @@ namespace SongBPMFinder.Audio.Timing
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not</param>
         /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
-        public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> tempBuffer, float instant, int numLevels = 4, bool debug = false)
+        public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> sliceSizedBuffer, float instant, int numLevels = 4, bool debug = false)
         {
 			//Discrete wavelet transform
-			Slice<float>[] dwtSlices = FloatArrays.HaarFWT(slice, tempBuffer, numLevels);
+			Slice<float>[] dwtSlices = FloatArrays.HaarFWT(slice, sliceSizedBuffer, numLevels);
 
 			//Full wave rectification
             FloatArrays.Abs(slice);

@@ -50,7 +50,19 @@ namespace SongBPMFinder.Util
 		// Can be used to return a number y such that x/base^exponent will be an integer
 		// (as well as everything in between)
 		public static int NearestDivisor(int x, int value){
-			return (int)(Math.Round((float)x/(float)value) * (float)value);
+			return (int)(Math.Ceiling((float)x/(float)value) * (float)value);
 		}
+
+        public static int NearestPower(int x, int val)
+        {
+            int num = 0;
+            while (x > 1)
+            {
+                x /= val;
+                num++;
+            }
+
+            return Pow(val, num);
+        }
     }
 }

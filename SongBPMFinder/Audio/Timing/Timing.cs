@@ -20,9 +20,8 @@ namespace SongBPMFinder.Audio.Timing
         }
         */
 
-        static List<TimingPoint> TestBeatfinding(List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, double beatSize, float resolution)
+        static List<TimingPoint> testBeatfindingInternal(List<TimingPoint> timingPoints, AudioData audioData, double t, double windowSize, float resolution, int numLevels)
         {
-			int numLevels = 4;
             int a = audioData.ToSample(t);
 
             int windowLength = audioData.ToSample(windowSize);
@@ -53,42 +52,41 @@ namespace SongBPMFinder.Audio.Timing
             return timingPoints;
         }
 
+        public static TimingPointList TestBeatFinding(AudioData audioData)
+        {
+            List<TimingPoint> timingPoints = new List<TimingPoint>();
+            float res = 0.0005f;
+            float coalesceWindow = res * 2;
+
+            Form1.Instance.IsTesting = true;
+
+            double t = audioData.CurrentSampleSeconds;
+
+            //double t = 0.31471655328798187;
+            //double t = 0.30471655328798187;
+
+            double windowLength = 0.2;
+            testBeatfindingInternal(timingPoints, audioData, t, windowLength, res, 4);
+
+            return new TimingPointList(timingPoints, false);
+        }
+
         public static TimingPointList GenerateMultiBPMTiming(AudioData audioData)
         {
             List<TimingPoint> timingPoints = new List<TimingPoint>();
 			float res = 0.0005f;
-
 			float coalesceWindow = res*2;
-            /*
-			Form1.Instance.IsTesting = false;
 
-
-
-            timingPoints = BeatFinder.FindAllBeats(audioData, 0.2, 0.01, res);
+            timingPoints = BeatFinder.FindAllBeats(audioData, 0.2, 0.05, res);
             //timingPoints = BeatFinder.FindAllBeatsCoalescing(audioData, 0.2, 0.01, res, coalesceWindow);
+
             timingPoints = TimingPointList.RemoveDebugPoints(timingPoints);
-
-
-            //*/
-
-            //*
-			Form1.Instance.IsTesting = true;
-			
-            double t = audioData.CurrentSampleSeconds;
-            
-            //double t = 0.31471655328798187;
-            //double t = 0.30471655328798187;
-
-            TestBeatfinding(timingPoints, audioData, t, 0.2, 0.01, res);
-
-            //*/
-
-            /*
             double tol = res/2.0;
+
+            timingPoints.Sort();
             timingPoints = TimingPointList.RemoveDoubles(timingPoints, 0.01);
             timingPoints = TimingPointList.CalculateBpms(timingPoints);
             timingPoints = TimingPointList.Simplify(timingPoints, tol);
-            //*/
 
             return new TimingPointList(timingPoints, false);
         }

@@ -94,6 +94,7 @@
     <Compile Include="Audio\AudioDataStream.cs" />
     <Compile Include="Audio\AudioPlayer.cs" />
     <Compile Include="Audio\Timing\BeatFinder.cs" />
+    <Compile Include="Util\AccordFourierTransform.cs" />
     <Compile Include="Util\FloatArrays.cs" />
     <Compile Include="Util\FourierTransform.cs" />
     <Compile Include="Util\Slice.cs" />

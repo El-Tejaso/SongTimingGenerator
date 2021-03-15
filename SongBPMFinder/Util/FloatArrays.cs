@@ -15,7 +15,7 @@ namespace SongBPMFinder.Util
         // This implementation was taken from the Accord.Net framework and adapted to use floats as well as allocate less memory
         // https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
 		// The temp buffer is manually specified to reduce memory allocations
-        static void haarFWTSingle(Slice<float> data, Slice<float> temp)
+        static void haarFWTSingle(Slice<float> data, Slice<float> dst)
         {
             float w0 = 0.5f;
             float w1 = -0.5f;
@@ -27,12 +27,11 @@ namespace SongBPMFinder.Util
             for (int i = 0; i < h; i++)
             {
                 int k = (i * 2);
-                temp[i] = data[k] * s0 + data[k + 1] * s1;
-                temp[i + h] = data[k] * w0 + data[k + 1] * w1;
+                float dK = data[k];
+                float dK1 = data[k+1];
+                dst[i] = dK * s0 + dK1 * s1;
+                dst[i + h] = dK * w0 + dK1 * w1;
             }
-
-            for (int i = 0; i < data.Length; i++)
-                data[i] = temp[i];
         }
 
 		public static Slice<float>[] GetDetailCoefficients(Slice<float>[] dwtSlices)
@@ -49,20 +48,31 @@ namespace SongBPMFinder.Util
 		}
 
 		//Performs a Haar DWT in the data numLevels times, and returns slices corresponding to each segment
-		public static Slice<float>[] HaarFWT(Slice<float> data, Slice<float> temp, int numLevels) {
-			Slice<float>[] dwtSlices = new Slice<float>[numLevels];
+        //The slices will index into the data buffer as well as the data array
+		public static Slice<float>[] HaarFWT(Slice<float> data, Slice<float> dataBuffer, int numLevels) {
+            Slice<float>[] outSlices = new Slice<float>[numLevels];
 
             for (int i = 0, h = data.Length; i < numLevels; i++, h /= 2)
             {
-                dwtSlices[i] = data.GetSlice(0, h);
-                haarFWTSingle(dwtSlices[i], temp);
+                Slice<float> inSlice = data.GetSlice(0, h);
+                outSlices[i] = dataBuffer.GetSlice(0, h);
+
+                haarFWTSingle(inSlice, dataBuffer);
+
+                Slice<float> temp = data;
+                data = dataBuffer;
+                dataBuffer = temp;
             }
 
-			dwtSlices = FloatArrays.GetDetailCoefficients(dwtSlices);
+			outSlices = FloatArrays.GetDetailCoefficients(outSlices);
 
-			return dwtSlices;
+			return outSlices;
 		}
 
+        public static Slice<float> ZeroesLike(Slice<float> x)
+        {
+            return new Slice<float>(new float[x.Length]);
+        }
 
 		public static Slice<float>[] DownsampleCoefficients(Slice<float>[] dwtSlices, Slice<float> original, int mainDownsampleFactor)
         {
@@ -192,7 +202,7 @@ namespace SongBPMFinder.Util
         {
             for (int i = 0; i < x.Length; i++)
             {
-                x[i] = Math.Abs(x[i]);
+                if (x[i] < 0) x[i] = -x[i];
             }
         }
 
