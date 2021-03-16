@@ -222,6 +222,9 @@ namespace SongBPMFinder.Gui
 
         public void Zoom(int dir, float amount)
         {
+            if (audioData == null)
+                return;
+
             SecondsPerPixel *= Math.Pow(amount, -dir);
 
             if (SecondsPerPixel < 0.000001f)
@@ -233,6 +236,8 @@ namespace SongBPMFinder.Gui
 
         public void Scroll(float amount)
         {
+            if (audioData == null)
+                return;
             audioData.CurrentSample -= (int)(amount * WindowLength / 20);
             Invalidate();
         }
@@ -298,14 +303,17 @@ namespace SongBPMFinder.Gui
 
         void drawAxes(PaintEventArgs e, float rectTop, float rectBottom)
         {
-
-            int mid = ClientRectangle.X + ClientRectangle.Width / 2;
-            e.Graphics.DrawLine(Pens.Yellow, mid, ClientRectangle.Top, mid, ClientRectangle.Bottom);
-
             e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, rectTop);
             e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, rectBottom - 20);
         }
 
+        private void DrawMidLine(PaintEventArgs e)
+        {
+            int mid = ClientRectangle.X + ClientRectangle.Width / 2;
+            e.Graphics.DrawLine(Pens.Black, mid - 1, ClientRectangle.Top, mid - 1, ClientRectangle.Bottom);
+            e.Graphics.DrawLine(Pens.Yellow, mid, ClientRectangle.Top, mid, ClientRectangle.Bottom);
+            e.Graphics.DrawLine(Pens.Black, mid + 1, ClientRectangle.Top, mid + 1, ClientRectangle.Bottom);
+        }
 
         void drawTimingPoints(PaintEventArgs e)
         {
@@ -382,7 +390,13 @@ namespace SongBPMFinder.Gui
 
             drawTimingPoints(e);
 
-            e.Graphics.DrawString("" + audioData.CurrentSampleSeconds.ToString("0.000") + "s", textFont, Brushes.Blue, new PointF(ClientRectangle.X + ClientRectangle.Width / 2, ClientRectangle.Top));
+            string currentTime = audioData.CurrentSampleSeconds.ToString("0.000") + "seconds" +
+                " / " + audioData.CurrentSample + "samples";
+
+            e.Graphics.DrawString(currentTime, textFont, Brushes.Blue, new PointF(ClientRectangle.X + ClientRectangle.Width / 2, ClientRectangle.Top));
+
+            DrawMidLine(e);
+
 
             base.OnPaint(e);
         }

@@ -82,6 +82,23 @@ namespace SongBPMFinder
 			calculateTiming();           
         }
 
+
+        private CustomWaveViewer GetCurrentViewer()
+        {
+            Logger.Log("selected: " + waveformTabs.SelectedIndex);
+
+            if (freezeView.Checked)
+            {
+                if(waveformTabs.SelectedIndex == 0)
+                    return null;
+
+                return getViewer(waveformTabs.SelectedIndex - 1);
+            }
+                
+
+            return audioViewer;
+        }
+
         CustomWaveViewer getViewer(int graph)
         {
             switch (graph)
@@ -155,25 +172,48 @@ namespace SongBPMFinder
 
             if (Control.ModifierKeys == Keys.Control)
             {
-                audioViewer.Zoom(dir, 2.0f);
+                Zoom(dir);
             }
-            else 
+            else
             {
-                if (ModifierKeys == Keys.Shift)
-                {
-                    audioViewer.Scroll(dir * 0.1f);
-                }
-                else
-                {
-                    audioViewer.Scroll(dir);
-                }
+                Scroll(dir);
+            }
+        }
 
+        private void Scroll(int dir)
+        {
+            var viewer = GetCurrentViewer();
+            if (viewer == null)
+                return;
+
+            if (ModifierKeys == Keys.Shift)
+            {
+                viewer.Scroll(dir * 0.1f);
+            }
+            else
+            {
+                viewer.Scroll(dir);
+            }
+
+            if (IsTesting)
+            {
                 //TESTING
-				if(IsTesting){
-                	calculateTiming();
-				}
-            } 
+                if (!freezeView.Checked)
+                {
+                    calculateTiming();
+                }
+            }
 
+            UpdateScrollExtents();
+        }
+
+        private void Zoom(int dir)
+        {
+            var viewer = GetCurrentViewer();
+            if (viewer == null)
+                return;
+
+            viewer.Zoom(dir, 2.0f);
             UpdateScrollExtents();
         }
 
