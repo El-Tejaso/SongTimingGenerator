@@ -26,6 +26,8 @@ namespace SongBPMFinder.Audio.Timing
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
         public static int FindBeat(AudioData audioData, Slice<float> slice, Slice<float> sliceSizedBuffer, float instant, int numLevels = 4, bool debug = false)
         {
+            Slice<float> sliceCopy = slice.DeepCopy();
+
 			//Discrete wavelet transform
 			Slice<float>[] dwtSlices = FloatArrays.HaarFWT(slice, sliceSizedBuffer, numLevels);
 
@@ -80,30 +82,11 @@ namespace SongBPMFinder.Audio.Timing
                 Slice<float> plotArray = autocorrelPlacement.DeepCopy();
 
                 Form1.Instance.Plot("Autocorrelated", plotArray, 0);
-                List<TimingPoint> debugPoints = new List<TimingPoint>();
-                double maxT = audioData.SampleToSeconds(maxIndex);
-                debugPoints.Add(new TimingPoint(maxT, maxT, Color.Pink));
-                Form1.Instance.AddLines(debugPoints, 0);
 
-                //Draw autocorrelated array again, sorted
-                Slice<float> plotArraySorted = plotArray.DeepCopy();
-                Array.Sort(plotArraySorted.GetInternalArray());
+                //Draw frequency spectrum
+                AccordFourierTransform.FFT(sliceCopy, FloatArrays.ZeroesLike(sliceCopy), AccordFourierTransform.Direction.Forward);
+                Form1.Instance.Plot("Frequencies", sliceCopy.GetSlice(0, sliceCopy.Length/2), 1);
 
-                Form1.Instance.Plot("Acl sorted", plotArraySorted, 1);
-
-                Slice<float> plotArrayAbsSorted = plotArraySorted.DeepCopy();
-                FloatArrays.Abs(plotArrayAbsSorted);
-                Array.Sort(plotArrayAbsSorted.GetInternalArray());
-                Form1.Instance.Plot("Acl ABS sorted", plotArrayAbsSorted, 2);
-
-				Slice<float> plotArrayNAcc = summedEnvelopes.DeepCopy();
-                //Do another normalization step
-                float mean2 = FloatArrays.Average(plotArrayNAcc, false);
-                FloatArrays.Sum(plotArrayNAcc, -mean2);
-                FloatArrays.Normalize(plotArrayNAcc);
-
-				//FloatArrays.Normalize(plotArrayDx);
-                Form1.Instance.Plot("Not Autocorrelated", plotArrayNAcc, 3);
             }
 
             #endregion
@@ -117,7 +100,7 @@ namespace SongBPMFinder.Audio.Timing
 
             float ratio = (max-av) / meanAbs;
 
-            if (ratio < 8)
+            if (ratio < 7)
             {
                 //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
                 return -1;

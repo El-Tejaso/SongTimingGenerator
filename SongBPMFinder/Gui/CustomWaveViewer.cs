@@ -221,31 +221,33 @@ namespace SongBPMFinder.Gui
         }
 
 
-        void drawIndividualSamples(PaintEventArgs e, float rectTop, float rectBottom)
+        void drawIndividualSamples(PaintEventArgs e, float rectTop, float rectBottom, int channel)
         {
             if (audioData == null)
                 return;
-            int samplesPerPixel = audioData.ToSample(SecondsPerPixel);
 
-            if (samplesPerPixel > 1) return;
+            int samplesPerPixel = audioData.ToSample(SecondsPerPixel);
 
             int lower = Math.Max(0, audioData.CurrentSample - WindowLength / 2);
             int upper = Math.Min(audioData.Data.Length, audioData.CurrentSample + WindowLength / 2);
 
+            Logger.Log(lower + " " + upper);
+
+            Slice<float> channelData = audioData.GetChannel(channel);
 
             for (int position = lower; position < upper; position++)
             {
                 float x = getWaveformX(position);
-                float y = getWaveformY(audioData.Data[position], rectTop, rectBottom);
+                float y = getWaveformY(channelData[position], rectTop, rectBottom);
                 e.Graphics.DrawLine(Pens.Black, x, getWaveformY(0, rectTop, rectBottom), x, y);
 
                 if (position > lower)
                 {
-                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(audioData.Data[position-1], rectTop, rectBottom), x, y);
+                    e.Graphics.DrawLine(Pens.Black, getWaveformX(position-1), getWaveformY(channelData[position-1], rectTop, rectBottom), x, y);
                 }
             }
 
-            Slice<float> range = audioData.Data.GetSlice(lower, upper);
+            Slice<float> range = channelData.GetSlice(lower, upper);
             float mean = FloatArrays.Average(range, false);
 			float meanAbs = FloatArrays.Average(range, true);
             float stdev = FloatArrays.StdDev(range);
@@ -343,7 +345,7 @@ namespace SongBPMFinder.Gui
 
                 if (ForceIndividualView)
                 {
-                    drawIndividualSamples(e, top, bottom);
+                    drawIndividualSamples(e, top, bottom, i);
                 }
                 else
                 {
@@ -353,7 +355,7 @@ namespace SongBPMFinder.Gui
                     }
                     else
                     {
-                        drawIndividualSamples(e, top, bottom);
+                        drawIndividualSamples(e, top, bottom, i);
                     }
                 }
 

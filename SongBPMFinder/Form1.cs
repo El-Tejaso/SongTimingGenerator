@@ -400,8 +400,8 @@ namespace SongBPMFinder
             Slice<float> subsetR = currentAudioFile.GetChannel(1).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample + window);
             Slice<float> imaginaryBufferR = FloatArrays.ZeroesLike(subsetR);
 
-            //AccordFourierTransform.FFT(subsetL, imaginaryBufferL);
-            //AccordFourierTransform.FFT(subsetR, imaginaryBufferR);
+            AccordFourierTransform.FFT(subsetL, imaginaryBufferL);
+            AccordFourierTransform.FFT(subsetR, imaginaryBufferR);
 
             for(int i = 0; i < imaginaryBufferL.Length/2; i++)
             {

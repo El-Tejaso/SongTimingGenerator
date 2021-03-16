@@ -53,11 +53,6 @@ namespace SongBPMFinder.Util
                 //Breakpoint
             }
 
-			if (newEnd * stride > array.Length)
-            {
-                //Breakpoint
-            }
-
             return new Slice<T>(
 				array, 
 				start + newStart*stride, 
