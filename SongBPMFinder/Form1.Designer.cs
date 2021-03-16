@@ -65,6 +65,7 @@
             this.openButton = new System.Windows.Forms.Button();
             this.openFileDialogue = new System.Windows.Forms.OpenFileDialog();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
+            this.freezeView = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -391,6 +392,7 @@
             // toolPanel
             // 
             this.toolPanel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.toolPanel.Controls.Add(this.freezeView);
             this.toolPanel.Controls.Add(this.testButton);
             this.toolPanel.Controls.Add(this.copyTimingButton);
             this.toolPanel.Controls.Add(this.label4);
@@ -411,7 +413,7 @@
             this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.testButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.testButton.Location = new System.Drawing.Point(6, 275);
+            this.testButton.Location = new System.Drawing.Point(6, 475);
             this.testButton.Name = "testButton";
             this.testButton.Size = new System.Drawing.Size(165, 29);
             this.testButton.TabIndex = 8;
@@ -454,7 +456,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 464);
+            this.label2.Location = new System.Drawing.Point(3, 528);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 4;
@@ -517,6 +519,17 @@
             // songPositionChangedInterrupt
             // 
             this.songPositionChangedInterrupt.Tick += new System.EventHandler(this.songPositionChangedInterrupt_Tick);
+            // 
+            // freezeView
+            // 
+            this.freezeView.AutoSize = true;
+            this.freezeView.Location = new System.Drawing.Point(6, 437);
+            this.freezeView.Name = "freezeView";
+            this.freezeView.Size = new System.Drawing.Size(83, 17);
+            this.freezeView.TabIndex = 9;
+            this.freezeView.Text = "Freeze view";
+            this.freezeView.UseVisualStyleBackColor = true;
+            this.freezeView.CheckedChanged += new System.EventHandler(this.freezeView_CheckedChanged);
             // 
             // Form1
             // 
@@ -583,6 +596,7 @@
         private System.Windows.Forms.TabPage testWaveformTab5;
         private Gui.CustomWaveViewer plotWaveViewer5;
         private System.Windows.Forms.Button testButton;
+        private System.Windows.Forms.CheckBox freezeView;
     }
 }
 

@@ -155,34 +155,24 @@ namespace SongBPMFinder
 
             if (Control.ModifierKeys == Keys.Control)
             {
-                audioViewer.SecondsPerPixel *= Math.Pow(2, -dir);
-
-                if (audioViewer.SecondsPerPixel < 0.000001f)
-                    audioViewer.SecondsPerPixel = 0.000001f;
-
-                if (audioViewer.SecondsPerPixel > currentAudioFile.Duration / audioViewer.Width)
-                    audioViewer.SecondsPerPixel = currentAudioFile.Duration / audioViewer.Width;
-
+                audioViewer.Zoom(dir, 2.0f);
             }
-            else
+            else 
             {
-                if(ModifierKeys == Keys.Shift)
+                if (ModifierKeys == Keys.Shift)
                 {
-                    currentAudioFile.CurrentSample -= dir * audioViewer.WindowLength / 200;
-                } 
+                    audioViewer.Scroll(dir * 0.1f);
+                }
                 else
                 {
-                    currentAudioFile.CurrentSample -= dir * audioViewer.WindowLength / 20;
+                    audioViewer.Scroll(dir);
                 }
-
-                audioViewer.Invalidate();
 
                 //TESTING
 				if(IsTesting){
                 	calculateTiming();
 				}
-            }
-
+            } 
 
             UpdateScrollExtents();
         }
@@ -416,6 +406,11 @@ namespace SongBPMFinder
 
             watch.Stop();
             Logger.Log("Did FFT and IFFT with w=" + window + " in " + watch.ElapsedMilliseconds + "ms");
+        }
+
+        private void freezeView_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

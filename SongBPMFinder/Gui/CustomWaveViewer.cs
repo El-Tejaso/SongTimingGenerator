@@ -220,6 +220,23 @@ namespace SongBPMFinder.Gui
             return ClientRectangle.X + ((samples-audioData.CurrentSample+WindowLength/2) / (float)WindowLength) * ClientRectangle.Width;
         }
 
+        public void Zoom(int dir, float amount)
+        {
+            SecondsPerPixel *= Math.Pow(amount, -dir);
+
+            if (SecondsPerPixel < 0.000001f)
+                SecondsPerPixel = 0.000001f;
+
+            if (SecondsPerPixel > audioData.Duration / Width)
+                SecondsPerPixel = audioData.Duration / Width;
+        }
+
+        public void Scroll(float amount)
+        {
+            audioData.CurrentSample -= (int)(amount * WindowLength / 20);
+            Invalidate();
+        }
+
 
         void drawIndividualSamples(PaintEventArgs e, float rectTop, float rectBottom, int channel)
         {
