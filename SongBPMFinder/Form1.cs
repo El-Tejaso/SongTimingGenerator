@@ -36,7 +36,7 @@ namespace SongBPMFinder
 
         public CustomWaveViewer Viewer;
 
-		public bool IsTesting = true;
+		public bool IsTesting = false;
         #endregion
 
         public Form1()
@@ -85,8 +85,6 @@ namespace SongBPMFinder
 
         private CustomWaveViewer GetCurrentViewer()
         {
-            Logger.Log("selected: " + waveformTabs.SelectedIndex);
-
             if (freezeView.Checked)
             {
                 if(waveformTabs.SelectedIndex == 0)

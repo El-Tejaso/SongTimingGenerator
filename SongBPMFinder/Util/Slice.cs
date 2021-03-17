@@ -46,6 +46,7 @@ namespace SongBPMFinder.Util
 			this.stride = 1;
         }
 
+        //Permits indexing outside of the defined slice bounds. Make sure you know what you are doing though
         public Slice<T> GetSlice(int newStart, int newEnd, int newStride = 1)
         {
             if (newEnd*stride > array.Length)

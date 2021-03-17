@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using SongBPMFinder.Util;
+using SongBPMFinder.Audio.BeatDetection;
 
 namespace SongBPMFinder.Audio.Timing
 {
@@ -38,7 +39,7 @@ namespace SongBPMFinder.Audio.Timing
 
 
             //Final beat position
-            int beatPosition = BeatFinder.FindBeat(audioData, data, data.DeepCopy(), resolution, numLevels, true);
+            int beatPosition = BeatDetector.DetectBeat(audioData, data, data.DeepCopy(), resolution, numLevels, true);
 
             if(beatPosition == -1)
             {
@@ -75,10 +76,9 @@ namespace SongBPMFinder.Audio.Timing
         {
             List<TimingPoint> timingPoints = new List<TimingPoint>();
 			float res = 0.0005f;
-			float coalesceWindow = res*2;
+			float beatSize = 0.01f;
 
-            timingPoints = BeatFinder.FindAllBeats(audioData, 0.2, 0.05, res);
-            //timingPoints = BeatFinder.FindAllBeatsCoalescing(audioData, 0.2, 0.01, res, coalesceWindow);
+            timingPoints = MultiBeatDetector.DetectAllBeats(audioData, 0.2, beatSize, res);
 
             timingPoints = TimingPointList.RemoveDebugPoints(timingPoints);
             double tol = res/2.0;
