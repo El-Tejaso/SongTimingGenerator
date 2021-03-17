@@ -9,6 +9,7 @@ using SongBPMFinder.Audio;
 using SongBPMFinder.Audio.Timing;
 using SongBPMFinder.Util;
 using SongBPMFinder.Logging;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder.Gui
 {

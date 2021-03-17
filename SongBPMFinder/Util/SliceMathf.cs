@@ -1,4 +1,5 @@
 ﻿using SongBPMFinder.Logging;
+using SongBPMFinder.Slices;
 using System;
 using System.Collections.Generic;
 using System.Linq;

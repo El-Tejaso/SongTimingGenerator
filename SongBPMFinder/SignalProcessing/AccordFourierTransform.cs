@@ -55,7 +55,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SongBPMFinder.Util;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder.SignalProcessing
 {
@@ -63,18 +63,19 @@ namespace SongBPMFinder.SignalProcessing
     ///   Fourier Transform (for arbitrary size matrices).
     /// </summary>
 
-    public static class AccordFourierTransform
+    class AccordFourierTransform : IFourierTransform
     {
-        public enum Direction { 
+        public enum Direction
+        {
             Forward,
             Backward
         };
 
         // Trigonometric tables cached.
-        private static float[] cosTable;
-        private static float[] sinTable;
-        private static float[] expCosTable;
-        private static float[] expSinTable;
+        private float[] cosTable;
+        private float[] sinTable;
+        private float[] expCosTable;
+        private float[] expSinTable;
 
         /// <summary>
         ///   1-D Fast Fourier Transform.
@@ -84,7 +85,7 @@ namespace SongBPMFinder.SignalProcessing
         /// <param name="imag">The imaginary part of the complex numbers to transform.</param>
         /// <param name="direction">The transformation direction.</param>
         /// 
-        public static void FFT(Slice<float> real, Slice<float> imag, AccordFourierTransform.Direction direction = Direction.Forward)
+        private void FFT(Slice<float> real, Slice<float> imag, AccordFourierTransform.Direction direction = Direction.Forward)
         {
             if (direction == AccordFourierTransform.Direction.Forward)
             {
@@ -105,7 +106,12 @@ namespace SongBPMFinder.SignalProcessing
             }
         }
 
-        public static void IFFT(Slice<float> real, Slice<float> imag)
+        public void Forward(Slice<float> real, Slice<float> imag)
+        {
+            FFT(real, imag, Direction.Forward);
+        }
+
+        public void Backward(Slice<float> real, Slice<float> imag)
         {
             FFT(real, imag, Direction.Backward);
         }
@@ -119,7 +125,7 @@ namespace SongBPMFinder.SignalProcessing
         /// <param name="real">The real.</param>
         /// <param name="imag">The imag.</param>
         /// 
-        private static void FFT(Slice<float> real, Slice<float> imag)
+        private void FFT(Slice<float> real, Slice<float> imag)
         {
             int n = real.Length;
 
@@ -146,7 +152,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   inverse is not a true inverse.
         /// </summary>
         /// 
-        private static void IDFT(Slice<float> real, Slice<float> imag)
+        private void IDFT(Slice<float> real, Slice<float> imag)
         {
             FFT(imag, real);
         }
@@ -159,7 +165,7 @@ namespace SongBPMFinder.SignalProcessing
         /// 
         /// <exception cref="System.ArgumentException">Length is not a power of 2.</exception>
         /// 
-        private static void TransformRadix2(Slice<float> real, Slice<float> imag)
+        private void TransformRadix2(Slice<float> real, Slice<float> imag)
         {
             int n = real.Length;
 
@@ -228,7 +234,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Bluestein's chirp z-transform algorithm.
         /// </summary>
         /// 
-        private static void TransformBluestein(Slice<float> real, Slice<float> imag)
+        private void TransformBluestein(Slice<float> real, Slice<float> imag)
         {
             int n = real.Length;
             int m = HighestOneBit(n * 2 + 1) << 1;
@@ -276,7 +282,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   vectors. All vectors must have the same length.
         /// </summary>
         /// 
-        public static void Convolve(Slice<float> x, Slice<float> y, Slice<float> result)
+        public void Convolve(Slice<float> x, Slice<float> y, Slice<float> result)
         {
             int n = x.Length;
             Convolve(x, new Slice<float>(new float[n]), y, new Slice<float>(new float[n]), result, new Slice<float>(new float[n]));
@@ -287,7 +293,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   vectors. All vectors must have the same length.
         /// </summary>
         /// 
-        public static void Convolve(Slice<float> xreal, Slice<float> ximag, Slice<float> yreal, Slice<float> yimag, Slice<float> outreal, Slice<float> outimag)
+        public void Convolve(Slice<float> xreal, Slice<float> ximag, Slice<float> yreal, Slice<float> yimag, Slice<float> outreal, Slice<float> outimag)
         {
             int n = xreal.Length;
 
@@ -311,7 +317,7 @@ namespace SongBPMFinder.SignalProcessing
             }
         }
 
-        private static int HighestOneBit(int i)
+        private int HighestOneBit(int i)
         {
             i |= (i >> 1);
             i |= (i >> 2);
@@ -321,7 +327,7 @@ namespace SongBPMFinder.SignalProcessing
             return i - (int)((uint)i >> 1);
         }
 
-        private static int Reverse(int i)
+        private int Reverse(int i)
         {
             i = (i & 0x55555555) << 1 | (int)((uint)i >> 1) & 0x55555555;
             i = (i & 0x33333333) << 2 | (int)((uint)i >> 2) & 0x33333333;
@@ -335,7 +341,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Creates an evenly spaced frequency vector (assuming a symmetric FFT)
         /// </summary>
         /// 
-        public static Slice<float> GetFrequencyVector(int length, int sampleRate)
+        public Slice<float> GetFrequencyVector(int length, int sampleRate)
         {
             int numUniquePts = (int)System.Math.Ceiling((length + 1) / 2.0);
 
@@ -350,7 +356,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Gets the spectral resolution for a signal of given sampling rate and number of samples.
         /// </summary>
         /// 
-        public static float GetSpectralResolution(int samplingRate, int samples)
+        public float GetSpectralResolution(int samplingRate, int samples)
         {
             return samplingRate / (float)samples;
         }
@@ -361,7 +367,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Keeps the results in memory and reuses if parameters are the same.
         /// </summary>
         /// 
-        private static float[] CosTable(int sampleCount)
+        private float[] CosTable(int sampleCount)
         {
             // Return table from memory if period matches.
             if (cosTable != null && sampleCount == cosTable.Length)
@@ -381,7 +387,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Keeps the results in memory and reuses if parameters are the same.
         /// </summary>
         ///
-        private static float[] SinTable(int sampleCount)
+        private float[] SinTable(int sampleCount)
         {
             // Return table from memory if period matches.
             if (sinTable != null && sampleCount == sinTable.Length)
@@ -401,7 +407,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Keeps the results in memory and reuses if parameters are the same.
         /// </summary>
         ///
-        private static float[] ExpCosTable(int sampleCount)
+        private float[] ExpCosTable(int sampleCount)
         {
             // Return table from memory if period matches.
             if (expCosTable != null && sampleCount == expCosTable.Length)
@@ -422,7 +428,7 @@ namespace SongBPMFinder.SignalProcessing
         ///   Keeps the results in memory and reuses if parameters are the same.
         /// </summary>
         ///
-        private static float[] ExpSinTable(int sampleCount)
+        private float[] ExpSinTable(int sampleCount)
         {
             // Return table from memory if period matches.
             if (expSinTable != null && sampleCount == expSinTable.Length)

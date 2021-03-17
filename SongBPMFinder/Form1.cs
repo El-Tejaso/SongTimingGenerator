@@ -14,6 +14,7 @@ using System.Diagnostics;
 using SongBPMFinder.Gui;
 using SongBPMFinder.Logging;
 using SongBPMFinder.SignalProcessing;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder
 {
@@ -430,8 +431,8 @@ namespace SongBPMFinder
             Slice<float> subsetR = currentAudioFile.GetChannel(1).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample + window);
             Slice<float> imaginaryBufferR = SliceMathf.ZeroesLike(subsetR);
 
-            AccordFourierTransform.FFT(subsetL, imaginaryBufferL);
-            AccordFourierTransform.FFT(subsetR, imaginaryBufferR);
+            FourierTransform.Forward(subsetL, imaginaryBufferL);
+            FourierTransform.Forward(subsetR, imaginaryBufferR);
 
             for(int i = 0; i < imaginaryBufferL.Length/2; i++)
             {
@@ -440,9 +441,8 @@ namespace SongBPMFinder
                 subsetR[i] *= subsetR[i];
             }
 
-            AccordFourierTransform.IFFT(subsetR, imaginaryBufferR);
-            AccordFourierTransform.IFFT(subsetL, imaginaryBufferL);
-
+            FourierTransform.Backward(subsetR, imaginaryBufferR);
+            FourierTransform.Backward(subsetL, imaginaryBufferL);
 
             watch.Stop();
             Logger.Log("Did FFT and IFFT with w=" + window + " in " + watch.ElapsedMilliseconds + "ms");

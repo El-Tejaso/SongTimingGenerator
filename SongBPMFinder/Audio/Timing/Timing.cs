@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using SongBPMFinder.Util;
 using SongBPMFinder.Audio.BeatDetection;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder.Audio.Timing
 {

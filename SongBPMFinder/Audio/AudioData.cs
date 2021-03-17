@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NAudio;
 using NAudio.Wave;
 using SongBPMFinder.Logging;
-using SongBPMFinder.Util;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder.Audio
 {

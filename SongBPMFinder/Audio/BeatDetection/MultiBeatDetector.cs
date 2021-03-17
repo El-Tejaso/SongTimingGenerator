@@ -1,5 +1,5 @@
 ﻿using SongBPMFinder.Audio.Timing;
-using SongBPMFinder.Util;
+using SongBPMFinder.Slices;
 using System;
 using System.Collections.Generic;
 using System.Linq;

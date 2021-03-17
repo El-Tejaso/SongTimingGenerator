@@ -7,6 +7,7 @@ using System.Drawing;
 using SongBPMFinder.Util;
 using SongBPMFinder.Audio.Timing;
 using SongBPMFinder.SignalProcessing;
+using SongBPMFinder.Slices;
 
 namespace SongBPMFinder.Audio.BeatDetection
 {
@@ -94,7 +95,7 @@ namespace SongBPMFinder.Audio.BeatDetection
             Form1.Instance.AddLines(debugLines, 0);
 
             //Draw frequency spectrum
-            AccordFourierTransform.FFT(sliceDebugCopy, SliceMathf.ZeroesLike(sliceDebugCopy), AccordFourierTransform.Direction.Forward);
+            FourierTransform.Forward(sliceDebugCopy, SliceMathf.ZeroesLike(sliceDebugCopy));
             Form1.Instance.Plot("Frequencies", sliceDebugCopy.GetSlice(0, sliceDebugCopy.Length / 2), 1);
         }
 
