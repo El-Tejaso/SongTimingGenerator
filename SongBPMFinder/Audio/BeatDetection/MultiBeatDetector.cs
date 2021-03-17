@@ -43,8 +43,8 @@ namespace SongBPMFinder.Audio.BeatDetection
             return timingPoints;
         }
         
-        //A brute force approach to beat detection
-        public static List<TimingPoint> DetectAllBeatsCoalescing(AudioData audioData, double windowSize, double beatSize, float resolution)
+        //A brute force approach to beat detection. probably takes way longer but may be more accurate
+        public static List<TimingPoint> DetectAllBeatsCoalescing(AudioData audioData, double windowSize, double coalesceWindow, float resolution)
         {
             //TODO: fix copypaste of this stuff
             Slice<float> data = PrepareData(audioData);
@@ -54,19 +54,18 @@ namespace SongBPMFinder.Audio.BeatDetection
             Slice<float> spareBuffer = new Slice<float>(new float[windowLength]);
 
 
-            int coalesceWindow = audioData.ToSample(beatSize);
-
             int pos = 0;
             while (pos < data.Length)
             {
                 int beatPosition = DetectBeatInWindow(pos, audioData, ref data, windowBuffer, spareBuffer, resolution);
-                pos += windowBuffer.Length / 5;
 
-                if (beatPosition == -1)
-                    continue;
+                if (beatPosition != -1)
+                {
+                    double beatTime = audioData.SampleToSeconds(pos + beatPosition);
+                    TimingPointList.AddCoalescing(timingPoints, new TimingPoint(120, beatTime), coalesceWindow);
+                }
 
-                double beatTime = audioData.SampleToSeconds(beatPosition);
-                TimingPointList.AddCoalescing(timingPoints, new TimingPoint(120, beatTime), coalesceWindow);
+                pos += windowBuffer.Length / 10;
             }
 
             timingPoints = RemoveLowWeightTimingPoints(timingPoints);
