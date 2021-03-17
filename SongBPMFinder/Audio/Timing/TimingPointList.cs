@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using SongBPMFinder.Util;
+using SongBPMFinder.Logging;
 
 namespace SongBPMFinder.Audio.Timing
 {

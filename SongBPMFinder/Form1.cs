@@ -12,6 +12,8 @@ using SongBPMFinder.Audio;
 using SongBPMFinder.Audio.Timing;
 using System.Diagnostics;
 using SongBPMFinder.Gui;
+using SongBPMFinder.Logging;
+using SongBPMFinder.SignalProcessing;
 
 namespace SongBPMFinder
 {
@@ -59,7 +61,7 @@ namespace SongBPMFinder
             songPositionChangedInterrupt.Stop();
             songPositionChangedInterrupt.Interval = 3;
 
-            Logger.SetOutput(textOutput);
+            Logger.SetOutput(new RichTextBoxLogger(textOutput));
             audioViewer.SecondsPerPixel = 0.1;
 
 
@@ -141,7 +143,7 @@ namespace SongBPMFinder
 
         private void clearOutputButton_Click(object sender, EventArgs e)
         {
-            Logger.ClearOutput();
+            Logger.Clear();
         }
         private void playPauseButton_Click(object sender, EventArgs e)
         {
@@ -423,10 +425,10 @@ namespace SongBPMFinder
             var watch = Stopwatch.StartNew();
 
             Slice<float> subsetL = currentAudioFile.GetChannel(0).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample+window);
-            Slice<float> imaginaryBufferL = FloatArrays.ZeroesLike(subsetL);
+            Slice<float> imaginaryBufferL = SliceMathf.ZeroesLike(subsetL);
 
             Slice<float> subsetR = currentAudioFile.GetChannel(1).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample + window);
-            Slice<float> imaginaryBufferR = FloatArrays.ZeroesLike(subsetR);
+            Slice<float> imaginaryBufferR = SliceMathf.ZeroesLike(subsetR);
 
             AccordFourierTransform.FFT(subsetL, imaginaryBufferL);
             AccordFourierTransform.FFT(subsetR, imaginaryBufferR);

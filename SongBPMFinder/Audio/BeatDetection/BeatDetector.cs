@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using SongBPMFinder.Util;
 using SongBPMFinder.Audio.Timing;
+using SongBPMFinder.SignalProcessing;
 
 namespace SongBPMFinder.Audio.BeatDetection
 {
@@ -34,7 +35,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
             //instantSize is a downsampling factor used later to convert from downsampled indices back to audio indices
             int instantSize = CalculateInstantSize(audioData, instant, numLevels);
-            Slice<float>[] downsampledSlices = FloatArrays.DownsampleCoefficients(dwtSlices, slice, instantSize);
+            Slice<float>[] downsampledSlices = SliceMathf.DownsampleCoefficients(dwtSlices, slice, instantSize);
 
             Slice<float> summedEnvelopes = SumEnvelopes(downsampledSlices);
 
@@ -59,15 +60,15 @@ namespace SongBPMFinder.Audio.BeatDetection
 
         private static int FindPeak(Slice<float> summedEnvelopes)
         {
-            return FloatArrays.ArgMax(summedEnvelopes, false);
+            return SliceMathf.ArgMax(summedEnvelopes, false);
         }
 
         private static float CalculateBeatStrength(Slice<float> summedEnvelopes, int beatPosition)
         {
             float max = summedEnvelopes[beatPosition];
-            float av = FloatArrays.Average(summedEnvelopes);
-            float stdDev = FloatArrays.StdDev(summedEnvelopes);
-            float meanAbs = FloatArrays.Average(summedEnvelopes, true);
+            float av = SliceMathf.Average(summedEnvelopes);
+            float stdDev = SliceMathf.StdDev(summedEnvelopes);
+            float meanAbs = SliceMathf.Average(summedEnvelopes, true);
 
             float ratio = (max - av) / meanAbs;
 
@@ -93,21 +94,21 @@ namespace SongBPMFinder.Audio.BeatDetection
             Form1.Instance.AddLines(debugLines, 0);
 
             //Draw frequency spectrum
-            AccordFourierTransform.FFT(sliceDebugCopy, FloatArrays.ZeroesLike(sliceDebugCopy), AccordFourierTransform.Direction.Forward);
+            AccordFourierTransform.FFT(sliceDebugCopy, SliceMathf.ZeroesLike(sliceDebugCopy), AccordFourierTransform.Direction.Forward);
             Form1.Instance.Plot("Frequencies", sliceDebugCopy.GetSlice(0, sliceDebugCopy.Length / 2), 1);
         }
 
         private static void NormalizeEnvelopes(Slice<float> summedEnvelopes)
         {
-            float mean = FloatArrays.Average(summedEnvelopes, false);
-            FloatArrays.Sum(summedEnvelopes, -mean);
-            FloatArrays.Normalize(summedEnvelopes);
+            float mean = SliceMathf.Average(summedEnvelopes, false);
+            SliceMathf.Sum(summedEnvelopes, -mean);
+            SliceMathf.Normalize(summedEnvelopes);
         }
 
         private static Slice<float> Autocorrelate(Slice<float> summedEnvelopes)
         {
             Slice<float> autocorrelPlacement = summedEnvelopes.GetSlice(summedEnvelopes.Length, 2 * summedEnvelopes.Length);
-            FloatArrays.Autocorrelate(summedEnvelopes, autocorrelPlacement);
+            SliceMathf.Autocorrelate(summedEnvelopes, autocorrelPlacement);
             return autocorrelPlacement;
         }
 
@@ -117,7 +118,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
             for (int i = 1; i < downsampleSlices.Length; i++)
             {
-                FloatArrays.Sum(summedEnvelopes, downsampleSlices[i]);
+                SliceMathf.Sum(summedEnvelopes, downsampleSlices[i]);
             }
 
             return summedEnvelopes;
@@ -133,12 +134,12 @@ namespace SongBPMFinder.Audio.BeatDetection
 
         private static Slice<float>[] DiscreteWaveletTransform(Slice<float> slice, Slice<float> sliceSizedBuffer, int numLevels)
         {
-            return FloatArrays.HaarFWT(slice, sliceSizedBuffer, numLevels);
+            return SliceMathf.HaarFWT(slice, sliceSizedBuffer, numLevels);
         }
 
         private static void FullWaveRectify(Slice<float> slice)
         {
-            FloatArrays.Abs(slice);
+            SliceMathf.Abs(slice);
         }
     }
 }

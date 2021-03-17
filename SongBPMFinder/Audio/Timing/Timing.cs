@@ -78,8 +78,8 @@ namespace SongBPMFinder.Audio.Timing
 			float res = 0.0005f;
 			float beatSize = 0.01f;
 
-            //timingPoints = MultiBeatDetector.DetectAllBeats(audioData, 0.2, beatSize, res);
-            timingPoints = MultiBeatDetector.DetectAllBeatsCoalescing(audioData, 0.2, beatSize, res);
+            timingPoints = MultiBeatDetector.DetectAllBeats(audioData, 0.2, beatSize, res);
+            //timingPoints = MultiBeatDetector.DetectAllBeatsCoalescing(audioData, 0.2, beatSize, res);
 
             timingPoints = TimingPointList.RemoveDebugPoints(timingPoints);
             double tol = res/2.0;

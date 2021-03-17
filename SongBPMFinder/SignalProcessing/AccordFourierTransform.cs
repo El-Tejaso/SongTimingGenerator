@@ -57,7 +57,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SongBPMFinder.Util;
 
-namespace SongBPMFinder.Util
+namespace SongBPMFinder.SignalProcessing
 {
     /// <summary>
     ///   Fourier Transform (for arbitrary size matrices).

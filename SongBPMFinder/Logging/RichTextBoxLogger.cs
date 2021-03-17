@@ -5,28 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
-namespace SongBPMFinder.Util
+namespace SongBPMFinder.Logging
 {
-    public class Logger
+    class RichTextBoxLogger : ILogger
     {
-        static RichTextBox output;
-        public static void SetOutput(RichTextBox newOutput)
+        RichTextBox output;
+        public RichTextBoxLogger(RichTextBox textBox)
         {
-            output = newOutput;
-            ClearOutput();
+            output = textBox;
         }
-
-        public static void ClearOutput()
+        public void Clear()
         {
             output.Text = "";
         }
 
-        public static void Log(string msg)
+        public void Log(string msg)
         {
             output.AppendText(msg + "\n");
             output.ScrollToCaret();
         }
     }
-
 }

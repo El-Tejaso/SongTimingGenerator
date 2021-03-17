@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SongBPMFinder.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace SongBPMFinder.Util
     /// A static class for performing operations on large arrays in-place.
     /// As we can be working with GB-size arrays, we should perform as few copys as possible
     /// </summary>
-    class FloatArrays
+    class SliceMathf
     {
         // This implementation was taken from the Accord.Net framework and adapted to use floats as well as allocate less memory
         // https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Wavelets/Haar.cs
@@ -64,7 +65,7 @@ namespace SongBPMFinder.Util
                 dataBuffer = temp;
             }
 
-			outSlices = FloatArrays.GetDetailCoefficients(outSlices);
+			outSlices = SliceMathf.GetDetailCoefficients(outSlices);
 
 			return outSlices;
 		}
@@ -88,7 +89,7 @@ namespace SongBPMFinder.Util
                 //dwtSlice[level] should have a length of original.Length / level
                 int downsampleFactor = mainDownsampleFactor / (original.Length/dwtSlices[numLevels - i - 1].Length);
 				
-                FloatArrays.DownsampleAverage(dwtSlices[numLevels - i - 1], downsampleSlices[i], downsampleFactor);
+                SliceMathf.DownsampleAverage(dwtSlices[numLevels - i - 1], downsampleSlices[i], downsampleFactor);
             }
 
 			return downsampleSlices;

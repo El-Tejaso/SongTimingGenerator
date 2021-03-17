@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using SongBPMFinder.Util;
 
-namespace SongBPMFinder.Util
+namespace SongBPMFinder.SignalProcessing
 {
     //This class is currently not working. Please do not use any of the methods contained in this class and instead use the AccordFourierTransform class
     class FourierTransform
@@ -24,8 +24,8 @@ namespace SongBPMFinder.Util
         {
             fastFFT(srcI, srcR, dstR, dstI);
 
-            FloatArrays.Divide(dstR, dstR.Length);
-            FloatArrays.Divide(dstI, dstI.Length);
+            SliceMathf.Divide(dstR, dstR.Length);
+            SliceMathf.Divide(dstI, dstI.Length);
         }
 
         //This implementation is based on this article: https://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
