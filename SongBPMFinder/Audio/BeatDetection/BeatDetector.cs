@@ -36,7 +36,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
             //instantSize is a downsampling factor used later to convert from downsampled indices back to audio indices
             int instantSize = CalculateInstantSize(audioData, instant, numLevels);
-            Slice<float>[] downsampledSlices = SliceMathf.DownsampleCoefficients(dwtSlices, slice, instantSize);
+            Slice<float>[] downsampledSlices = DownsampleSlicesToSameLength(slice, dwtSlices, instantSize);
 
             Slice<float> summedEnvelopes = SumEnvelopes(downsampledSlices);
 
@@ -44,7 +44,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
             if (debug)
                 GenerateDebugPlots(sliceDebugCopy, audioData, summedEnvelopes);
-            
+
             int maxIndex = FindPeak(summedEnvelopes);
             float beatStrength = CalculateBeatStrength(summedEnvelopes, maxIndex);
 
@@ -57,6 +57,11 @@ namespace SongBPMFinder.Audio.BeatDetection
             //convert back to position in audio
             int maxAudioPos = CalculateUpsampledPosition(instantSize, maxIndex);
             return maxAudioPos;
+        }
+
+        private static Slice<float>[] DownsampleSlicesToSameLength(Slice<float> slice, Slice<float>[] dwtSlices, int instantSize)
+        {
+            return WaveletTransforms.DownsampleCoefficients(dwtSlices, slice, instantSize);
         }
 
         private static int FindPeak(Slice<float> summedEnvelopes)
@@ -135,7 +140,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
         private static Slice<float>[] DiscreteWaveletTransform(Slice<float> slice, Slice<float> sliceSizedBuffer, int numLevels)
         {
-            return SliceMathf.HaarFWT(slice, sliceSizedBuffer, numLevels);
+            return WaveletTransforms.HaarFWT(slice, sliceSizedBuffer, numLevels);
         }
 
         private static void FullWaveRectify(Slice<float> slice)

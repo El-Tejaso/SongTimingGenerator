@@ -98,8 +98,11 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\RichTextBoxLogger.cs" />
     <Compile Include="SignalProcessing\AccordFourierTransform.cs" />
-    <Compile Include="Util\SliceMathf.cs" />
     <Compile Include="SignalProcessing\FourierTransform.cs" />
+    <Compile Include="SignalProcessing\IFourierTransform.cs" />
+    <Compile Include="SignalProcessing\WaveletTransforms.cs" />
+    <Compile Include="Util\SliceMathf.cs" />
+    <Compile Include="SignalProcessing\HomemadeFourierTransform.cs" />
     <Compile Include="Slices\Slice.cs" />
     <Compile Include="Audio\Timing\Timing.cs" />
     <Compile Include="Audio\Timing\TimingPoint.cs" />
