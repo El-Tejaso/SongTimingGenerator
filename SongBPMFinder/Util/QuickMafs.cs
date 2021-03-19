@@ -53,6 +53,16 @@ namespace SongBPMFinder.Util
 			return (int)(Math.Ceiling((float)x/(float)value) * (float)value);
 		}
 
+        public static float MultilpyImaginaryR(float aR, float bR, float aI, float bI)
+        {
+            return aR * bR - aI * bI;
+        }
+
+        public static float MultilpyImaginaryI(float aR, float bR, float aI, float bI)
+        {
+            return aR * bI + aI * bR;
+        }
+
         public static int NearestPower(int x, int val)
         {
             int num = 0;

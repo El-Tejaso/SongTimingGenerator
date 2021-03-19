@@ -93,6 +93,8 @@
     <Compile Include="Audio\AudioData.cs" />
     <Compile Include="Audio\AudioDataStream.cs" />
     <Compile Include="Audio\AudioPlayer.cs" />
+    <Compile Include="Audio\BeatDetection\AudioChannelSeperator.cs" />
+    <Compile Include="Audio\BeatDetection\BeatData.cs" />
     <Compile Include="Audio\BeatDetection\BeatDetector.cs" />
     <Compile Include="Audio\BeatDetection\MultiBeatDetector.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -100,8 +102,11 @@
     <Compile Include="SignalProcessing\AccordFourierTransform.cs" />
     <Compile Include="SignalProcessing\FourierTransform.cs" />
     <Compile Include="SignalProcessing\IFourierTransform.cs" />
-    <Compile Include="SignalProcessing\WaveletTransforms.cs" />
-    <Compile Include="Util\SliceMathf.cs" />
+    <Compile Include="SignalProcessing\Wavelets\DB4WaveletTransform.cs" />
+    <Compile Include="SignalProcessing\Wavelets\HaarWaveletTransform.cs" />
+    <Compile Include="SignalProcessing\Wavelets\WaveletTransform.cs" />
+    <Compile Include="SignalProcessing\Wavelets\WaveletTransforms.cs" />
+    <Compile Include="Util\FloatSlices.cs" />
     <Compile Include="SignalProcessing\HomemadeFourierTransform.cs" />
     <Compile Include="Slices\Slice.cs" />
     <Compile Include="Audio\Timing\Timing.cs" />

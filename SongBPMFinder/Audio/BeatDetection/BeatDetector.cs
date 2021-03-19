@@ -8,6 +8,8 @@ using SongBPMFinder.Util;
 using SongBPMFinder.Audio.Timing;
 using SongBPMFinder.SignalProcessing;
 using SongBPMFinder.Slices;
+using SongBPMFinder.SignalProcessing.Wavelets;
+using SongBPMFinder.Logging;
 
 namespace SongBPMFinder.Audio.BeatDetection
 {
@@ -27,36 +29,68 @@ namespace SongBPMFinder.Audio.BeatDetection
         /// <param name="instant">The time in seconsds considered as the smallest unit. osu! uses 0.001 (aka 1 millisecond), your rhythm game may not. Don't set this too small however</param>
         /// <param name="numLevels">Internal variable relating to the wavelet transform. delete later if not needed</param>
         /// <returns>An integer corresponding to the sample in the slice where the beat occured</returns>
-        public static int DetectBeat(AudioData audioData, Slice<float> slice, Slice<float> sliceSizedBuffer, float instant, int numLevels = 4, bool debug = false)
+        public static BeatData DetectBeat(AudioData audioData, Slice<float> slice, Slice<float> sliceSizedBuffer, float instant, int numLevels = 4, bool debug = false)
         {
+            //TODO: delete in production
             Slice<float> sliceDebugCopy = slice.DeepCopy();
-            Slice<float>[] dwtSlices = DiscreteWaveletTransform(slice, sliceSizedBuffer, numLevels);
 
-            FullWaveRectify(slice);
-
-            //instantSize is a downsampling factor used later to convert from downsampled indices back to audio indices
+            //instantSize is a downsampling factor used later in the code to convert from downsampled indices back to audio indices
             int instantSize = CalculateInstantSize(audioData, instant, numLevels);
-            Slice<float>[] downsampledSlices = DownsampleSlicesToSameLength(slice, dwtSlices, instantSize);
 
-            Slice<float> summedEnvelopes = SumEnvelopes(downsampledSlices);
+            Slice<float> summedEnvelopes;
 
-            NormalizeEnvelopes(summedEnvelopes);
+            Slice<float>[] dwtSlicesDebug = null;
 
-            if (debug)
-                GenerateDebugPlots(sliceDebugCopy, audioData, summedEnvelopes);
-
-            int maxIndex = FindPeak(summedEnvelopes);
-            float beatStrength = CalculateBeatStrength(summedEnvelopes, maxIndex);
-
-            if (beatStrength < 1.0f)
+            if(numLevels > 0)
             {
-                //just because this is the max sample, doesn't necesarily mean that it is siginificant in any way
-                return -1;
+                Slice<float>[] dwtSlices = DiscreteWaveletTransform(slice, sliceSizedBuffer, numLevels);
+                dwtSlicesDebug = dwtSlices;
+
+                FullWaveRectify(slice);
+
+                Slice<float>[] downsampledSlices = DownsampleSlicesToSameLength(slice, dwtSlices, instantSize);
+
+                summedEnvelopes = SumEnvelopes(downsampledSlices);
+            }
+            else
+            {
+                FullWaveRectify(slice);
+
+                summedEnvelopes = slice.GetSlice(0, slice.Length / instantSize);
+
+                FloatSlices.DownsampleAverage(slice, summedEnvelopes, instantSize);
             }
 
-            //convert back to position in audio
+            Slice<float> summedEvelopesCopy = summedEnvelopes.DeepCopy();
+
+            EnhancePeak(summedEnvelopes);
+
+            if (debug)
+            {
+                GenerateDebugPlots(sliceDebugCopy, audioData, summedEnvelopes, instantSize, summedEvelopesCopy, slice, dwtSlicesDebug);
+            }
+
+            int maxIndex = FindPeak(summedEnvelopes);
+
+            float beatStrength = CalculateBeatStrength(summedEnvelopes, maxIndex);
+
             int maxAudioPos = CalculateUpsampledPosition(instantSize, maxIndex);
-            return maxAudioPos;
+            return new BeatData(maxAudioPos, beatStrength);
+        }
+
+        private static void EnhancePeak(Slice<float> summedEnvelopes)
+        {
+            FloatSlices.MovingAverageOffset(summedEnvelopes, 5, 7);
+
+            //*
+            FloatSlices.Sum(summedEnvelopes, -FloatSlices.Average(summedEnvelopes));
+
+            for (int i = 0; i < 4; i++)
+            {
+                FloatSlices.Normalize(summedEnvelopes);
+                FloatSlices.Max(summedEnvelopes, 0);
+            }
+            //*/
         }
 
         private static Slice<float>[] DownsampleSlicesToSameLength(Slice<float> slice, Slice<float>[] dwtSlices, int instantSize)
@@ -66,20 +100,20 @@ namespace SongBPMFinder.Audio.BeatDetection
 
         private static int FindPeak(Slice<float> summedEnvelopes)
         {
-            return SliceMathf.ArgMax(summedEnvelopes, false);
+            return FloatSlices.ArgMax(summedEnvelopes, false);
         }
 
         private static float CalculateBeatStrength(Slice<float> summedEnvelopes, int beatPosition)
         {
             float max = summedEnvelopes[beatPosition];
-            float av = SliceMathf.Average(summedEnvelopes);
-            float stdDev = SliceMathf.StdDev(summedEnvelopes);
-            float meanAbs = SliceMathf.Average(summedEnvelopes, true);
+            float av = FloatSlices.Average(summedEnvelopes);
+            float stdDev = FloatSlices.StdDev(summedEnvelopes);
+            float meanAbs = FloatSlices.Average(summedEnvelopes, true);
 
             float ratio = (max - av) / meanAbs;
 
             //TODO: make this not an arbitrary number
-            return ratio / 7.0f;
+            return ratio / 9.0f;
         }
 
         private static int CalculateUpsampledPosition(int downsampleFactor, int index)
@@ -87,34 +121,54 @@ namespace SongBPMFinder.Audio.BeatDetection
             return index * downsampleFactor;
         }
 
-        private static void GenerateDebugPlots(Slice<float> sliceDebugCopy, AudioData audioData, Slice<float> summedEnvelopes)
+        private static void GenerateDebugPlots(Slice<float> sliceDebugCopy, AudioData audioData, Slice<float> summedEnvelopes, int instantSize, Slice<float> summedEvelopesCopy, Slice<float> slice, Slice<float>[] dwtSlicesDebug)
         {
-            int maxIndex = FindPeak(sliceDebugCopy);
+            int maxIndex = FindPeak(summedEnvelopes);
 
             //Draw autocorrelated array
             Slice<float> plotArray = summedEnvelopes.DeepCopy();
 
             Form1.Instance.Plot("Autocorrelated", plotArray, 0);
             List<TimingPoint> debugLines = new List<TimingPoint>();
-            debugLines.Add(new TimingPoint(maxIndex, audioData.ToSample(maxIndex), Color.Red));
+            debugLines.Add(new TimingPoint(maxIndex, audioData.SampleToSeconds(maxIndex), Color.Red));
             Form1.Instance.AddLines(debugLines, 0);
 
+            int dt = audioData.SampleRate / instantSize;
+
+            //Draw moving average
+            Slice<float> derivative = plotArray.DeepCopy();
+            FloatSlices.Differentiate(derivative, dt);
+            Form1.Instance.Plot("Acl dx", derivative, 1);
+
+            //orignal
+            Form1.Instance.Plot("Acl original", summedEvelopesCopy, 2);
+
+            //Slice
+            Form1.Instance.Plot("Slice", slice, 3);
+            List<TimingPoint> debugLines2 = new List<TimingPoint>();
+            for(int i = 0; i < dwtSlicesDebug.Length; i++)
+            {
+                debugLines2.Add(new TimingPoint(0, audioData.SampleToSeconds(dwtSlicesDebug[i].InternalStart)));
+            }
+            Form1.Instance.AddLines(debugLines2, 3);
+
             //Draw frequency spectrum
-            FourierTransform.Forward(sliceDebugCopy, SliceMathf.ZeroesLike(sliceDebugCopy));
-            Form1.Instance.Plot("Frequencies", sliceDebugCopy.GetSlice(0, sliceDebugCopy.Length / 2), 1);
+            FourierTransform.Forward(sliceDebugCopy, FloatSlices.ZeroesLike(sliceDebugCopy));
+            Form1.Instance.Plot("Frequencies", sliceDebugCopy, 4);
+
         }
 
         private static void NormalizeEnvelopes(Slice<float> summedEnvelopes)
         {
-            float mean = SliceMathf.Average(summedEnvelopes, false);
-            SliceMathf.Sum(summedEnvelopes, -mean);
-            SliceMathf.Normalize(summedEnvelopes);
+            float mean = FloatSlices.Average(summedEnvelopes, false);
+            FloatSlices.Sum(summedEnvelopes, -mean);
+            FloatSlices.Normalize(summedEnvelopes);
         }
 
         private static Slice<float> Autocorrelate(Slice<float> summedEnvelopes)
         {
             Slice<float> autocorrelPlacement = summedEnvelopes.GetSlice(summedEnvelopes.Length, 2 * summedEnvelopes.Length);
-            SliceMathf.Autocorrelate(summedEnvelopes, autocorrelPlacement);
+            FloatSlices.Autocorrelate(summedEnvelopes, autocorrelPlacement);
             return autocorrelPlacement;
         }
 
@@ -124,7 +178,7 @@ namespace SongBPMFinder.Audio.BeatDetection
 
             for (int i = 1; i < downsampleSlices.Length; i++)
             {
-                SliceMathf.Sum(summedEnvelopes, downsampleSlices[i]);
+                FloatSlices.Sum(summedEnvelopes, downsampleSlices[i]);
             }
 
             return summedEnvelopes;
@@ -140,12 +194,12 @@ namespace SongBPMFinder.Audio.BeatDetection
 
         private static Slice<float>[] DiscreteWaveletTransform(Slice<float> slice, Slice<float> sliceSizedBuffer, int numLevels)
         {
-            return WaveletTransforms.HaarFWT(slice, sliceSizedBuffer, numLevels);
+            return WaveletTransforms.DWT(DB4WaveletTransform.Implementation, slice, sliceSizedBuffer, numLevels);
         }
 
         private static void FullWaveRectify(Slice<float> slice)
         {
-            SliceMathf.Abs(slice);
+            FloatSlices.Abs(slice);
         }
     }
 }

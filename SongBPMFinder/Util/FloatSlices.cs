@@ -12,7 +12,7 @@ namespace SongBPMFinder.Util
     /// A static class for performing operations on large arrays in-place.
     /// As we can be working with GB-size arrays, we should perform as few copys as possible
     /// </summary>
-    class SliceMathf
+    public static class FloatSlices
     {
         public static Slice<float> ZeroesLike(Slice<float> x)
         {
@@ -23,7 +23,7 @@ namespace SongBPMFinder.Util
         //Src and dst may also overlap, as long as dst starts at or before where x starts
         public static void DownsampleAverage(Slice<float> x, Slice<float> dst, int samples)
         {
-            if(x.Length < dst.Length)
+            if (x.Length < dst.Length)
             {
                 Logger.Log("This isnt downsampling");
                 return;
@@ -42,7 +42,7 @@ namespace SongBPMFinder.Util
                         shouldEnd = true;
                         break;
                     }
-                    
+
                     sum += x[i * samples + j];
                 }
 
@@ -69,21 +69,21 @@ namespace SongBPMFinder.Util
             }
         }
 
-		public static float Sum(Slice<float> x, bool abs = false)
+        public static float Sum(Slice<float> x, bool abs = false)
         {
-			float sum = 0;
-            for(int i = 0; i < x.Length; i++)
+            float sum = 0;
+            for (int i = 0; i < x.Length; i++)
             {
-				float xi = x[i];
-				if(abs) xi = (float)Math.Abs(xi);
+                float xi = x[i];
+                if (abs) xi = (float)Math.Abs(xi);
                 sum += xi;
             }
-			return sum;
+            return sum;
         }
 
         public static void Sum(Slice<float> x, Slice<float> other)
         {
-            for(int i = 0; i < x.Length; i++)
+            for (int i = 0; i < x.Length; i++)
             {
                 if (i > other.Length) break;
                 x[i] += other[i];
@@ -102,7 +102,7 @@ namespace SongBPMFinder.Util
         {
             for (int i = 0; i < dst.Length; i++)
             {
-                if(value > dst[i]) dst[i] = value;
+                if (value > dst[i]) dst[i] = value;
             }
         }
 
@@ -156,7 +156,7 @@ namespace SongBPMFinder.Util
 
         public static float Max(Slice<float> x, bool abs = false)
         {
-            if(abs) return Math.Abs(x[ArgMax(x, true)]);
+            if (abs) return Math.Abs(x[ArgMax(x, true)]);
             return x[ArgMax(x, false)];
         }
 
@@ -206,10 +206,11 @@ namespace SongBPMFinder.Util
 
         public static float Average(Slice<float> x, bool abs = false)
         {
-            return Sum(x,abs)/(float)x.Length;
+            return Sum(x, abs) / (float)x.Length;
         }
 
-		public static float VarianceSum(Slice<float> x){
+        public static float VarianceSum(Slice<float> x)
+        {
             float variance = 0;
             float mean = Average(x, false);
 
@@ -220,39 +221,125 @@ namespace SongBPMFinder.Util
                 variance += ((xi - mean) * (xi - mean));
             }
 
-			return variance;
-		}
+            return variance;
+        }
 
         public static float StdDev(Slice<float> x)
         {
-            return (float)Math.Sqrt(VarianceSum(x)/(float)x.Length);
+            return (float)Math.Sqrt(VarianceSum(x) / (float)x.Length);
         }
 
         /// <summary>
         /// Generates a Sliding window average in place.
-        /// Returns the new length of the array
+        /// uses wrap-around to calculate averages for the entire array
         /// </summary>
         /// <param name="x">The array to operate on. Can overlap with dest</param>
         /// <param name="dest">the destination array, ideally of size x.Length - size. Can overlap with x</param>
         /// <param name="size">The size of the window</param>
 		/// <param name="exponent">The exponent to use</param>
-        public static void SlidingWindowAverage(Slice<float> x, Slice<float> dest, int size, float exponent)
+        public static void MovingAverageOffset(Slice<float> x, int size, int iterations, float exponent = 1.0f)
         {
-			int newSize = x.Length - size - 1;
-			if(dest.Length != newSize) return;
+            for(int i = 0; i < iterations; i++)
+            {
+                MovingAverageOffsetIteration(x, size, exponent);
+            }
+        }
 
+        private static void MovingAverageOffsetIteration(Slice<float> x, int size, float exponent)
+        {
+            MovingAverage(x, x, size, exponent);
+            Rotate(x, size / 2);
+
+            for (int i = 0; i < size / 2; i++)
+            {
+                x[i] = x[size / 2];
+            }
+        }
+
+        public static void Swap(Slice<float> src, Slice<float> dst)
+        {
+            for (int i = 0; i < src.Length; i++)
+            {
+                float temp = src[i];
+                src[i] = dst[i];
+                dst[i] = temp;
+            }
+        }
+
+
+        //There is also a way to do this in place using swaps, might be worth implementing
+        public static void Rotate(Slice<float> x, int amount)
+        {
+            float[] buffer = new float[amount];
+            if (amount > 0)
+            {
+                RightRotate(x, buffer);
+            }
+            else if (amount < 0)
+            {
+                LeftRotate(x, buffer);
+            }
+        }
+
+        private static void LeftRotate(Slice<float> x, float[] buffer)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = x[i];
+            }
+
+            for (int i = 0; i < x.Length - buffer.Length; i++)
+            {
+                x[i] = x[i + buffer.Length];
+            }
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                x[x.Length - buffer.Length + i] = buffer[i];
+            }
+        }
+
+        private static void RightRotate(Slice<float> x, float[] buffer)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = x[x.Length - buffer.Length + i];
+            }
+
+            for (int i = x.Length - 1; i >= buffer.Length; i--)
+            {
+                x[i] = x[i - buffer.Length];
+            }
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                x[i] = buffer[i];
+            }
+        }
+
+        //x and dest must be the same length
+        public static void MovingAverage(Slice<float> x, Slice<float> dest, int size, float exponent)
+        {
             float sum = 0;
             for (int i = 0; i < size; i++)
             {
                 sum += x[i];
             }
 
-            for (int i = size; i <= x.Length - size; i++)
+            for (int i = size; i < x.Length; i++)
             {
                 float temp = x[i - size];
-                dest[i-size] = (float)Math.Pow(sum, exponent) / (float)size;
+
+                dest[i - size] = (float)Math.Pow(sum, exponent) / (float)size;
+
                 sum -= temp;
                 sum += x[i];
+            }
+
+
+            for (int i = x.Length - size; i < dest.Length; i++)
+            {
+                dest[i] = dest[dest.Length - size - 1];
             }
         }
 
@@ -276,14 +363,14 @@ namespace SongBPMFinder.Util
         /// <param name="dst">must be the same length as src, and musn't overlap</param>
         public static void Autocorrelate(Slice<float> src, Slice<float> dst)
         {
-            if(src.Length != dst.Length)
+            if (src.Length != dst.Length)
             {
                 //bruh
                 return;
             }
 
-			float mean = Average(src, false);
-			float varianceSum = VarianceSum(src);
+            float mean = Average(src, false);
+            float varianceSum = VarianceSum(src);
 
             //Autocorrelation
             //This operation is O(N^2), potentially a bottleneck, which explains the windowed approach used by others
@@ -303,14 +390,24 @@ namespace SongBPMFinder.Util
 
         public static void Divide(Slice<float> x, float value)
         {
-			Mult(x, 1.0f/value);
+            Mult(x, 1.0f / value);
         }
-		
-		public static void Mult(Slice<float> x, float value)
+
+        public static void Divide(Slice<float> src, Slice<float> dst, float value)
         {
-			for (int i = 0; i < x.Length; i++)
+            Mult(src, dst, 1.0f / value);
+        }
+
+        public static void Mult(Slice<float> x, float value)
+        {
+            Mult(x, x, value);
+        }
+
+        public static void Mult(Slice<float> src, Slice<float> dst, float value)
+        {
+            for (int i = 0; i < src.Length; i++)
             {
-                x[i] = x[i] * value;
+                dst[i] = src[i] * value;
             }
         }
 
@@ -320,18 +417,19 @@ namespace SongBPMFinder.Util
             Divide(x, max);
         }
 
-		public static void NormalizeMeanStdDev(Slice<float> x){
-			//Subtract means
-			float average = Average(x, false);
-			Sum(x, -average);
+        public static void NormalizeMeanStdDev(Slice<float> x)
+        {
+            //Subtract means
+            float average = Average(x, false);
+            Sum(x, -average);
 
-			float stdev = StdDev(x);
-			Mult(x, 1.0f/stdev);
-		}
+            float stdev = StdDev(x);
+            Mult(x, 1.0f / stdev);
+        }
 
         public static void NormalizeAv(Slice<float> x)
         {
-            float av= Average(x, true);
+            float av = Average(x, true);
             Divide(x, av);
         }
 
@@ -359,7 +457,7 @@ namespace SongBPMFinder.Util
             for (int i = 1; i < src.Length; i++)
             {
                 float temp = src[i];
-                src[i] = alpha * (src[i-1] + src[i] - x0);
+                src[i] = alpha * (src[i - 1] + src[i] - x0);
                 x0 = temp;
             }
         }
@@ -376,7 +474,7 @@ namespace SongBPMFinder.Util
 
             for (int i = 1; i < src.Length; i++)
             {
-                src[i] = src[i - 1] + alpha * (src[i] - src[i-1]);
+                src[i] = src[i - 1] + alpha * (src[i] - src[i - 1]);
             }
         }
     }

@@ -155,7 +155,7 @@ namespace SongBPMFinder.Gui
             int lower = Math.Max(0, audioData.CurrentSample - WindowLength / 2);
             int upper = Math.Min(audioData.Data.Length, audioData.CurrentSample + WindowLength / 2);
 
-            viewportMax = Math.Max(0.00001f, SliceMathf.Max(audioData.Data.GetSlice(lower, upper), true));
+            viewportMax = Math.Max(0.00001f, FloatSlices.Max(audioData.Data.GetSlice(lower, upper), true));
         }
 
         void drawWaveform(PaintEventArgs e, float rectTop, float rectBottom, int channel)
@@ -280,9 +280,9 @@ namespace SongBPMFinder.Gui
             }
 
             Slice<float> range = channelData.GetSlice(lower, upper);
-            float mean = SliceMathf.Average(range, false);
-            float meanAbs = SliceMathf.Average(range, true);
-            float stdev = SliceMathf.StdDev(range);
+            float mean = FloatSlices.Average(range, false);
+            float meanAbs = FloatSlices.Average(range, true);
+            float stdev = FloatSlices.StdDev(range);
 
             //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
             //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));

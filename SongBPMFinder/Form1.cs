@@ -39,7 +39,7 @@ namespace SongBPMFinder
 
         public CustomWaveViewer Viewer;
 
-		public bool IsTesting = false;
+		public bool IsTesting = true;
         #endregion
 
         public Form1()
@@ -77,12 +77,13 @@ namespace SongBPMFinder
 
             //TESTING
 
-            loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
-			//loadFile("D:\\Archives\\Music\\Test\\Early Summer.mp3");
-			//loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
-			//loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
+            loadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
+            //loadFile("D:\\Archives\\Music\\Test\\Test1.mp3");
+            //loadFile("D:\\Archives\\Music\\Test\\Early Summer.mp3");
+            //loadFile("D:\\Archives\\Music\\Test\\Test1-5.mp3");
+            //loadFile("D:\\Archives\\Music\\Test\\Test2.mp3");
 
-			calculateTiming();           
+            calculateTiming();           
         }
 
 
@@ -128,6 +129,7 @@ namespace SongBPMFinder
         public void Plot(string name, Slice<float> data, int graph){
             CustomWaveViewer viewer = getViewer(graph);
             TabPage page = getPage(graph);
+            data = data.DeepCopy();
 
             page.Text = name;
             viewer.Data = new AudioData(data, currentAudioFile.SampleRate, 1);
@@ -139,7 +141,7 @@ namespace SongBPMFinder
 		public void AddLines(List<TimingPoint> timingPoints, int graph){
             CustomWaveViewer viewer = getViewer(graph);
 
-            viewer.ShowTimingPoints(new TimingPointList(timingPoints));
+            viewer.ShowTimingPoints(new TimingPointList(timingPoints, false));
 		}
 
         private void clearOutputButton_Click(object sender, EventArgs e)
@@ -313,7 +315,7 @@ namespace SongBPMFinder
         {
             int windowLength = audioViewer.WindowLength;
             playbackScrollbar.Minimum = -windowLength / 2;
-            playbackScrollbar.Maximum = Math.Max(0, currentAudioFile.Data.Length - windowLength / 2);
+            playbackScrollbar.Maximum = Math.Max(0, currentAudioFile.Length - windowLength / 2);
             playbackScrollbar.Value = playbackScrollbar.Minimum + currentAudioFile.CurrentSample;
         }
 
@@ -426,10 +428,10 @@ namespace SongBPMFinder
             var watch = Stopwatch.StartNew();
 
             Slice<float> subsetL = currentAudioFile.GetChannel(0).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample+window);
-            Slice<float> imaginaryBufferL = SliceMathf.ZeroesLike(subsetL);
+            Slice<float> imaginaryBufferL = FloatSlices.ZeroesLike(subsetL);
 
             Slice<float> subsetR = currentAudioFile.GetChannel(1).GetSlice(currentAudioFile.CurrentSample, currentAudioFile.CurrentSample + window);
-            Slice<float> imaginaryBufferR = SliceMathf.ZeroesLike(subsetR);
+            Slice<float> imaginaryBufferR = FloatSlices.ZeroesLike(subsetR);
 
             FourierTransform.Forward(subsetL, imaginaryBufferL);
             FourierTransform.Forward(subsetR, imaginaryBufferR);

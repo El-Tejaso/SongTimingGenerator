@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using SongBPMFinder.Util;
 using SongBPMFinder.Slices;
+using SongBPMFinder.Logging;
 
 namespace SongBPMFinder.SignalProcessing
 {
@@ -17,6 +18,13 @@ namespace SongBPMFinder.SignalProcessing
 		//src and dst may not overlap unless they overlap perfectly (i.e in place transform)
         public static void FFTForward(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
         {
+            int len = srcR.Length;
+
+            if (len != QuickMafs.NearestPower(len, 2))
+            {
+                Logger.Log("" + len + " is not a power of 2.");
+            }
+
             fastFFT(srcR, srcI, dstR, dstI);
         }
 
@@ -26,15 +34,16 @@ namespace SongBPMFinder.SignalProcessing
         {
             fastFFT(srcI, srcR, dstR, dstI);
 
-            SliceMathf.Divide(dstR, dstR.Length);
-            SliceMathf.Divide(dstI, dstI.Length);
+            FloatSlices.Divide(dstR, dstR.Length);
+            FloatSlices.Divide(dstI, dstI.Length);
         }
 
         //This implementation is based on this article: https://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
 		//and as such, may not be as efficient as possible
         private static void fastFFT(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
         {
-            if(srcR.Length < 16)
+
+            if(srcR.Length <= 16)
             {
                 slowFFT(srcR, srcI, dstR, dstI);
                 return;
@@ -70,19 +79,20 @@ namespace SongBPMFinder.SignalProcessing
                 float evenIDstK = evenIDst[k];
                 float oddRDstK = oddRDst[k];
                 float oddIDstK = oddIDst[k];
-			
-                dstR[k] = evenRDstK + factorR * oddRDstK;
-                dstI[k] = evenIDstK + factorI * oddIDstK;
 
-				//Reuse the values in the second half of the array in this for-loop itself
-				factorAngle = -2 * Math.PI * (k + halfN) / (double)n;
+                dstR[k] = evenRDstK + QuickMafs.MultilpyImaginaryR(factorR, oddRDstK, factorI, oddIDstK);
+                dstI[k] = evenIDstK + QuickMafs.MultilpyImaginaryI(factorR, oddRDstK, factorI, oddIDstK);
+
+                //Reuse the values in the second half of the array in this for-loop itself
+                factorAngle = -2 * Math.PI * (k + halfN) / (double)n;
                 factorR = (float)Math.Cos(factorAngle);
                 factorI = (float)Math.Sin(factorAngle);
 
-                dstR[k + halfN] = evenRDstK + factorR * oddRDstK;
-                dstI[k + halfN] = evenIDstK + factorI * oddIDstK;
+                dstR[k + halfN] = evenRDstK + QuickMafs.MultilpyImaginaryR(factorR, oddRDstK, factorI, oddIDstK);
+                dstI[k + halfN] = evenIDstK + QuickMafs.MultilpyImaginaryI(factorR, oddRDstK, factorI, oddIDstK);
             }
         }
+
 
         //The source arrays and the destination arrays may not be the same
         private static void slowFFT(Slice<float> srcR, Slice<float> srcI, Slice<float> dstR, Slice<float> dstI)
@@ -99,9 +109,11 @@ namespace SongBPMFinder.SignalProcessing
 
                 for(int t = 0; t < n; t++)
                 {
-                    double angle = 2 * Math.PI * t * k / (double)n;
-                    R += (float)(+srcR[t] * Math.Cos(angle) - srcI[t] * Math.Sin(angle));
-                    im += (float)(-srcR[t] * Math.Sin(angle) + srcI[t] * Math.Cos(angle));
+                    double angle = -2 * Math.PI * t * k/ (double)n;
+                    float sinAngle = (float)Math.Sin(angle);
+                    float cosAngle = (float)Math.Cos(angle);
+                    R += QuickMafs.MultilpyImaginaryR(srcR[t], cosAngle, srcI[t], sinAngle);
+                    im += QuickMafs.MultilpyImaginaryI(srcR[t], cosAngle, srcI[t], sinAngle);
                 }
 
                 resR[k] = R;

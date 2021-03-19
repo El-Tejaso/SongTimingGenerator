@@ -16,6 +16,11 @@ namespace SongBPMFinder.Audio.Timing
         public Color Color = Color.Red;
 		public double Weight = 1;
 
+        public TimingPoint(double bPM, double offsetSeconds, double weight) : this(bPM, offsetSeconds)
+        {
+            Weight = weight;
+        }
+
         public TimingPoint(double bpm, double offset, Color col)
         {
             BPM = bpm;
