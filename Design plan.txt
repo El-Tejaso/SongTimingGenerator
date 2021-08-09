@@ -1,10 +1,6 @@
+What to do next time we start this project:
 
+-> Make something similar in Python so that we can actually get a beat detection algorithm prototyped 
 
-Current objectives
- - Use the new HighPassFilter and LowPassFilter to isolate the light drum sound in the end of Test1-5.mp3
-	- current methods are not doing this
-	
-	
-Current thoughts:
-	- I have been treating 2 channel data as simply 1 channel data with double the sample rate.
-		it works for playback, but it may not work for various filtering algorithms that rely on the value of the last frame
+- Use the new HighPassFilter and LowPassFilter to isolate the light drum sound in the end of Test1-5.mp3
+- figure out some way of making a tool that you can use to just isolate and time beats

@@ -42,17 +42,17 @@
             this.buttonSpeed025x = new System.Windows.Forms.Button();
             this.waveformTabs = new System.Windows.Forms.TabControl();
             this.songWaveformTab = new System.Windows.Forms.TabPage();
-            this.audioViewer = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.plotWaveViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer2 = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.plotWaveViewer2 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab3 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer3 = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.plotWaveViewer3 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab4 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer4 = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.plotWaveViewer4 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer5 = new SongBPMFinder.Gui.CustomWaveViewer();
+            this.plotWaveViewer5 = new SongBPMFinder.CustomWaveViewer();
             this.toolPanel = new System.Windows.Forms.Panel();
             this.testButton = new System.Windows.Forms.Button();
             this.copyTimingButton = new System.Windows.Forms.Button();
@@ -259,9 +259,9 @@
             this.audioViewer.Name = "audioViewer";
             this.audioViewer.SecondsPerPixel = 0D;
             this.audioViewer.Size = new System.Drawing.Size(898, 343);
-            this.audioViewer.StartTime = 0D;
+            this.audioViewer.StartTimeSeconds = 0D;
             this.audioViewer.TabIndex = 5;
-            this.audioViewer.WindowLength = 0;
+            this.audioViewer.WindowLengthSamples = 0;
             this.audioViewer.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab
@@ -284,9 +284,9 @@
             this.plotWaveViewer.Name = "plotWaveViewer";
             this.plotWaveViewer.SecondsPerPixel = 0D;
             this.plotWaveViewer.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer.StartTime = 0D;
+            this.plotWaveViewer.StartTimeSeconds = 0D;
             this.plotWaveViewer.TabIndex = 0;
-            this.plotWaveViewer.WindowLength = 0;
+            this.plotWaveViewer.WindowLengthSamples = 0;
             this.plotWaveViewer.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab2
@@ -309,9 +309,9 @@
             this.plotWaveViewer2.Name = "plotWaveViewer2";
             this.plotWaveViewer2.SecondsPerPixel = 0D;
             this.plotWaveViewer2.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer2.StartTime = 0D;
+            this.plotWaveViewer2.StartTimeSeconds = 0D;
             this.plotWaveViewer2.TabIndex = 1;
-            this.plotWaveViewer2.WindowLength = 0;
+            this.plotWaveViewer2.WindowLengthSamples = 0;
             this.plotWaveViewer2.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab3
@@ -334,9 +334,9 @@
             this.plotWaveViewer3.Name = "plotWaveViewer3";
             this.plotWaveViewer3.SecondsPerPixel = 0D;
             this.plotWaveViewer3.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer3.StartTime = 0D;
+            this.plotWaveViewer3.StartTimeSeconds = 0D;
             this.plotWaveViewer3.TabIndex = 2;
-            this.plotWaveViewer3.WindowLength = 0;
+            this.plotWaveViewer3.WindowLengthSamples = 0;
             this.plotWaveViewer3.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab4
@@ -359,9 +359,9 @@
             this.plotWaveViewer4.Name = "plotWaveViewer4";
             this.plotWaveViewer4.SecondsPerPixel = 0D;
             this.plotWaveViewer4.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer4.StartTime = 0D;
+            this.plotWaveViewer4.StartTimeSeconds = 0D;
             this.plotWaveViewer4.TabIndex = 2;
-            this.plotWaveViewer4.WindowLength = 0;
+            this.plotWaveViewer4.WindowLengthSamples = 0;
             this.plotWaveViewer4.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab5
@@ -384,9 +384,9 @@
             this.plotWaveViewer5.Name = "plotWaveViewer5";
             this.plotWaveViewer5.SecondsPerPixel = 0D;
             this.plotWaveViewer5.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer5.StartTime = 0D;
+            this.plotWaveViewer5.StartTimeSeconds = 0D;
             this.plotWaveViewer5.TabIndex = 2;
-            this.plotWaveViewer5.WindowLength = 0;
+            this.plotWaveViewer5.WindowLengthSamples = 0;
             this.plotWaveViewer5.WindowLengthSeconds = 0D;
             // 
             // toolPanel
@@ -584,17 +584,17 @@
         private System.Windows.Forms.Button buttonSpeed025x;
         private System.Windows.Forms.TabControl waveformTabs;
         private System.Windows.Forms.TabPage songWaveformTab;
-        private Gui.CustomWaveViewer audioViewer;
+        private CustomWaveViewer audioViewer;
         private System.Windows.Forms.TabPage testWaveformTab;
-        private Gui.CustomWaveViewer plotWaveViewer;
+        private CustomWaveViewer plotWaveViewer;
         private System.Windows.Forms.TabPage testWaveformTab2;
-        private Gui.CustomWaveViewer plotWaveViewer2;
+        private CustomWaveViewer plotWaveViewer2;
         private System.Windows.Forms.TabPage testWaveformTab3;
-        private Gui.CustomWaveViewer plotWaveViewer3;
+        private CustomWaveViewer plotWaveViewer3;
         private System.Windows.Forms.TabPage testWaveformTab4;
-        private Gui.CustomWaveViewer plotWaveViewer4;
+        private CustomWaveViewer plotWaveViewer4;
         private System.Windows.Forms.TabPage testWaveformTab5;
-        private Gui.CustomWaveViewer plotWaveViewer5;
+        private CustomWaveViewer plotWaveViewer5;
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.CheckBox freezeView;
     }

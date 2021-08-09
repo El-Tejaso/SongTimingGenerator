@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SongBPMFinder.Util
+namespace SongBPMFinder
 {
-    class QuickMafs
+    class MathUtilF
     {
         public static bool IsIntegerMultiple(double a, double b, double tolerance = 0.000001)
         {
@@ -34,7 +30,8 @@ namespace SongBPMFinder.Util
 
         public static int Pow(int x, int p)
         {
-            if (p < 0) return x;
+            if (p < 0)
+                return x;
 
             int res = 1;
 
@@ -47,11 +44,12 @@ namespace SongBPMFinder.Util
             return res;
         }
 
-		// Can be used to return a number y such that x/base^exponent will be an integer
-		// (as well as everything in between)
-		public static int NearestDivisor(int x, int value){
-			return (int)(Math.Ceiling((float)x/(float)value) * (float)value);
-		}
+        // Can be used to return a number y such that x/base^exponent will be an integer
+        // (as well as everything in between)
+        public static int NearestDivisor(int x, int value)
+        {
+            return (int)(Math.Ceiling((float)x / (float)value) * (float)value);
+        }
 
         public static float MultilpyImaginaryR(float aR, float bR, float aI, float bI)
         {

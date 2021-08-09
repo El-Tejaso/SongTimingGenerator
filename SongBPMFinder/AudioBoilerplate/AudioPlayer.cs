@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NAudio.Wave;
-using System.Timers;
+﻿using NAudio.Wave;
 
-namespace SongBPMFinder.Audio
+namespace SongBPMFinder
 {
     public class AudioPlayer
     {
@@ -20,8 +14,10 @@ namespace SongBPMFinder.Audio
 
         public void Play()
         {
-            if (isPlaying) return;
-            if (output == null) return;
+            if (isPlaying)
+                return;
+            if (output == null)
+                return;
 
             isPlaying = true;
             output.Play();
@@ -29,8 +25,10 @@ namespace SongBPMFinder.Audio
 
         public void Pause()
         {
-            if (!isPlaying) return;
-            if (output == null) return;
+            if (!isPlaying)
+                return;
+            if (output == null)
+                return;
 
             isPlaying = false;
             output.Stop();
@@ -38,7 +36,7 @@ namespace SongBPMFinder.Audio
 
         public void SetAudio(WaveProvider32 audio)
         {
-            if(output != null)
+            if (output != null)
             {
                 Pause();
 

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-
-namespace SongBPMFinder.Logging
+﻿namespace SongBPMFinder
 {
     public static class Logger
     {
@@ -25,7 +17,7 @@ namespace SongBPMFinder.Logging
         public static void Log(string msg)
         {
             output.Log(msg);
-            
+
         }
     }
 

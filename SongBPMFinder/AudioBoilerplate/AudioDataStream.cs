@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NAudio.Wave;
-using SongBPMFinder.Util;
+﻿using NAudio.Wave;
+using System;
 
-namespace SongBPMFinder.Audio
+namespace SongBPMFinder
 {
     public enum Playback
     {
@@ -30,7 +25,7 @@ namespace SongBPMFinder.Audio
         }
 
         public AudioDataStream(AudioData data)
-            : base(data.SampleRate, data.Channels) 
+            : base(data.SampleRate, data.Channels)
         {
             this.audioData = data;
         }
@@ -39,7 +34,7 @@ namespace SongBPMFinder.Audio
             get => audioData.WaveFormat;
         }
 
-        float GetCurrentSlowdown()
+        float GetPlaybackRate()
         {
             switch (currentPlaybackType)
             {
@@ -57,11 +52,11 @@ namespace SongBPMFinder.Audio
 
         public override int Read(float[] buffer, int offset, int count)
         {
-			//calculate in terms of the actual array
-			int channels = audioData.Channels;
-			int len = audioData.Length * channels;
-			int position = audioData.CurrentSample * channels;
-			
+            //calculate in terms of the actual array
+            int channels = audioData.Channels;
+            int len = audioData.Length;
+            int position = audioData.CurrentSample;
+
             //ensre we dont read past the end of our data buffer
             if (position + count >= len)
             {
@@ -69,27 +64,35 @@ namespace SongBPMFinder.Audio
             }
 
             //return 0 if there is nothing to read
-            if (count <= 0) return 0;
+            if (count <= 0)
+                return 0;
 
-            double slowdown = GetCurrentSlowdown();
+            double playbackRate = GetPlaybackRate();
 
-            for (int i = 0; i < count; i+=channels)
+            int currentIndex = position;
+            for (int currentUnit = 0, currentSample = 0; currentUnit < count; currentUnit += channels, currentSample++)
             {
-                int currentIndex = position + (int)((double)i * slowdown);
-                int nextIndex = Math.Min(currentIndex + channels, len - channels);
+                currentIndex = position + (int)((double)currentSample * playbackRate);
+                int nextIndex = Math.Min(currentIndex + 1, len - 1);
 
-                float t = (float)(((double)i * slowdown) % 1.0);
+                float t = (float)(((double)currentSample * playbackRate) % 1.0);
+
+                int bufferBaseIndex = offset + currentUnit;
 
                 for (int j = 0; j < channels; j++)
                 {
-                    float thisSample = audioData.Data[currentIndex + j];
-                    float nextSample =  audioData.Data[nextIndex + j];
+                    AudioSlice chanelJ = audioData.GetChannel(j);
+                    float thisSample = chanelJ[currentIndex];
+                    float nextSample = chanelJ[nextIndex];
 
-                    buffer[offset + i + j] = QuickMafs.Lerp(thisSample, nextSample, t);
+                    float interpolatedSample = MathUtilF.Lerp(thisSample, nextSample, t);
+
+                    buffer[bufferBaseIndex + j] = interpolatedSample;
                 }
             }
 
-            audioData.CurrentSample += (int)(slowdown*(count/channels));
+            audioData.CurrentSample = currentIndex;
+
             return count;
         }
     }

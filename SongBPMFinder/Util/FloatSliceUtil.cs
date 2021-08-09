@@ -1,18 +1,12 @@
-﻿using SongBPMFinder.Logging;
-using SongBPMFinder.Slices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace SongBPMFinder.Util
+namespace SongBPMFinder
 {
     /// <summary>
     /// A static class for performing operations on large arrays in-place.
     /// As we can be working with GB-size arrays, we should perform as few copys as possible
     /// </summary>
-    public static class FloatSlices
+    public static class FloatSliceUtil
     {
         public static Slice<float> ZeroesLike(Slice<float> x)
         {
@@ -75,7 +69,8 @@ namespace SongBPMFinder.Util
             for (int i = 0; i < x.Length; i++)
             {
                 float xi = x[i];
-                if (abs) xi = (float)Math.Abs(xi);
+                if (abs)
+                    xi = (float)Math.Abs(xi);
                 sum += xi;
             }
             return sum;
@@ -85,7 +80,8 @@ namespace SongBPMFinder.Util
         {
             for (int i = 0; i < x.Length; i++)
             {
-                if (i > other.Length) break;
+                if (i > other.Length)
+                    break;
                 x[i] += other[i];
             }
         }
@@ -102,7 +98,8 @@ namespace SongBPMFinder.Util
         {
             for (int i = 0; i < dst.Length; i++)
             {
-                if (value > dst[i]) dst[i] = value;
+                if (value > dst[i])
+                    dst[i] = value;
             }
         }
 
@@ -114,10 +111,11 @@ namespace SongBPMFinder.Util
                 int b = i * multiple;
                 for (int j = a; j < b; j++)
                 {
-                    if (j > dest.Length) break;
+                    if (j > dest.Length)
+                        break;
 
                     float t = (j - a) / (float)(b - a);
-                    float val = QuickMafs.Lerp(x[i - 1], x[i], t);
+                    float val = MathUtilF.Lerp(x[i - 1], x[i], t);
                     dest[j] = val;
                 }
             }
@@ -127,7 +125,8 @@ namespace SongBPMFinder.Util
         {
             for (int i = 0; i < x.Length; i++)
             {
-                if (x[i] < 0) x[i] = -x[i];
+                if (x[i] < 0)
+                    x[i] = -x[i];
             }
         }
 
@@ -137,12 +136,14 @@ namespace SongBPMFinder.Util
             int maxIndex = 0;
 
             float max = x[0];
-            if (abs) max = Math.Abs(max);
+            if (abs)
+                max = Math.Abs(max);
 
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
-                if (abs) xi = Math.Abs(xi);
+                if (abs)
+                    xi = Math.Abs(xi);
 
                 if (xi > max)
                 {
@@ -156,7 +157,8 @@ namespace SongBPMFinder.Util
 
         public static float Max(Slice<float> x, bool abs = false)
         {
-            if (abs) return Math.Abs(x[ArgMax(x, true)]);
+            if (abs)
+                return Math.Abs(x[ArgMax(x, true)]);
             return x[ArgMax(x, false)];
         }
 
@@ -165,12 +167,14 @@ namespace SongBPMFinder.Util
             int minIndex = 0;
 
             float min = x[0];
-            if (abs) min = Math.Abs(min);
+            if (abs)
+                min = Math.Abs(min);
 
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
-                if (abs) xi = Math.Abs(xi);
+                if (abs)
+                    xi = Math.Abs(xi);
 
                 if (xi < min)
                 {
@@ -187,12 +191,14 @@ namespace SongBPMFinder.Util
             int minIndex = 0;
 
             float min = x[0];
-            if (abs) min = Math.Abs(min);
+            if (abs)
+                min = Math.Abs(min);
 
             for (int i = 1; i < x.Length; i++)
             {
                 float xi = x[i];
-                if (abs) xi = Math.Abs(xi);
+                if (abs)
+                    xi = Math.Abs(xi);
 
                 if (xi < min)
                 {
@@ -239,7 +245,7 @@ namespace SongBPMFinder.Util
 		/// <param name="exponent">The exponent to use</param>
         public static void MovingAverageOffset(Slice<float> x, int size, int iterations, float exponent = 1.0f)
         {
-            for(int i = 0; i < iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 MovingAverageOffsetIteration(x, size, exponent);
             }
