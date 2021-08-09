@@ -10,7 +10,6 @@ namespace SongBPMFinder
     {
         AudioData currentAudioFile = null;
         AudioData currentAudioFileCopy = null;
-
         AudioDataStream audioStream;
         AudioPlayer player = new AudioPlayer();
 
@@ -18,10 +17,7 @@ namespace SongBPMFinder
 
         TimingPointList currentTimingResult;
 
-        //m
-        Playback currentPlayback = Playback.Realtime;
-
-        public bool IsTesting = true;
+        WaveformCoordinates viewManager;
 
         public Form1()
         {
@@ -33,8 +29,7 @@ namespace SongBPMFinder
             songPositionChangedInterrupt.Interval = 3;
 
             Logger.SetOutput(new RichTextBoxLogger(textOutput));
-            audioViewer.SecondsPerPixel = 0.1;
-
+            audioViewer.Coordinates.SecondsPerPixel = 0.1;
 
             updateSBPos = new MethodInvoker(delegate () {
                 if (this.IsDisposed)
@@ -115,7 +110,7 @@ namespace SongBPMFinder
 
             viewer.Data = new AudioData(new AudioSlice[] { data }, currentAudioFile.SampleRate);
 
-            viewer.WindowLengthSamples = data.Length;
+            viewer.Coordinates.WindowLengthSamples = data.Length;
             viewer.Data.CurrentSample = data.Length / 2;
         }
 
@@ -175,11 +170,11 @@ namespace SongBPMFinder
 
             if (ModifierKeys == Keys.Shift)
             {
-                viewer.ScrollAudio(dir * 0.1f);
+                viewer.Coordinates.ScrollAudio(dir * 0.1f);
             }
             else
             {
-                viewer.ScrollAudio(dir);
+                viewer.Coordinates.ScrollAudio(dir);
             }
 
             UpdateScrollExtents();
@@ -191,7 +186,7 @@ namespace SongBPMFinder
             if (viewer == null)
                 return;
 
-            viewer.Zoom(dir, 2.0f);
+            viewer.Coordinates.Zoom(dir, 2.0f);
             UpdateScrollExtents();
         }
 
@@ -267,14 +262,6 @@ namespace SongBPMFinder
 
         void setCurrentAudio(AudioData audioData)
         {
-            if (IsTesting)
-            {
-                if (audioData != currentAudioFile)
-                {
-                    currentAudioFileCopy = audioData.DeepCopy();
-                }
-            }
-
             currentAudioFile = audioData;
             audioViewer.Data = audioData;
 
@@ -295,11 +282,6 @@ namespace SongBPMFinder
 
                 currentAudioFile = null;
 
-                if (IsTesting)
-                {
-                    currentAudioFileCopy = null;
-                }
-
                 audioStream = null;
                 GC.Collect();
             }
@@ -319,7 +301,7 @@ namespace SongBPMFinder
 
         void UpdateScrollExtents()
         {
-            int windowLength = audioViewer.WindowLengthSamples;
+            int windowLength = audioViewer.Coordinates.WindowLengthSamples;
             playbackScrollbar.Minimum = -windowLength / 2;
             playbackScrollbar.Maximum = Math.Max(0, currentAudioFile.Length - windowLength / 2);
             playbackScrollbar.Value = playbackScrollbar.Minimum + currentAudioFile.CurrentSample;

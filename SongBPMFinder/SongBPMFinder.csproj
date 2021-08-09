@@ -101,6 +101,9 @@
     <Compile Include="BeatDetection\OsuTimingPointFormatter.cs" />
     <Compile Include="BeatDetection\TestTimingGenerator.cs" />
     <Compile Include="BeatDetection\TimingPointList.cs" />
+    <Compile Include="Gui\TimingPointDrawer.cs" />
+    <Compile Include="Gui\WaveformCoordinates1.cs" />
+    <Compile Include="Gui\WaveformDrawer.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\RichTextBoxLogger.cs" />
     <Compile Include="Util\AudioSlice.cs" />

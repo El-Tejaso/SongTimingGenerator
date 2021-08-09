@@ -30,12 +30,12 @@
             return new AudioSlice(slice, newSampleRate);
         }
 
-        public double GetSecond(int timeInSamples)
+        public double ToSeconds(int timeInSamples)
         {
             return timeInSamples / (double)SampleRate;
         }
 
-        public int GetSample(double timeInSeconds)
+        public int ToSamples(double timeInSeconds)
         {
             return (int)(SampleRate * timeInSeconds);
         }

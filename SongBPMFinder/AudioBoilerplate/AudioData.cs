@@ -13,7 +13,11 @@ namespace SongBPMFinder
         private int currentSample = 0;
         private int len;
 
-        public int Length => len;
+        public int Length {
+            get {
+                return len;
+            }
+        }
 
 
         public int CurrentSample {
@@ -57,12 +61,12 @@ namespace SongBPMFinder
 
         public double SampleToSeconds(int sample)
         {
-            return data[0].GetSecond(sample);
+            return data[0].ToSeconds(sample);
         }
 
         public int ToSample(double seconds)
         {
-            return data[0].GetSample(seconds);
+            return data[0].ToSamples(seconds);
         }
 
         public float GetSample(int sample, int channel)
@@ -73,11 +77,11 @@ namespace SongBPMFinder
         private void initialize(AudioSlice[] channelSeperatedData, int sampleRate)
         {
             this.data = channelSeperatedData;
+            this.len = channelSeperatedData[0].Length;
 
             this.sampleRate = sampleRate;
             this.numChannels = channelSeperatedData.Length;
             this.metadata = new WaveFormat(sampleRate, numChannels);
-            this.len = this.data[0].Length;
         }
 
         public AudioData(AudioSlice[] channelSeperatedData, int sampleRate)

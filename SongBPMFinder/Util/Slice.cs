@@ -40,7 +40,16 @@
             stride = 1;
         }
 
-        //Permits indexing outside of the defined slice bounds. Make sure you know what you are doing though
+        /// <summary>
+        /// start inclusive, end exclusive. 
+        /// 
+        /// Stride is the number of indices to step forward to the next item.
+        /// Anything 1 and greater is valid. 
+        /// 
+        /// A common use is to quickly get the left and right channels of interleaved audio with a stride of 2
+        /// 
+        /// Permits indexing outside of the defined slice bounds. Make sure you know what you are doing though
+        /// </summary>
         public Slice<T> GetSlice(int newStart, int newEnd, int newStride = 1)
         {
             if (newEnd * stride > array.Length)

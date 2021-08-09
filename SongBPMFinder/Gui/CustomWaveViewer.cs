@@ -22,71 +22,42 @@ namespace SongBPMFinder
                 return audioData;
             }
             set {
+                if (value == audioData)
+                    return;
+
                 audioData = value;
-                this.Invalidate();
-            }
-        }
+                coordinates.AudioData = value;
+                waveformDrawer.AudioData = value;
+                timingPointDrawer.TimingPoints = null;
 
-        public double StartTimeSeconds {
-            get {
-                if (audioData == null)
-                    return 0.0;
-                return audioData.SampleToSeconds(audioData.CurrentSample);
-            }
-            set {
-                if (audioData == null)
-                    return;
-                int pos = audioData.ToSample(value);
-                audioData.CurrentSample = pos;
-                this.Invalidate();
-            }
-        }
-
-        public int WindowLengthSamples {
-            get {
-                if (audioData == null)
-                    return 0;
-
-                return (int)(audioData.ToSample(WindowLengthSeconds));
-            }
-            set {
-                if (audioData == null)
-                    return;
-
-                WindowLengthSeconds = audioData.SampleToSeconds(value);
-            }
-        }
-
-        public double WindowLengthSeconds {
-            get => (this.SecondsPerPixel * this.ClientRectangle.Width);
-            set {
-                this.SecondsPerPixel = value / ClientRectangle.Width;
-            }
-        }
-
-        private double secondsPerPixel;
-        public double SecondsPerPixel {
-            get {
-                return secondsPerPixel;
-            }
-            set {
-                secondsPerPixel = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
         private TimingPointList timingPoints;
 
-        float viewportMax = 1;
 
         public bool ForceIndividualView {
-            get; set;
+            get {
+                return waveformDrawer.ForceIndividualView;
+            }
+            set {
+                waveformDrawer.ForceIndividualView = value;
+                Invalidate();
+            }
         }
+
 
         Font textFont;
         StringFormat format;
         Pen drawingPen;
         SolidBrush textBrush;
+
+        WaveformCoordinates coordinates;
+        public WaveformCoordinates Coordinates { get => coordinates; }
+
+        WaveformDrawer waveformDrawer;
+        TimingPointDrawer timingPointDrawer;
 
         public CustomWaveViewer()
         {
@@ -101,35 +72,18 @@ namespace SongBPMFinder
 
             drawingPen = new Pen(Color.Red, 3);
             textBrush = new SolidBrush(Color.Red);
-        }
 
+            //might need injection
+            coordinates = new WaveformCoordinates(audioData, this);
 
-        public void Zoom(int dir, float amount)
-        {
-            if (audioData == null)
-                return;
-
-            SecondsPerPixel *= Math.Pow(amount, -dir);
-
-            if (SecondsPerPixel < 0.000001f)
-                SecondsPerPixel = 0.000001f;
-
-            if (SecondsPerPixel > audioData.Duration / Width)
-                SecondsPerPixel = audioData.Duration / Width;
-        }
-
-
-        public void ScrollAudio(float amount)
-        {
-            if (audioData == null)
-                return;
-            audioData.CurrentSample -= (int)(amount * WindowLengthSamples / 20);
-            Invalidate();
+            waveformDrawer = new WaveformDrawer(this, textFont, audioData, coordinates);
+            timingPointDrawer = new TimingPointDrawer(this, textFont, coordinates, timingPoints);
         }
 
         public void ShowTimingPoints(TimingPointList list)
         {
             timingPoints = list;
+            timingPointDrawer.TimingPoints = list;
             Invalidate();
         }
 
@@ -141,14 +95,11 @@ namespace SongBPMFinder
             if (audioData == null)
                 return;
 
-            calculateExtents();
+            coordinates.RecalculateExtents();
 
-            for (int i = 0; i < audioData.Channels; i++)
-            {
-                drawAudioChannelWaveform(e, i);
-            }
+            waveformDrawer.DrawAudioWaveform(e.Graphics);
 
-            drawTimingPoints(e);
+            timingPointDrawer.DrawTimingPoints(e.Graphics);
 
             drawCurrentPositionText(e);
 
@@ -157,182 +108,6 @@ namespace SongBPMFinder
             base.OnPaint(e);
         }
 
-        void calculateExtents()
-        {
-            if (audioData == null)
-                return;
-
-            int lower = Math.Max(0, audioData.CurrentSample - WindowLengthSamples / 2);
-            int upper = Math.Min(audioData.GetChannel(0).Length, audioData.CurrentSample + WindowLengthSamples / 2);
-
-            viewportMax = Math.Max(0.00001f, FloatSliceUtil.Max(audioData.GetChannel(0).Slice.GetSlice(lower, upper), true));
-        }
-
-
-        private void drawAudioChannelWaveform(PaintEventArgs e, int i)
-        {
-            float height = ClientRectangle.Height - 80;
-            float top = ClientRectangle.Top + i * height / (float)audioData.Channels;
-            float bottom = ClientRectangle.Top + (i + 1) * height / (float)audioData.Channels;
-
-            int samplesPerPixel = audioData.ToSample(SecondsPerPixel);
-            if (ForceIndividualView || samplesPerPixel < 1)
-            {
-                drawIndividualSamples(e, top, bottom, i);
-            }
-            else
-            {
-                drawCondensedWaveform(e, top, bottom, i);
-            }
-
-            drawAxes(e, top, bottom);
-        }
-
-        void drawIndividualSamples(PaintEventArgs e, float rectTop, float rectBottom, int channel)
-        {
-            int lower = Math.Max(0, audioData.CurrentSample - WindowLengthSamples / 2);
-            int upper = Math.Min(audioData.GetChannel(0).Length, audioData.CurrentSample + WindowLengthSamples / 2);
-
-            AudioSlice channelData = audioData.GetChannel(channel);
-
-            for (int position = lower; position < upper; position++)
-            {
-                float x = getWaveformX(position);
-                float y = getWaveformY(channelData[position], rectTop, rectBottom);
-
-                e.Graphics.DrawLine(WAVEPEN, x, getWaveformY(0, rectTop, rectBottom), x, y);
-
-                if (position > lower)
-                {
-                    e.Graphics.DrawLine(WAVEPEN, getWaveformX(position - 1), getWaveformY(channelData[position - 1], rectTop, rectBottom), x, y);
-                }
-            }
-
-            drawStdevStatistics(e, rectTop, rectBottom, lower, upper, channelData.Slice);
-        }
-
-        private void drawStdevStatistics(PaintEventArgs e, float rectTop, float rectBottom, int lower, int upper, Slice<float> channelData)
-        {
-            Slice<float> range = channelData.GetSlice(lower, upper);
-            float mean = FloatSliceUtil.Average(range, false);
-            float meanAbs = FloatSliceUtil.Average(range, true);
-            float stdev = FloatSliceUtil.StdDev(range);
-
-            //e.Graphics.DrawString("Av = " + mean.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 100));
-            //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
-            float meanY = getWaveformY(mean, rectTop, rectBottom);
-
-            e.Graphics.DrawLine(Pens.Orange, ClientRectangle.Left, meanY, ClientRectangle.Right, meanY);
-
-            drawStdevGradiation(e, rectTop, rectBottom, mean, stdev, Pens.Orange);
-            drawStdevGradiation(e, rectTop, rectBottom, mean, meanAbs, Pens.Aqua);
-        }
-
-        private void drawStdevGradiation(PaintEventArgs e, float rectTop, float rectBottom, float mean, float stdev, Pen pen)
-        {
-            for (int i = 1; i <= 6; i++)
-            {
-                float stdevY = getWaveformY(mean + (float)i * stdev, rectTop, rectBottom);
-                if (stdevY < rectTop + 10)
-                    break;
-                if (stdevY > rectBottom - 10)
-                    break;
-
-                e.Graphics.DrawLine(pen, ClientRectangle.Left, stdevY, ClientRectangle.Right, stdevY);
-                e.Graphics.DrawString(i.ToString(), textFont, Brushes.Aqua, new PointF(ClientRectangle.X + ClientRectangle.Width / 2 - 40, stdevY));
-            }
-        }
-
-        void drawCondensedWaveform(PaintEventArgs e, float rectTop, float rectBottom, int channel)
-        {
-            Slice<float> data = audioData.GetChannel(channel).Slice;
-
-            for (float x = ClientRectangle.Left; x < ClientRectangle.Right; x += 1)
-            {
-                int a = waveformToDataX(x);
-                if (a < 0)
-                    continue;
-                if (a >= audioData.Length)
-                    break;
-
-                int samplesPerPixel = audioData.ToSample(SecondsPerPixel);
-                int b = a + samplesPerPixel;
-
-                float low = data[a];
-                float high = low;
-
-                bool reachedEnd = false;
-                for (int i = a + 1; i < b; i++)
-                {
-                    if (i >= data.Length)
-                    {
-                        reachedEnd = true;
-                        break;
-                    }
-
-                    low = Math.Min(low, data[i]);
-                    high = Math.Max(high, data[i]);
-                }
-
-                e.Graphics.DrawLine(
-                    WAVEPEN,
-                    x,
-                    getWaveformY(low, rectTop, rectBottom),
-                    x,
-                    getWaveformY(high, rectTop, rectBottom));
-
-                if (reachedEnd)
-                {
-                    break;
-                }
-            }
-        }
-
-        void drawAxes(PaintEventArgs e, float rectTop, float rectBottom)
-        {
-            e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, rectTop);
-            e.Graphics.DrawString(viewportMax.ToString("0.00"), textFont, Brushes.LimeGreen, ClientRectangle.Left, rectBottom - 20);
-        }
-
-        void drawTimingPoints(PaintEventArgs e)
-        {
-            if(timingPoints == null || timingPoints.Count == 0)
-                return;
-
-            double lowerBound = audioData.CurrentSampleSeconds - WindowLengthSeconds / 2.0;
-            double upperBound = audioData.CurrentSampleSeconds + WindowLengthSeconds / 2.0;
-            int startIndex = timingPoints.FirstVisible(lowerBound);
-
-            double prevTime = timingPoints[Math.Max(startIndex - 1, 0)].TimeSeconds;
-
-            for (int i = startIndex; i < timingPoints.Count; i++)
-            {
-                TimingPoint tp = timingPoints[i];
-
-                if (tp.TimeSeconds > upperBound)
-                    break;
-
-                float x = getWaveformX(tp.TimeSeconds);
-
-                drawingPen.Color = tp.Color;
-                textBrush.Color = tp.Color;
-
-                e.Graphics.DrawLine(drawingPen, x, ClientRectangle.Top, x, ClientRectangle.Bottom - 60);
-
-                string desc = formatTimingPoint(prevTime, tp);
-
-                e.Graphics.DrawString(desc, textFont, textBrush, new PointF(x, ClientRectangle.Bottom - 20), format);
-                e.Graphics.DrawString("W:" + tp.Weight.ToString("0.000"), textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 40), format);
-
-                prevTime = tp.TimeSeconds;
-            }
-        }
-
-        private static string formatTimingPoint(double prevTime, TimingPoint tp)
-        {
-            return "[" + tp.BPM.ToString("0.00") + "," + tp.TimeSeconds.ToString("0.00") + "]" +
-                                        "(+ " + (tp.TimeSeconds - prevTime).ToString("0.000") + "s)";
-        }
 
         private void drawCurrentPositionText(PaintEventArgs e)
         {
@@ -349,32 +124,6 @@ namespace SongBPMFinder
             e.Graphics.DrawLine(Pens.Black, mid - 1, ClientRectangle.Top, mid - 1, ClientRectangle.Bottom);
             e.Graphics.DrawLine(Pens.Yellow, mid, ClientRectangle.Top, mid, ClientRectangle.Bottom);
             e.Graphics.DrawLine(Pens.Black, mid + 1, ClientRectangle.Top, mid + 1, ClientRectangle.Bottom);
-        }
-
-
-        float getWaveformY(float sample, float rectTop, float rectBottom)
-        {
-            float percent = -0.5f * MathUtilF.Clamp(sample / Math.Abs(viewportMax), -1, 1) + 0.5f;
-
-            float y = rectTop + (rectBottom - rectTop) * percent;
-
-            return y;
-        }
-
-
-        float getWaveformX(double time)
-        {
-            return getWaveformX(audioData.ToSample(time));
-        }
-
-        int waveformToDataX(float waveformX)
-        {
-            return audioData.CurrentSample - WindowLengthSamples / 2 + (int)(((waveformX / (float)ClientRectangle.Width) * (float)WindowLengthSamples));
-        }
-
-        float getWaveformX(int samples)
-        {
-            return ClientRectangle.X + ((samples - audioData.CurrentSample + WindowLengthSamples / 2) / (float)WindowLengthSamples) * ClientRectangle.Width;
         }
 
 

@@ -257,12 +257,8 @@
             this.audioViewer.ForceIndividualView = false;
             this.audioViewer.Location = new System.Drawing.Point(3, 3);
             this.audioViewer.Name = "audioViewer";
-            this.audioViewer.SecondsPerPixel = 0D;
             this.audioViewer.Size = new System.Drawing.Size(898, 343);
-            this.audioViewer.StartTimeSeconds = 0D;
             this.audioViewer.TabIndex = 5;
-            this.audioViewer.WindowLengthSamples = 0;
-            this.audioViewer.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab
             // 
@@ -282,12 +278,8 @@
             this.plotWaveViewer.ForceIndividualView = true;
             this.plotWaveViewer.Location = new System.Drawing.Point(3, 3);
             this.plotWaveViewer.Name = "plotWaveViewer";
-            this.plotWaveViewer.SecondsPerPixel = 0D;
             this.plotWaveViewer.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer.StartTimeSeconds = 0D;
             this.plotWaveViewer.TabIndex = 0;
-            this.plotWaveViewer.WindowLengthSamples = 0;
-            this.plotWaveViewer.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab2
             // 
@@ -307,12 +299,8 @@
             this.plotWaveViewer2.ForceIndividualView = true;
             this.plotWaveViewer2.Location = new System.Drawing.Point(3, 3);
             this.plotWaveViewer2.Name = "plotWaveViewer2";
-            this.plotWaveViewer2.SecondsPerPixel = 0D;
             this.plotWaveViewer2.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer2.StartTimeSeconds = 0D;
             this.plotWaveViewer2.TabIndex = 1;
-            this.plotWaveViewer2.WindowLengthSamples = 0;
-            this.plotWaveViewer2.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab3
             // 
@@ -332,12 +320,8 @@
             this.plotWaveViewer3.ForceIndividualView = true;
             this.plotWaveViewer3.Location = new System.Drawing.Point(3, 3);
             this.plotWaveViewer3.Name = "plotWaveViewer3";
-            this.plotWaveViewer3.SecondsPerPixel = 0D;
             this.plotWaveViewer3.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer3.StartTimeSeconds = 0D;
             this.plotWaveViewer3.TabIndex = 2;
-            this.plotWaveViewer3.WindowLengthSamples = 0;
-            this.plotWaveViewer3.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab4
             // 
@@ -357,12 +341,8 @@
             this.plotWaveViewer4.ForceIndividualView = true;
             this.plotWaveViewer4.Location = new System.Drawing.Point(3, 3);
             this.plotWaveViewer4.Name = "plotWaveViewer4";
-            this.plotWaveViewer4.SecondsPerPixel = 0D;
             this.plotWaveViewer4.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer4.StartTimeSeconds = 0D;
             this.plotWaveViewer4.TabIndex = 2;
-            this.plotWaveViewer4.WindowLengthSamples = 0;
-            this.plotWaveViewer4.WindowLengthSeconds = 0D;
             // 
             // testWaveformTab5
             // 
@@ -382,12 +362,8 @@
             this.plotWaveViewer5.ForceIndividualView = true;
             this.plotWaveViewer5.Location = new System.Drawing.Point(3, 3);
             this.plotWaveViewer5.Name = "plotWaveViewer5";
-            this.plotWaveViewer5.SecondsPerPixel = 0D;
             this.plotWaveViewer5.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer5.StartTimeSeconds = 0D;
             this.plotWaveViewer5.TabIndex = 2;
-            this.plotWaveViewer5.WindowLengthSamples = 0;
-            this.plotWaveViewer5.WindowLengthSeconds = 0D;
             // 
             // toolPanel
             // 
