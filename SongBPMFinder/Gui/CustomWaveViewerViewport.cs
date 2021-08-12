@@ -29,6 +29,8 @@ namespace SongBPMFinder
                 waveformDrawer.AudioData = value;
                 timingPointDrawer.TimingPoints = null;
 
+                coordinates.SecondsPerPixel = audioData.Duration / ClientRectangle.Width;
+
                 Invalidate();
             }
         }

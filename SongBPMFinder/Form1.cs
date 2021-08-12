@@ -27,6 +27,7 @@ namespace SongBPMFinder
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
             calcTimingButton.Enabled = true;
+            
         }
 
         CustomWaveViewer getViewer(int graph)
