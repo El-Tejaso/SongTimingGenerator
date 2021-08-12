@@ -74,10 +74,9 @@ namespace SongBPMFinder
             {
                 currentIndex = position + (int)((double)currentSample * playbackRate);
                 int nextIndex = Math.Min(currentIndex + 1, len - 1);
+                float lerpFactor = (float)(((double)currentSample * playbackRate) % 1.0);
 
-                float t = (float)(((double)currentSample * playbackRate) % 1.0);
-
-                int bufferBaseIndex = offset + currentUnit;
+                int indexIntoOutputBuffer = offset + currentUnit;
 
                 for (int j = 0; j < channels; j++)
                 {
@@ -85,9 +84,9 @@ namespace SongBPMFinder
                     float thisSample = chanelJ[currentIndex];
                     float nextSample = chanelJ[nextIndex];
 
-                    float interpolatedSample = MathUtilF.Lerp(thisSample, nextSample, t);
+                    float interpolatedSample = MathUtilF.Lerp(thisSample, nextSample, lerpFactor);
 
-                    buffer[bufferBaseIndex + j] = interpolatedSample;
+                    buffer[indexIntoOutputBuffer + j] = interpolatedSample;
                 }
             }
 

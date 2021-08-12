@@ -10,6 +10,8 @@ namespace SongBPMFinder
 {
     public class WaveformCoordinates
     {
+        const float MINIMUM_ZOOM = 0.000001f;
+
         AudioData audioData;
         public AudioData AudioData {
             get {
@@ -75,8 +77,8 @@ namespace SongBPMFinder
             set {
                 secondsPerPixel = value;
 
-                if (secondsPerPixel < 0.000001f)
-                    secondsPerPixel = 0.000001f;
+                if (secondsPerPixel < MINIMUM_ZOOM)
+                    secondsPerPixel = MINIMUM_ZOOM;
                 else if (audioData != null && (secondsPerPixel > audioData.Duration / ClientRectangle.Width))
                     secondsPerPixel = audioData.Duration / ClientRectangle.Width;
             }

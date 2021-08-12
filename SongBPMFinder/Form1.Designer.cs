@@ -33,7 +33,6 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textOutput = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.playbackScrollbar = new System.Windows.Forms.HScrollBar();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.playPauseButton = new System.Windows.Forms.Button();
             this.buttonSpeed1x = new System.Windows.Forms.Button();
@@ -44,16 +43,12 @@
             this.songWaveformTab = new System.Windows.Forms.TabPage();
             this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer2 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab3 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer3 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab4 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer4 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
-            this.plotWaveViewer5 = new SongBPMFinder.CustomWaveViewer();
             this.toolPanel = new System.Windows.Forms.Panel();
+            this.freezeView = new System.Windows.Forms.CheckBox();
             this.testButton = new System.Windows.Forms.Button();
             this.copyTimingButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -63,9 +58,12 @@
             this.calcTimingButton = new System.Windows.Forms.Button();
             this.clearOutputButton = new System.Windows.Forms.Button();
             this.openButton = new System.Windows.Forms.Button();
-            this.openFileDialogue = new System.Windows.Forms.OpenFileDialog();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
-            this.freezeView = new System.Windows.Forms.CheckBox();
+            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -128,28 +126,17 @@
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.playbackScrollbar, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.waveformTabs, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(918, 451);
             this.tableLayoutPanel3.TabIndex = 2;
-            // 
-            // playbackScrollbar
-            // 
-            this.playbackScrollbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playbackScrollbar.Location = new System.Drawing.Point(0, 427);
-            this.playbackScrollbar.Name = "playbackScrollbar";
-            this.playbackScrollbar.Size = new System.Drawing.Size(918, 24);
-            this.playbackScrollbar.TabIndex = 5;
-            this.playbackScrollbar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.playbackScrollbar_Scroll);
             // 
             // flowLayoutPanel1
             // 
@@ -236,7 +223,7 @@
             this.waveformTabs.Location = new System.Drawing.Point(3, 49);
             this.waveformTabs.Name = "waveformTabs";
             this.waveformTabs.SelectedIndex = 0;
-            this.waveformTabs.Size = new System.Drawing.Size(912, 375);
+            this.waveformTabs.Size = new System.Drawing.Size(912, 399);
             this.waveformTabs.TabIndex = 7;
             // 
             // songWaveformTab
@@ -245,125 +232,73 @@
             this.songWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.songWaveformTab.Name = "songWaveformTab";
             this.songWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.songWaveformTab.Size = new System.Drawing.Size(904, 349);
+            this.songWaveformTab.Size = new System.Drawing.Size(904, 373);
             this.songWaveformTab.TabIndex = 0;
             this.songWaveformTab.Text = "Song Waveform";
             this.songWaveformTab.UseVisualStyleBackColor = true;
             // 
             // audioViewer
             // 
-            this.audioViewer.Data = null;
             this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audioViewer.ForceIndividualView = false;
             this.audioViewer.Location = new System.Drawing.Point(3, 3);
             this.audioViewer.Name = "audioViewer";
-            this.audioViewer.Size = new System.Drawing.Size(898, 343);
-            this.audioViewer.TabIndex = 5;
+            this.audioViewer.Size = new System.Drawing.Size(898, 367);
+            this.audioViewer.TabIndex = 0;
             // 
             // testWaveformTab
             // 
-            this.testWaveformTab.Controls.Add(this.plotWaveViewer);
+            this.testWaveformTab.Controls.Add(this.debugPlot1);
             this.testWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab.Name = "testWaveformTab";
             this.testWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab.Size = new System.Drawing.Size(904, 373);
             this.testWaveformTab.TabIndex = 1;
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
             // 
-            // plotWaveViewer
-            // 
-            this.plotWaveViewer.Data = null;
-            this.plotWaveViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotWaveViewer.ForceIndividualView = true;
-            this.plotWaveViewer.Location = new System.Drawing.Point(3, 3);
-            this.plotWaveViewer.Name = "plotWaveViewer";
-            this.plotWaveViewer.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer.TabIndex = 0;
-            // 
             // testWaveformTab2
             // 
-            this.testWaveformTab2.Controls.Add(this.plotWaveViewer2);
+            this.testWaveformTab2.Controls.Add(this.debugPlot2);
             this.testWaveformTab2.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab2.Name = "testWaveformTab2";
             this.testWaveformTab2.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab2.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab2.Size = new System.Drawing.Size(904, 373);
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
             // 
-            // plotWaveViewer2
-            // 
-            this.plotWaveViewer2.Data = null;
-            this.plotWaveViewer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotWaveViewer2.ForceIndividualView = true;
-            this.plotWaveViewer2.Location = new System.Drawing.Point(3, 3);
-            this.plotWaveViewer2.Name = "plotWaveViewer2";
-            this.plotWaveViewer2.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer2.TabIndex = 1;
-            // 
             // testWaveformTab3
             // 
-            this.testWaveformTab3.Controls.Add(this.plotWaveViewer3);
+            this.testWaveformTab3.Controls.Add(this.debugPlot3);
             this.testWaveformTab3.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab3.Name = "testWaveformTab3";
             this.testWaveformTab3.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab3.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab3.Size = new System.Drawing.Size(904, 373);
             this.testWaveformTab3.TabIndex = 3;
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
             // 
-            // plotWaveViewer3
-            // 
-            this.plotWaveViewer3.Data = null;
-            this.plotWaveViewer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotWaveViewer3.ForceIndividualView = true;
-            this.plotWaveViewer3.Location = new System.Drawing.Point(3, 3);
-            this.plotWaveViewer3.Name = "plotWaveViewer3";
-            this.plotWaveViewer3.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer3.TabIndex = 2;
-            // 
             // testWaveformTab4
             // 
-            this.testWaveformTab4.Controls.Add(this.plotWaveViewer4);
+            this.testWaveformTab4.Controls.Add(this.debugPlot4);
             this.testWaveformTab4.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab4.Name = "testWaveformTab4";
             this.testWaveformTab4.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab4.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab4.Size = new System.Drawing.Size(904, 373);
             this.testWaveformTab4.TabIndex = 4;
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
             // 
-            // plotWaveViewer4
-            // 
-            this.plotWaveViewer4.Data = null;
-            this.plotWaveViewer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotWaveViewer4.ForceIndividualView = true;
-            this.plotWaveViewer4.Location = new System.Drawing.Point(3, 3);
-            this.plotWaveViewer4.Name = "plotWaveViewer4";
-            this.plotWaveViewer4.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer4.TabIndex = 2;
-            // 
             // testWaveformTab5
             // 
-            this.testWaveformTab5.Controls.Add(this.plotWaveViewer5);
+            this.testWaveformTab5.Controls.Add(this.debugPlot5);
             this.testWaveformTab5.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab5.Name = "testWaveformTab5";
             this.testWaveformTab5.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab5.Size = new System.Drawing.Size(904, 349);
+            this.testWaveformTab5.Size = new System.Drawing.Size(904, 373);
             this.testWaveformTab5.TabIndex = 5;
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
-            // 
-            // plotWaveViewer5
-            // 
-            this.plotWaveViewer5.Data = null;
-            this.plotWaveViewer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotWaveViewer5.ForceIndividualView = true;
-            this.plotWaveViewer5.Location = new System.Drawing.Point(3, 3);
-            this.plotWaveViewer5.Name = "plotWaveViewer5";
-            this.plotWaveViewer5.Size = new System.Drawing.Size(898, 343);
-            this.plotWaveViewer5.TabIndex = 2;
             // 
             // toolPanel
             // 
@@ -383,6 +318,17 @@
             this.toolPanel.Name = "toolPanel";
             this.toolPanel.Size = new System.Drawing.Size(177, 579);
             this.toolPanel.TabIndex = 1;
+            // 
+            // freezeView
+            // 
+            this.freezeView.AutoSize = true;
+            this.freezeView.Location = new System.Drawing.Point(6, 437);
+            this.freezeView.Name = "freezeView";
+            this.freezeView.Size = new System.Drawing.Size(83, 17);
+            this.freezeView.TabIndex = 9;
+            this.freezeView.Text = "Freeze view";
+            this.freezeView.UseVisualStyleBackColor = true;
+            this.freezeView.CheckedChanged += new System.EventHandler(this.freezeView_CheckedChanged);
             // 
             // testButton
             // 
@@ -460,7 +406,6 @@
             this.calcTimingButton.TabStop = false;
             this.calcTimingButton.Text = "Calculate timing";
             this.calcTimingButton.UseVisualStyleBackColor = false;
-            this.calcTimingButton.Click += new System.EventHandler(this.calcTimingButton_Click);
             // 
             // clearOutputButton
             // 
@@ -488,24 +433,48 @@
             this.openButton.UseVisualStyleBackColor = false;
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
-            // openFileDialogue
-            // 
-            this.openFileDialogue.FileName = "openFileDialog1";
-            // 
             // songPositionChangedInterrupt
             // 
-            this.songPositionChangedInterrupt.Tick += new System.EventHandler(this.songPositionChangedInterrupt_Tick);
             // 
-            // freezeView
+            // debugPlot1
             // 
-            this.freezeView.AutoSize = true;
-            this.freezeView.Location = new System.Drawing.Point(6, 437);
-            this.freezeView.Name = "freezeView";
-            this.freezeView.Size = new System.Drawing.Size(83, 17);
-            this.freezeView.TabIndex = 9;
-            this.freezeView.Text = "Freeze view";
-            this.freezeView.UseVisualStyleBackColor = true;
-            this.freezeView.CheckedChanged += new System.EventHandler(this.freezeView_CheckedChanged);
+            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot1.Name = "debugPlot1";
+            this.debugPlot1.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot1.TabIndex = 0;
+            // 
+            // debugPlot2
+            // 
+            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot2.Name = "debugPlot2";
+            this.debugPlot2.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot2.TabIndex = 0;
+            // 
+            // debugPlot3
+            // 
+            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot3.Name = "debugPlot3";
+            this.debugPlot3.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot3.TabIndex = 0;
+            // 
+            // debugPlot4
+            // 
+            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot4.Name = "debugPlot4";
+            this.debugPlot4.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot4.TabIndex = 0;
+            // 
+            // debugPlot5
+            // 
+            this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot5.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot5.Name = "debugPlot5";
+            this.debugPlot5.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot5.TabIndex = 0;
             // 
             // Form1
             // 
@@ -539,7 +508,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel toolPanel;
-        private System.Windows.Forms.OpenFileDialog openFileDialogue;
         private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.RichTextBox textOutput;
         private System.Windows.Forms.Button clearOutputButton;
@@ -552,27 +520,26 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button copyTimingButton;
-        private System.Windows.Forms.HScrollBar playbackScrollbar;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button buttonSpeed1x;
         private System.Windows.Forms.Button buttonSpeed075x;
         private System.Windows.Forms.Button buttonSpeed050x;
         private System.Windows.Forms.Button buttonSpeed025x;
-        private System.Windows.Forms.TabControl waveformTabs;
-        private System.Windows.Forms.TabPage songWaveformTab;
-        private CustomWaveViewer audioViewer;
-        private System.Windows.Forms.TabPage testWaveformTab;
-        private CustomWaveViewer plotWaveViewer;
-        private System.Windows.Forms.TabPage testWaveformTab2;
-        private CustomWaveViewer plotWaveViewer2;
-        private System.Windows.Forms.TabPage testWaveformTab3;
-        private CustomWaveViewer plotWaveViewer3;
-        private System.Windows.Forms.TabPage testWaveformTab4;
-        private CustomWaveViewer plotWaveViewer4;
-        private System.Windows.Forms.TabPage testWaveformTab5;
-        private CustomWaveViewer plotWaveViewer5;
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.CheckBox freezeView;
+        private System.Windows.Forms.TabControl waveformTabs;
+        private System.Windows.Forms.TabPage songWaveformTab;
+        private System.Windows.Forms.TabPage testWaveformTab;
+        private System.Windows.Forms.TabPage testWaveformTab2;
+        private System.Windows.Forms.TabPage testWaveformTab3;
+        private System.Windows.Forms.TabPage testWaveformTab4;
+        private System.Windows.Forms.TabPage testWaveformTab5;
+        private CustomWaveViewer audioViewer;
+        private CustomWaveViewer debugPlot1;
+        private CustomWaveViewer debugPlot2;
+        private CustomWaveViewer debugPlot3;
+        private CustomWaveViewer debugPlot4;
+        private CustomWaveViewer debugPlot5;
     }
 }
 

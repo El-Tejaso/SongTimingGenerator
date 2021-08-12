@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="AudioBoilerplate\AudioData.cs" />
     <Compile Include="AudioBoilerplate\AudioDataStream.cs" />
+    <Compile Include="AudioBoilerplate\AudioPlaybackSystem.cs" />
     <Compile Include="AudioBoilerplate\AudioPlayer.cs" />
     <Compile Include="BeatDetection\Beat.cs" />
     <Compile Include="BeatDetection\BeatDetector.cs" />
@@ -101,6 +102,12 @@
     <Compile Include="BeatDetection\OsuTimingPointFormatter.cs" />
     <Compile Include="BeatDetection\TestTimingGenerator.cs" />
     <Compile Include="BeatDetection\TimingPointList.cs" />
+    <Compile Include="Gui\CustomWaveViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\CustomWaveViewer.Designer.cs">
+      <DependentUpon>CustomWaveViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\TimingPointDrawer.cs" />
     <Compile Include="Gui\WaveformCoordinates1.cs" />
     <Compile Include="Gui\WaveformDrawer.cs" />
@@ -116,7 +123,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\CustomWaveViewer.cs">
+    <Compile Include="Gui\CustomWaveViewerViewport.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Program.cs" />
@@ -130,6 +137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\CustomWaveViewer.resx">
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\CustomWaveViewerViewport.resx">
+      <DependentUpon>CustomWaveViewerViewport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

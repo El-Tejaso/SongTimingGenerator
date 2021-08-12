@@ -39,7 +39,7 @@ namespace SongBPMFinder
             this.audioData = audioData;
             this.coordinates = coordinates;
 
-            wavePen = new Pen(Color.Black);
+            wavePen = new Pen(Color.Blue);
         }
 
         public void DrawAudioWaveform(Graphics g)
@@ -60,7 +60,7 @@ namespace SongBPMFinder
             AudioSlice data = audioData.GetChannel(0);
 
             int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
-            if (ForceIndividualView || samplesPerPixel < 1)
+            if (ForceIndividualView || samplesPerPixel <= 1)
             {
                 drawIndividualSamples(region, data, g);
             }
@@ -74,20 +74,22 @@ namespace SongBPMFinder
 
         void drawIndividualSamples(Rectangle region, AudioSlice entireChannel, Graphics g)
         {
-            int lower = coordinates.VeryLeftSample;
-            int upper = coordinates.VeryRightSample;
+            int leftMost = coordinates.VeryLeftSample;
+            int rightMost = coordinates.VeryRightSample;
+            if (rightMost - leftMost == 0)
+                return;
 
             float rectTop = region.Top;
             float rectBottom = region.Bottom;
 
-            for (int position = lower; position < upper; position++)
+            for (int position = leftMost; position < rightMost; position++)
             {
                 float x = coordinates.GetWaveformXSamples(position);
                 float y = coordinates.GetWaveformY(entireChannel[position], rectTop, rectBottom);
 
                 g.DrawLine(wavePen, x, coordinates.GetWaveformY(0, rectTop, rectBottom), x, y);
 
-                if (position > lower)
+                if (position > leftMost)
                 {
                     g.DrawLine(
                         wavePen, coordinates.GetWaveformXSamples(position - 1), 
@@ -96,12 +98,12 @@ namespace SongBPMFinder
                 }
             }
 
-            drawStdevStatistics(g, region, entireChannel);
+            drawStdevStatistics(g, region, entireChannel.GetSlice(coordinates.VeryLeftSample, coordinates.VeryRightSample));
         }
 
-        private void drawStdevStatistics(Graphics g, Rectangle region, AudioSlice data)
+        private void drawStdevStatistics(Graphics g, Rectangle region, AudioSlice specificData)
         {
-            Slice<float> range = data.Slice;
+            Slice<float> range = specificData.Slice;
             float mean = FloatSliceUtil.Average(range, false);
             float meanAbs = FloatSliceUtil.Average(range, true);
             float stdev = FloatSliceUtil.StdDev(range);
@@ -154,7 +156,7 @@ namespace SongBPMFinder
                 int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
                 int rangeEnd = rangeStart + samplesPerPixel;
 
-                float low = entireChannel[rangeStart];
+                float low = 0;
                 float high = low;
 
                 bool reachedEnd = false;
@@ -187,8 +189,8 @@ namespace SongBPMFinder
         void drawAxes(Rectangle region, Graphics g)
         {
             float vmax = coordinates.ViewportMax;
-            g.DrawString(vmax.ToString("0.00"), textFont, Brushes.LimeGreen, region.Left, region.Top);
-            g.DrawString(vmax.ToString("0.00"), textFont, Brushes.LimeGreen, region.Left, region.Bottom - 20);
+            g.DrawString(vmax.ToString("+0.00"), textFont, Brushes.Black, region.Left, region.Top);
+            g.DrawString(vmax.ToString("-0.00"), textFont, Brushes.Black, region.Left, region.Bottom - 20);
         }
     }
 }
