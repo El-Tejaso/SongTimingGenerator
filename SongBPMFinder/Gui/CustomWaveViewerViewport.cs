@@ -16,6 +16,7 @@ namespace SongBPMFinder
         private readonly Pen WAVEPEN = Pens.Black;
 
         private AudioData audioData;
+
         public AudioData AudioData {
             get {
                 return audioData;
@@ -28,8 +29,6 @@ namespace SongBPMFinder
                 coordinates.AudioData = value;
                 waveformDrawer.AudioData = value;
                 timingPointDrawer.TimingPoints = null;
-
-                coordinates.SecondsPerPixel = audioData.Duration / ClientRectangle.Width;
 
                 Invalidate();
             }

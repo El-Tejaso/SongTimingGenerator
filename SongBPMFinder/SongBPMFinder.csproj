@@ -109,7 +109,7 @@
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\TimingPointDrawer.cs" />
-    <Compile Include="Gui\WaveformCoordinates1.cs" />
+    <Compile Include="Gui\WaveformCoordinates.cs" />
     <Compile Include="Gui\WaveformDrawer.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\RichTextBoxLogger.cs" />

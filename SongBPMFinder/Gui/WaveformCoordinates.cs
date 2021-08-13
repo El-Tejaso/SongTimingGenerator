@@ -11,6 +11,7 @@ namespace SongBPMFinder
     public class WaveformCoordinates
     {
         const float MINIMUM_ZOOM = 0.000001f;
+        const float MAXIMUM_ZOOM = 20;
 
         AudioData audioData;
         public AudioData AudioData {
@@ -19,7 +20,8 @@ namespace SongBPMFinder
             }
             set {
                 audioData = value;
-                //invoke event or someth
+
+                SecondsPerPixel = MAXIMUM_ZOOM;
             }
         }
 
@@ -78,9 +80,20 @@ namespace SongBPMFinder
                 secondsPerPixel = value;
 
                 if (secondsPerPixel < MINIMUM_ZOOM)
+                {
                     secondsPerPixel = MINIMUM_ZOOM;
-                else if (audioData != null && (secondsPerPixel > audioData.Duration / ClientRectangle.Width))
-                    secondsPerPixel = audioData.Duration / ClientRectangle.Width;
+                }
+
+
+                if(audioData != null)
+                {
+                    //DotNet CORE is the one with MathF
+                    float maxZoom = (float)Math.Min(MAXIMUM_ZOOM, audioData.Duration) / ClientRectangle.Width;
+
+                    if(secondsPerPixel > maxZoom){
+                        secondsPerPixel = maxZoom;
+                    }
+                }
             }
         }
 
