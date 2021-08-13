@@ -3,15 +3,18 @@ using System;
 
 namespace SongBPMFinder
 {
+    /// <summary>
+    /// A class for loading, storing and keeping track of playback within an audio file.
+    /// 
+    /// </summary>
     public class AudioData
     {
         AudioSlice[] data;
-
-        int sampleRate;
-        int numChannels;
-
-        private int currentSample = 0;
         private int len;
+        private int sampleRate;
+        private int currentSample = 0;
+        WaveFormat nAudioWaveformat;
+
 
         public int Length {
             get {
@@ -19,10 +22,15 @@ namespace SongBPMFinder
             }
         }
 
+        public AudioSlice this[int channel] {
+            get {
+                return data[channel];
+            }
+        }
 
         public int CurrentSample {
             get => currentSample;
-            set {
+            private set {
                 currentSample = value;
                 if (currentSample < 0)
                     currentSample = 0;
@@ -31,62 +39,72 @@ namespace SongBPMFinder
             }
         }
 
+        public event Action OnPositionManuallyChanged;
+
+        /// <summary>
+        /// This should be used from an audio thread.
+        /// No events will be invoked.
+        /// </summary>
+        internal void SetCurrentSampleNoEvent(int value)
+        {
+            CurrentSample = value;
+        }
+
+        /// <summary>
+        /// This will be called from the main thread in response to user input or something.
+        /// It should NOT be called form an audio thread
+        /// </summary>
+        public void SetCurrentSampleWithEvent(int value)
+        {
+            CurrentSample = value;
+            OnPositionManuallyChanged?.Invoke();
+        }
+
+
         public double CurrentSampleSeconds {
             get {
                 return SampleToSeconds(CurrentSample);
             }
         }
 
-        public AudioSlice GetChannel(int c)
+        public double SampleToSeconds(int sample)
         {
-            return data[c];
+            return sample / (double)sampleRate;
         }
+
+        public int ToSample(double seconds)
+        {
+            return (int)(seconds * sampleRate);
+        }
+
 
         public int SampleRate {
             get => sampleRate;
         }
 
-        public int Channels {
-            get => numChannels;
+        public int NumChannels {
+            get => data.Length;
         }
 
         public double Duration {
             get => SampleToSeconds(Length);
         }
 
-        WaveFormat metadata;
         public WaveFormat WaveFormat {
-            get => metadata;
+            get => nAudioWaveformat;
         }
 
-        public double SampleToSeconds(int sample)
-        {
-            return data[0].ToSeconds(sample);
-        }
-
-        public int ToSample(double seconds)
-        {
-            return data[0].ToSamples(seconds);
-        }
-
-        public float GetSample(int sample, int channel)
-        {
-            return data[channel][sample];
-        }
-
-        private void initialize(AudioSlice[] channelSeperatedData, int sampleRate)
+        /// <summary>
+        /// the sampleRate provided to this class's constructor will override the sample rates
+        /// used in either channel of channelSeperatedData
+        /// </summary>
+        public AudioData(AudioSlice[] channelSeperatedData, int sampleRate)
         {
             this.data = channelSeperatedData;
             this.len = channelSeperatedData[0].Length;
 
             this.sampleRate = sampleRate;
-            this.numChannels = channelSeperatedData.Length;
-            this.metadata = new WaveFormat(sampleRate, numChannels);
-        }
-
-        public AudioData(AudioSlice[] channelSeperatedData, int sampleRate)
-        {
-            initialize(channelSeperatedData, sampleRate);
+            this.nAudioWaveformat = new WaveFormat(sampleRate, NumChannels);
         }
 
         public static AudioData FromFile(string filepath)
@@ -156,7 +174,7 @@ namespace SongBPMFinder
 
         public AudioData DeepCopy()
         {
-            AudioSlice[] deepCopyOfData = new AudioSlice[Channels];
+            AudioSlice[] deepCopyOfData = new AudioSlice[NumChannels];
             for(int i = 0; i < data.Length; i++)
             {
                 deepCopyOfData[i] = data[i].DeepCopy();

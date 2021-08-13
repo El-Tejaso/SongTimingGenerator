@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,30 @@ namespace SongBPMFinder
     public class AudioPlaybackSystem
     {
         AudioData currentAudioFile = null;
-        public AudioData CurrentAudioFile { get { return currentAudioFile; } }
+
+        public AudioData CurrentAudioFile {
+            get {
+                return currentAudioFile;
+            }
+            set {
+                if (currentAudioFile != value)
+                {
+                    if (currentAudioFile != null)
+                    {
+                        currentAudioFile.OnPositionManuallyChanged -= CurrentAudioFile_OnPositionManuallyChanged;
+                    }
+
+                    currentAudioFile = value;
+
+                    currentAudioFile.OnPositionManuallyChanged += CurrentAudioFile_OnPositionManuallyChanged;
+                }
+            }
+        }
+
+        private void CurrentAudioFile_OnPositionManuallyChanged()
+        {
+            OnPositionChanged?.Invoke();
+        }
 
         AudioDataStream audioStream;
         AudioPlayer player = new AudioPlayer();
@@ -19,7 +43,7 @@ namespace SongBPMFinder
 
         Timer songIsPlayingTicker;
 
-        public event Action WhileSongIsPlaying;
+        public event Action OnPositionChanged;
         public event Action OnSongPlay;
         public event Action OnSongPause;
         public event Action OnNewSongLoad;
@@ -30,7 +54,7 @@ namespace SongBPMFinder
 
         public int CurrentSample {
             get {
-                return currentAudioFile.CurrentSample;
+                return CurrentAudioFile.CurrentSample;
             }
         }
 
@@ -43,6 +67,8 @@ namespace SongBPMFinder
             }
         }
 
+        
+
         public AudioPlaybackSystem()
         {
             openFileDialog = new OpenFileDialog();
@@ -51,12 +77,18 @@ namespace SongBPMFinder
             songIsPlayingTicker.Stop();
             songIsPlayingTicker.Enabled = false;
             songIsPlayingTicker.Interval = 1000 / 30;
-            songIsPlayingTicker.Tick += onSongPlayingTimerTick;
+            songIsPlayingTicker.Tick += SongIsPlayingTicker_Tick;
         }
 
-        private void onSongPlayingTimerTick(object sender, EventArgs e)
+        private void SongIsPlayingTicker_Tick(object sender, EventArgs e)
         {
-            WhileSongIsPlaying?.Invoke();
+            if(currentAudioFile.CurrentSample == currentAudioFile.Length)
+            {
+                Pause();
+                return;
+            }
+
+            OnPositionChanged?.Invoke();
         }
 
         public void ShowOpenFilePrompt()
@@ -74,9 +106,9 @@ namespace SongBPMFinder
 
         public bool LoadFile(string filename)
         {
-            if (currentAudioFile != null)
+            if (CurrentAudioFile != null)
             {
-                currentAudioFile = null;
+                CurrentAudioFile = null;
                 audioStream = null;
 
                 ///////////////////////////////////////////
@@ -97,15 +129,16 @@ namespace SongBPMFinder
 
         void setCurrentAudio(AudioData audioData)
         {
-            currentAudioFile = audioData;
+            CurrentAudioFile = audioData;
 
-            audioStream = new AudioDataStream(currentAudioFile);
+            audioStream = new AudioDataStream(CurrentAudioFile);
+
             player.SetAudio(audioStream);
         }
 
         public void PlayPause()
         {
-            if (currentAudioFile == null)
+            if (CurrentAudioFile == null)
                 return;
 
             if (player.IsPlaying)
@@ -134,7 +167,7 @@ namespace SongBPMFinder
 
         public void SeekSample(int sample)
         {
-            currentAudioFile.CurrentSample = sample;
+            CurrentAudioFile.SetCurrentSampleWithEvent(sample);
             OnAudioScroll?.Invoke();
         }
     }

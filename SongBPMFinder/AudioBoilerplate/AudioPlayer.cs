@@ -5,7 +5,7 @@ namespace SongBPMFinder
     public class AudioPlayer
     {
         WaveOut output = null;
-        WaveProvider32 audio;
+        AudioDataStream audio;
         bool isPlaying = false;
 
         public bool IsPlaying {
@@ -34,7 +34,7 @@ namespace SongBPMFinder
             output.Stop();
         }
 
-        public void SetAudio(WaveProvider32 audio)
+        public void SetAudio(AudioDataStream audio)
         {
             if (output != null)
             {
@@ -46,7 +46,8 @@ namespace SongBPMFinder
             }
 
             this.audio = audio;
-            output = new WaveOut();
+
+            output = new WaveOut(WaveCallbackInfo.FunctionCallback());
             output.Init(audio);
         }
     }

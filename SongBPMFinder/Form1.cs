@@ -14,54 +14,37 @@ namespace SongBPMFinder
         public Form1()
         {
             InitializeComponent();
+
             Logger.SetOutput(new RichTextBoxLogger(textOutput));
+
             audioPlaybackSystem = new AudioPlaybackSystem();
-
             audioViewer.LinkPlaybackSystem(audioPlaybackSystem);
-
             audioPlaybackSystem.OnNewSongLoad += AudioPlaybackSystem_OnNewSongLoad;
+            audioPlaybackSystem.OnPositionChanged += AudioPlaybackSystem_OnPositionChanged;
+
+            Plotting.LinkPlottingGraph(debugPlot1, testWaveformTab);
+            Plotting.LinkPlottingGraph(debugPlot2, testWaveformTab2);
+            Plotting.LinkPlottingGraph(debugPlot3, testWaveformTab3);
+            Plotting.LinkPlottingGraph(debugPlot4, testWaveformTab4);
+            Plotting.LinkPlottingGraph(debugPlot5, testWaveformTab5);
+
 
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
+        }
+
+        private void AudioPlaybackSystem_OnPositionChanged()
+        {
+            AudioData data = audioPlaybackSystem.CurrentAudioFile;
+            int start = data.CurrentSample;
+            int end = Math.Min(data.Length, start + data.SampleRate);
+            AudioSlice slice = data[0].GetSlice(start, end);
+            Plotting.Plot(0, "The current second", slice);
         }
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
             calcTimingButton.Enabled = true;
             
-        }
-
-        CustomWaveViewer getViewer(int graph)
-        {
-            switch (graph)
-            {
-                case 1:
-                    return debugPlot1;
-                case 2:
-                    return debugPlot2;
-                case 3:
-                    return debugPlot3;
-                case 4:
-                    return debugPlot4;
-                default:
-                    return debugPlot5;
-            }
-        }
-
-        TabPage getPage(int graph)
-        {
-            switch (graph)
-            {
-                case 1:
-                    return testWaveformTab2;
-                case 2:
-                    return testWaveformTab3;
-                case 3:
-                    return testWaveformTab4;
-                case 4:
-                    return testWaveformTab5;
-                default:
-                    return testWaveformTab;
-            }
         }
 
         private void clearOutputButton_Click(object sender, EventArgs e)

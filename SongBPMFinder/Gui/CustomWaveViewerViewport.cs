@@ -22,13 +22,13 @@ namespace SongBPMFinder
                 return audioData;
             }
             set {
-                if (value == audioData)
-                    return;
-
-                audioData = value;
-                coordinates.AudioData = value;
-                waveformDrawer.AudioData = value;
-                timingPointDrawer.TimingPoints = null;
+                if (value != audioData)
+                {
+                    audioData = value;
+                    coordinates.AudioData = value;
+                    waveformDrawer.AudioData = value;
+                    timingPointDrawer.TimingPoints = null;
+                }
 
                 Invalidate();
             }

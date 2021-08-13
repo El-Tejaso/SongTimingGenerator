@@ -59,12 +59,12 @@ namespace SongBPMFinder
 
         public int VeryRightSample { 
             get { 
-                return Math.Min(audioData.GetChannel(0).Length, VeryRightSampleNotClamped); 
+                return Math.Min(audioData.Length, VeryRightSampleNotClamped); 
             }
         }
 
         public AudioSlice GetActiveAudioSlice(int channel) {
-            return audioData.GetChannel(channel).GetSlice(VeryLeftSample, VeryRightSample);
+            return audioData[channel].GetSlice(VeryLeftSample, VeryRightSample);
         }
 
 
@@ -100,16 +100,6 @@ namespace SongBPMFinder
         public void Zoom(int dir, float amount)
         {
             SecondsPerPixel *= Math.Pow(amount, -dir);
-            client.Invalidate();
-        }
-
-        public void ScrollAudio(float amount)
-        {
-            if (audioData == null)
-                return;
-
-            audioData.CurrentSample -= (int)(amount * WindowLengthSamples / 20);
-            client.Invalidate();
         }
 
 
@@ -149,21 +139,6 @@ namespace SongBPMFinder
         public double WindowRightSeconds {
             get {
                 return audioData.CurrentSampleSeconds + WindowLengthSeconds / 2.0;
-            }
-        }
-
-
-        public double StartTimeSeconds {
-            get {
-                if (audioData == null)
-                    return 0.0;
-                return audioData.SampleToSeconds(audioData.CurrentSample);
-            }
-            set {
-                if (audioData == null)
-                    return;
-                int pos = audioData.ToSample(value);
-                audioData.CurrentSample = pos;
             }
         }
 

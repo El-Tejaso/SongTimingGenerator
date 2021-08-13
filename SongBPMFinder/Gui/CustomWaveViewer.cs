@@ -13,14 +13,38 @@ namespace SongBPMFinder
                 return audioData;
             }
             set {
-                audioData = value;
+                if(audioData != value)
+                {
+                    if(audioData != null)
+                    {
+                        audioData.OnPositionManuallyChanged -= AudioData_OnPositionManuallyChanged;
+                    }
+
+                    audioData = value;
+                    viewport.AudioData = value;
+
+                    audioData.OnPositionManuallyChanged += AudioData_OnPositionManuallyChanged;
+                }
             }
         }
+
+        private void AudioData_OnPositionManuallyChanged()
+        {
+            Invalidate();
+        }
+
+        public CustomWaveViewer()
+        {
+            InitializeComponent();
+
+            MouseWheel += onMouseWheelScroll;
+        }
+
 
         public void LinkPlaybackSystem(AudioPlaybackSystem system)
         {
             playbackSystem = system;
-            playbackSystem.WhileSongIsPlaying += PlaybackSystem_WhileSongIsPlaying;
+            playbackSystem.OnPositionChanged += PlaybackSystem_OnPositionChanged;
             playbackSystem.OnNewSongLoad += PlaybackSystem_OnNewSongLoad;
         }
 
@@ -28,10 +52,10 @@ namespace SongBPMFinder
         private void PlaybackSystem_OnNewSongLoad()
         {
             AudioData = playbackSystem.CurrentAudioFile;
-            viewport.AudioData = AudioData;
 
             UpdateScrollExtents();
         }
+
         void UpdateScrollExtents()
         {
             if (audioData == null)
@@ -44,16 +68,9 @@ namespace SongBPMFinder
         }
 
 
-        private void PlaybackSystem_WhileSongIsPlaying()
+        private void PlaybackSystem_OnPositionChanged()
         {
             Invalidate();
-        }
-
-        public CustomWaveViewer()
-        {
-            InitializeComponent();
-
-            MouseWheel += onMouseWheelScroll;
         }
 
 
@@ -75,26 +92,43 @@ namespace SongBPMFinder
         {
             viewport.Coordinates.Zoom(dir, 2.0f);
             Logger.Log("zoom: " + viewport.Coordinates.SecondsPerPixel + "s/px");
+
+            Invalidate();
         }
 
         private void ScrollAudio(int dir)
         {
+            if (audioData == null)
+                return;
+
+            float amount;
             if (ModifierKeys == Keys.Shift)
             {
-                viewport.Coordinates.ScrollAudio(dir * 0.1f);
+                amount = (dir * 0.1f);
             }
             else
             {
-                viewport.Coordinates.ScrollAudio(dir);
+                amount = (dir);
             }
+
+            int windowLengthInSamples = viewport.Coordinates.WindowLengthSamples;
+            int newPosition = audioData.CurrentSample - (int)(amount * windowLengthInSamples / 20);
+            audioData.SetCurrentSampleWithEvent(newPosition);
+
+            Invalidate();
         }
 
         private void onHScrollbarScroll(object sender, ScrollEventArgs e)
         {
-            if (playbackSystem == null)
+            seekSample(hScrollBar.Value - hScrollBar.Minimum);
+        }
+
+        private void seekSample(int sample)
+        {
+            if (audioData == null)
                 return;
 
-            playbackSystem.SeekSample(hScrollBar.Value - hScrollBar.Minimum);
+            audioData.SetCurrentSampleWithEvent(sample);
             Invalidate();
         }
     }

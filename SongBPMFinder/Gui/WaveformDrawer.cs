@@ -44,7 +44,7 @@ namespace SongBPMFinder
 
         public void DrawAudioWaveform(Graphics g)
         {
-            for (int i = 0; i < audioData.Channels; i++)
+            for (int i = 0; i < audioData.NumChannels; i++)
             {
                 drawAudioChannelWaveform(g, i);
             }
@@ -52,12 +52,12 @@ namespace SongBPMFinder
 
         private void drawAudioChannelWaveform(Graphics g, int channel)
         {
-            int height = (int)((ClientRectangle.Height) / (float)audioData.Channels);
+            int height = (int)((ClientRectangle.Height) / (float)audioData.NumChannels);
             int top = ClientRectangle.Top + (int)(channel * height);
             int bottom = top + height;
 
             Rectangle region = new Rectangle(ClientRectangle.X, top, ClientRectangle.Width, bottom - top);
-            AudioSlice data = audioData.GetChannel(0);
+            AudioSlice data = audioData[0];
 
             int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
             if (ForceIndividualView || samplesPerPixel <= 1)
