@@ -11,6 +11,9 @@ namespace SongBPMFinder
         TimingPointList currentTimingResult;
         AudioPlaybackSystem audioPlaybackSystem;
 
+        //move to an array of a custom Struct/class
+        Button currentSpeedButton = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -30,6 +33,8 @@ namespace SongBPMFinder
             Plotting.LinkPlottingGraph(debugPlot4, testWaveformTab4);
             Plotting.LinkPlottingGraph(debugPlot5, testWaveformTab5);
 
+            applyVisualChangesToSpeedButton(buttonSpeed1x);
+
 
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
         }
@@ -46,11 +51,7 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnPositionChanged()
         {
-            AudioData data = audioPlaybackSystem.CurrentAudioFile;
-            int start = data.CurrentSample;
-            int end = Math.Min(data.Length, start + data.SampleRate);
-            AudioSlice slice = data[0].GetSlice(start, end);
-            Plotting.Plot(0, "The current second", slice);
+            
         }
 
         private void AudioPlaybackSystem_OnNewSongLoad()
@@ -93,6 +94,7 @@ namespace SongBPMFinder
             copyTimingToClipboard();
         }
 
+        //TODO: abstract this out, possibly to a static helper class
         void copyTimingToClipboard()
         {
             if (currentTimingResult == null)
@@ -110,22 +112,15 @@ namespace SongBPMFinder
             Logger.Log("Copied the following to the clipboard:\n\"" + osuFormattedTimingPoints + "\n\"");
         }
 
-        Button currentSpeedButton = null;
-        Color initBackColor;
-
         void applyVisualChangesToSpeedButton(Button b)
         {
-            if (currentSpeedButton == null)
+            if (currentSpeedButton != null)
             {
-                initBackColor = b.BackColor;
-            }
-            else
-            {
-                currentSpeedButton.BackColor = initBackColor;
+                currentSpeedButton.BackColor = SystemColors.Control;
             }
 
             currentSpeedButton = b;
-            b.BackColor = Color.Aqua;
+            b.BackColor = Color.Gray;
         }
 
         private void buttonSpeed1x_Click(object sender, EventArgs e)
@@ -152,6 +147,5 @@ namespace SongBPMFinder
             audioPlaybackSystem.Playback = PlaybackRate.Quartertime;
             applyVisualChangesToSpeedButton(buttonSpeed025x);
         }
-
     }
 }

@@ -47,7 +47,7 @@ namespace SongBPMFinder
 
             this.audio = audio;
 
-            output = new WaveOut(WaveCallbackInfo.FunctionCallback());
+            output = new WaveOut();
             output.Init(audio);
         }
     }
