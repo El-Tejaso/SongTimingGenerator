@@ -58,12 +58,12 @@ namespace SongBPMFinder
             }
         }
 
-        public Playback Playback {
+        public PlaybackRate Playback {
             get {
-                return audioStream.Playback;
+                return audioStream.PlaybackRate;
             }
             set {
-                audioStream.Playback = value;
+                audioStream.PlaybackRate = value;
             }
         }
 

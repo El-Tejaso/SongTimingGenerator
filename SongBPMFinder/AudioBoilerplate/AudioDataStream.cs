@@ -3,7 +3,7 @@ using System;
 
 namespace SongBPMFinder
 {
-    public enum Playback
+    public enum PlaybackRate
     {
         Realtime,
         ThreeFourths,
@@ -15,10 +15,10 @@ namespace SongBPMFinder
     {
         private AudioData audioData;
 
-        private Playback currentPlaybackType = Playback.Realtime;
+        private PlaybackRate currentPlaybackType = PlaybackRate.Realtime;
         private float playbackRate;
 
-        public Playback Playback {
+        public PlaybackRate PlaybackRate {
             get => currentPlaybackType;
             set {
                 currentPlaybackType = value;
@@ -26,17 +26,17 @@ namespace SongBPMFinder
             }
         }
 
-        private float getPlaybackRate(Playback enumeration)
+        private float getPlaybackRate(PlaybackRate enumeration)
         {
             switch (enumeration)
             {
-                case Playback.Realtime:
+                case PlaybackRate.Realtime:
                     return 1;
-                case Playback.ThreeFourths:
+                case PlaybackRate.ThreeFourths:
                     return 0.75f;
-                case Playback.Halftime:
+                case PlaybackRate.Halftime:
                     return 0.5f;
-                case Playback.Quartertime:
+                case PlaybackRate.Quartertime:
                     return 0.25f;
             }
             return -1;
@@ -47,6 +47,7 @@ namespace SongBPMFinder
             : base(data.SampleRate, data.NumChannels)
         {
             this.audioData = data;
+            PlaybackRate = PlaybackRate.Realtime;
         }
         
 
@@ -55,17 +56,20 @@ namespace SongBPMFinder
             //calculate in terms of the actual array
             int numChannels = audioData.NumChannels;
             int len = audioData.Length;
-            int position = audioData.CurrentSample;
+            double deltaPosition = 0;
+            int lastSamplePosition = audioData.CurrentSample;
 
             int floatsRead = 0;
 
             while(floatsRead < count)
             {
+                int position = lastSamplePosition = audioData.CurrentSample + (int)(deltaPosition);
+
                 if (position >= audioData.Length)
                     break;
 
                 int nextPosition = Math.Min(position + 1, len - 1);
-                float lerpFactor = (float)(((double)position * playbackRate) % 1.0);
+                float lerpFactor = (float)(deltaPosition % 1.0);
 
                 int indexIntoOutputBuffer = offset + floatsRead;
 
@@ -80,10 +84,10 @@ namespace SongBPMFinder
                 }
 
                 floatsRead += numChannels;
-                position++;
+                deltaPosition+=playbackRate;
             }
 
-            audioData.SetCurrentSampleNoEvent(position);
+            audioData.SetCurrentSampleNoEvent(lastSamplePosition);
             return floatsRead;
         }
     }

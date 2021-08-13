@@ -21,6 +21,8 @@ namespace SongBPMFinder
             audioViewer.LinkPlaybackSystem(audioPlaybackSystem);
             audioPlaybackSystem.OnNewSongLoad += AudioPlaybackSystem_OnNewSongLoad;
             audioPlaybackSystem.OnPositionChanged += AudioPlaybackSystem_OnPositionChanged;
+            audioPlaybackSystem.OnSongPlay += AudioPlaybackSystem_OnSongPlay;
+            audioPlaybackSystem.OnSongPause += AudioPlaybackSystem_OnSongPause;
 
             Plotting.LinkPlottingGraph(debugPlot1, testWaveformTab);
             Plotting.LinkPlottingGraph(debugPlot2, testWaveformTab2);
@@ -30,6 +32,16 @@ namespace SongBPMFinder
 
 
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
+        }
+
+        private void AudioPlaybackSystem_OnSongPause()
+        {
+            playPauseButton.Text = "4";
+        }
+
+        private void AudioPlaybackSystem_OnSongPlay()
+        {
+            playPauseButton.Text = ";";
         }
 
         private void AudioPlaybackSystem_OnPositionChanged()
@@ -60,6 +72,7 @@ namespace SongBPMFinder
         {
             if (e.KeyCode == Keys.Space)
             {
+                playPauseButton.Focus();
                 playPause();
                 e.Handled = true;
             }
@@ -100,7 +113,7 @@ namespace SongBPMFinder
         Button currentSpeedButton = null;
         Color initBackColor;
 
-        void setActiveSpeedButton(Button b)
+        void applyVisualChangesToSpeedButton(Button b)
         {
             if (currentSpeedButton == null)
             {
@@ -117,37 +130,28 @@ namespace SongBPMFinder
 
         private void buttonSpeed1x_Click(object sender, EventArgs e)
         {
-            audioPlaybackSystem.Playback = Playback.Realtime;
-            setActiveSpeedButton(buttonSpeed1x);
+            audioPlaybackSystem.Playback = PlaybackRate.Realtime;
+            applyVisualChangesToSpeedButton(buttonSpeed1x);
         }
 
         private void buttonSpeed075x_Click(object sender, EventArgs e)
         {
-            audioPlaybackSystem.Playback = Playback.ThreeFourths;
-            setActiveSpeedButton(buttonSpeed075x);
+            audioPlaybackSystem.Playback = PlaybackRate.ThreeFourths;
+            applyVisualChangesToSpeedButton(buttonSpeed075x);
 
         }
 
         private void buttonSpeed050x_Click(object sender, EventArgs e)
         {
-            audioPlaybackSystem.Playback = Playback.Halftime;
-            setActiveSpeedButton(buttonSpeed050x);
+            audioPlaybackSystem.Playback = PlaybackRate.Halftime;
+            applyVisualChangesToSpeedButton(buttonSpeed050x);
         }
 
         private void buttonSpeed025x_Click(object sender, EventArgs e)
         {
-            audioPlaybackSystem.Playback = Playback.Quartertime;
-            setActiveSpeedButton(buttonSpeed025x);
+            audioPlaybackSystem.Playback = PlaybackRate.Quartertime;
+            applyVisualChangesToSpeedButton(buttonSpeed025x);
         }
 
-        private void testButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void freezeView_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

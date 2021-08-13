@@ -328,7 +328,6 @@
             this.freezeView.TabIndex = 9;
             this.freezeView.Text = "Freeze view";
             this.freezeView.UseVisualStyleBackColor = true;
-            this.freezeView.CheckedChanged += new System.EventHandler(this.freezeView_CheckedChanged);
             // 
             // testButton
             // 
@@ -341,7 +340,6 @@
             this.testButton.TabIndex = 8;
             this.testButton.Text = "TestButton";
             this.testButton.UseVisualStyleBackColor = false;
-            this.testButton.Click += new System.EventHandler(this.testButton_Click);
             // 
             // copyTimingButton
             // 
