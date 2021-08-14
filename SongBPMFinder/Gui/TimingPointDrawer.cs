@@ -40,8 +40,11 @@ namespace SongBPMFinder
             this.coordinates = coordinates;
             this.timingPoints = tpList;
 
-            drawingPen = new Pen(Color.Red, 3);
-            textBrush = new SolidBrush(Color.Red);
+            drawingPen = new Pen(Color.Gray, 3);
+            textBrush = new SolidBrush(Color.Gray);
+
+            format = new StringFormat();
+            format.Alignment = StringAlignment.Center;
         }
 
 
@@ -51,7 +54,7 @@ namespace SongBPMFinder
                 return;
 
 
-            int startIndex = timingPoints.FirstVisible(coordinates.WindowRightSeconds);
+            int startIndex = timingPoints.FirstVisible(coordinates.WindowLeftSeconds);
             double prevTime = timingPoints[Math.Max(startIndex - 1, 0)].TimeSeconds;
 
             for (int i = startIndex; i < timingPoints.Count; i++)

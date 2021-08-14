@@ -14,6 +14,14 @@ namespace SongBPMFinder
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
 
+        public TimingPointList CurrentTimingResult {
+            get { return currentTimingResult; }
+            set {
+                currentTimingResult = value;
+                audioViewer.TimingPoints = currentTimingResult;
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -145,21 +153,27 @@ namespace SongBPMFinder
 
         void calculateTiming()
         {
-            currentTimingResult = TimingUtil.GetTiming(
+            DateTime t = DateTime.Now;
+
+            Logger.Log("Calculating timing...");
+            CurrentTimingResult = TimingUtil.GetTiming(
                 audioPlaybackSystem.CurrentAudioFile,
                 new BeatDetector(),
                 new TestTimingGenerator()
             );
+
+            TimeSpan delta = DateTime.Now - t;
+            Logger.Log("Calculated timing in " + delta.TotalMilliseconds + " ms");
         }
 
         private void osuTimingPointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (currentTimingResult == null)
+            if (CurrentTimingResult == null)
             {
                 calculateTiming();
             }
 
-            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(currentTimingResult);
+            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(CurrentTimingResult);
             copyToClipboard(osuFormattedTimingPoints);
         }
 

@@ -35,7 +35,14 @@ namespace SongBPMFinder
         }
 
         private TimingPointList timingPoints;
-
+        public TimingPointList TimingPoints { 
+            get => timingPoints;
+            set {
+                timingPoints = value;
+                timingPointDrawer.TimingPoints = value;
+                Invalidate();
+            }
+        }
 
         public bool ForceIndividualView {
             get {
@@ -77,13 +84,6 @@ namespace SongBPMFinder
 
             waveformDrawer = new WaveformDrawer(this, textFont, audioData, coordinates);
             timingPointDrawer = new TimingPointDrawer(this, textFont, coordinates, timingPoints);
-        }
-
-        public void ShowTimingPoints(TimingPointList list)
-        {
-            timingPoints = list;
-            timingPointDrawer.TimingPoints = list;
-            Invalidate();
         }
 
         /// <summary>

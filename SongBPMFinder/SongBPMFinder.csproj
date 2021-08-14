@@ -96,6 +96,7 @@
     <Compile Include="AudioBoilerplate\AudioPlayer.cs" />
     <Compile Include="BeatDetection\Beat.cs" />
     <Compile Include="BeatDetection\BeatDetector.cs" />
+    <Compile Include="BeatDetection\Conventions.cs" />
     <Compile Include="BeatDetection\Interfaces\IBeatDetector.cs" />
     <Compile Include="BeatDetection\Interfaces\ITimingPointFormatter.cs" />
     <Compile Include="BeatDetection\Interfaces\ITimingGenerator.cs" />

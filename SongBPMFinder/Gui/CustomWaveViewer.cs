@@ -8,6 +8,11 @@ namespace SongBPMFinder
         AudioData audioData;
         AudioPlaybackSystem playbackSystem;
 
+        public TimingPointList TimingPoints {
+            get { return viewport.TimingPoints; }
+            set { viewport.TimingPoints = value; }
+        }
+
         public AudioData AudioData {
             get {
                 return audioData;
@@ -91,7 +96,6 @@ namespace SongBPMFinder
         private void Zoom(int dir)
         {
             viewport.Coordinates.Zoom(dir, 2.0f);
-            Logger.Log("zoom: " + viewport.Coordinates.SecondsPerPixel + "s/px");
 
             Invalidate();
         }

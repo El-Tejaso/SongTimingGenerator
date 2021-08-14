@@ -15,7 +15,7 @@ namespace SongBPMFinder
         public readonly Color Color;
 
         public TimingPoint(double bPM, double offsetSeconds)
-            : this(bPM, offsetSeconds, 1, Color.Red)
+            : this(bPM, offsetSeconds, 1, Conventions.TimingPointColor)
         { }
 
         public TimingPoint(double bPM, double offsetSeconds, double weight, Color color)

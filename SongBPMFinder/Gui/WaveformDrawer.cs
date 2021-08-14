@@ -52,7 +52,7 @@ namespace SongBPMFinder
 
         private void drawAudioChannelWaveform(Graphics g, int channel)
         {
-            int height = (int)((ClientRectangle.Height) / (float)audioData.NumChannels);
+            int height = (int)((ClientRectangle.Height-80) / (float)audioData.NumChannels);
             int top = ClientRectangle.Top + (int)(channel * height);
             int bottom = top + height;
 
