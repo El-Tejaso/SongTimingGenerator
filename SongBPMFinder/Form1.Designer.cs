@@ -41,27 +41,29 @@
             this.buttonSpeed025x = new System.Windows.Forms.Button();
             this.waveformTabs = new System.Windows.Forms.TabControl();
             this.songWaveformTab = new System.Windows.Forms.TabPage();
-            this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab = new System.Windows.Forms.TabPage();
-            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
-            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab3 = new System.Windows.Forms.TabPage();
-            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab4 = new System.Windows.Forms.TabPage();
-            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
-            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
-            this.toolPanel = new System.Windows.Forms.Panel();
-            this.testButton = new System.Windows.Forms.Button();
-            this.copyTimingButton = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.calcTimingButton = new System.Windows.Forms.Button();
-            this.clearOutputButton = new System.Windows.Forms.Button();
-            this.openButton = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAudioForTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xMLFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.osuTimingPointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
+            this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToClipboardToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.audioViewer = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -73,21 +75,21 @@
             this.testWaveformTab3.SuspendLayout();
             this.testWaveformTab4.SuspendLayout();
             this.testWaveformTab5.SuspendLayout();
-            this.toolPanel.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.55795F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.44205F));
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.toolPanel, 1, 0);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.menuStrip1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.11111F));
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1113, 585);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -98,12 +100,12 @@
             this.tableLayoutPanel2.Controls.Add(this.textOutput, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 26);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 79.1019F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20.8981F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(924, 579);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1107, 556);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // textOutput
@@ -113,10 +115,10 @@
             this.textOutput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textOutput.ForeColor = System.Drawing.Color.White;
-            this.textOutput.Location = new System.Drawing.Point(3, 460);
+            this.textOutput.Location = new System.Drawing.Point(3, 442);
             this.textOutput.Name = "textOutput";
             this.textOutput.ReadOnly = true;
-            this.textOutput.Size = new System.Drawing.Size(918, 116);
+            this.textOutput.Size = new System.Drawing.Size(1101, 111);
             this.textOutput.TabIndex = 1;
             this.textOutput.Text = "awdwdadw";
             // 
@@ -133,7 +135,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(918, 451);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1101, 433);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // flowLayoutPanel1
@@ -146,7 +148,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(912, 40);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1095, 40);
             this.flowLayoutPanel1.TabIndex = 6;
             // 
             // playPauseButton
@@ -221,7 +223,7 @@
             this.waveformTabs.Location = new System.Drawing.Point(3, 49);
             this.waveformTabs.Name = "waveformTabs";
             this.waveformTabs.SelectedIndex = 0;
-            this.waveformTabs.Size = new System.Drawing.Size(912, 399);
+            this.waveformTabs.Size = new System.Drawing.Size(1095, 381);
             this.waveformTabs.TabIndex = 7;
             // 
             // songWaveformTab
@@ -230,19 +232,10 @@
             this.songWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.songWaveformTab.Name = "songWaveformTab";
             this.songWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.songWaveformTab.Size = new System.Drawing.Size(904, 373);
+            this.songWaveformTab.Size = new System.Drawing.Size(1087, 355);
             this.songWaveformTab.TabIndex = 0;
             this.songWaveformTab.Text = "Song Waveform";
             this.songWaveformTab.UseVisualStyleBackColor = true;
-            // 
-            // audioViewer
-            // 
-            this.audioViewer.AudioData = null;
-            this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audioViewer.Location = new System.Drawing.Point(3, 3);
-            this.audioViewer.Name = "audioViewer";
-            this.audioViewer.Size = new System.Drawing.Size(898, 367);
-            this.audioViewer.TabIndex = 0;
             // 
             // testWaveformTab
             // 
@@ -250,19 +243,10 @@
             this.testWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab.Name = "testWaveformTab";
             this.testWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab.Size = new System.Drawing.Size(904, 373);
+            this.testWaveformTab.Size = new System.Drawing.Size(1087, 355);
             this.testWaveformTab.TabIndex = 1;
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot1
-            // 
-            this.debugPlot1.AudioData = null;
-            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot1.Name = "debugPlot1";
-            this.debugPlot1.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot1.TabIndex = 0;
             // 
             // testWaveformTab2
             // 
@@ -270,19 +254,10 @@
             this.testWaveformTab2.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab2.Name = "testWaveformTab2";
             this.testWaveformTab2.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab2.Size = new System.Drawing.Size(904, 373);
+            this.testWaveformTab2.Size = new System.Drawing.Size(1087, 355);
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot2
-            // 
-            this.debugPlot2.AudioData = null;
-            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot2.Name = "debugPlot2";
-            this.debugPlot2.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot2.TabIndex = 0;
             // 
             // testWaveformTab3
             // 
@@ -290,19 +265,10 @@
             this.testWaveformTab3.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab3.Name = "testWaveformTab3";
             this.testWaveformTab3.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab3.Size = new System.Drawing.Size(904, 373);
+            this.testWaveformTab3.Size = new System.Drawing.Size(1087, 355);
             this.testWaveformTab3.TabIndex = 3;
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot3
-            // 
-            this.debugPlot3.AudioData = null;
-            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot3.Name = "debugPlot3";
-            this.debugPlot3.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot3.TabIndex = 0;
             // 
             // testWaveformTab4
             // 
@@ -310,19 +276,10 @@
             this.testWaveformTab4.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab4.Name = "testWaveformTab4";
             this.testWaveformTab4.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab4.Size = new System.Drawing.Size(904, 373);
+            this.testWaveformTab4.Size = new System.Drawing.Size(1087, 355);
             this.testWaveformTab4.TabIndex = 4;
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot4
-            // 
-            this.debugPlot4.AudioData = null;
-            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot4.Name = "debugPlot4";
-            this.debugPlot4.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot4.TabIndex = 0;
             // 
             // testWaveformTab5
             // 
@@ -330,10 +287,144 @@
             this.testWaveformTab5.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab5.Name = "testWaveformTab5";
             this.testWaveformTab5.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab5.Size = new System.Drawing.Size(904, 373);
+            this.testWaveformTab5.Size = new System.Drawing.Size(1087, 355);
             this.testWaveformTab5.TabIndex = 5;
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.timingToolStripMenuItem,
+            this.copyToClipboardToolStripMenuItem,
+            this.outputToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1113, 23);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openAudioForTimingToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // openAudioForTimingToolStripMenuItem
+            // 
+            this.openAudioForTimingToolStripMenuItem.Name = "openAudioForTimingToolStripMenuItem";
+            this.openAudioForTimingToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.openAudioForTimingToolStripMenuItem.Text = "Open audio for timing";
+            this.openAudioForTimingToolStripMenuItem.Click += new System.EventHandler(this.openAudioForTimingToolStripMenuItem_Click);
+            // 
+            // timingToolStripMenuItem
+            // 
+            this.timingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calculateTimingToolStripMenuItem});
+            this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
+            this.timingToolStripMenuItem.Size = new System.Drawing.Size(56, 19);
+            this.timingToolStripMenuItem.Text = "Timing";
+            // 
+            // calculateTimingToolStripMenuItem
+            // 
+            this.calculateTimingToolStripMenuItem.Name = "calculateTimingToolStripMenuItem";
+            this.calculateTimingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.calculateTimingToolStripMenuItem.Text = "Calculate timing";
+            this.calculateTimingToolStripMenuItem.Click += new System.EventHandler(this.calculateTimingToolStripMenuItem_Click);
+            // 
+            // copyToClipboardToolStripMenuItem
+            // 
+            this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.xMLFileToolStripMenuItem,
+            this.osuTimingPointsToolStripMenuItem});
+            this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
+            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(114, 19);
+            this.copyToClipboardToolStripMenuItem.Text = "Copy to clipboard";
+            // 
+            // xMLFileToolStripMenuItem
+            // 
+            this.xMLFileToolStripMenuItem.Name = "xMLFileToolStripMenuItem";
+            this.xMLFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xMLFileToolStripMenuItem.Text = "XML file";
+            this.xMLFileToolStripMenuItem.Click += new System.EventHandler(this.xMLFileToolStripMenuItem_Click);
+            // 
+            // osuTimingPointsToolStripMenuItem
+            // 
+            this.osuTimingPointsToolStripMenuItem.Name = "osuTimingPointsToolStripMenuItem";
+            this.osuTimingPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.osuTimingPointsToolStripMenuItem.Text = "osu! timing points";
+            this.osuTimingPointsToolStripMenuItem.Click += new System.EventHandler(this.osuTimingPointsToolStripMenuItem_Click);
+            // 
+            // outputToolStripMenuItem
+            // 
+            this.outputToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToClipboardToolStripMenuItem1,
+            this.clearToolStripMenuItem});
+            this.outputToolStripMenuItem.Name = "outputToolStripMenuItem";
+            this.outputToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
+            this.outputToolStripMenuItem.Text = "Output";
+            // 
+            // copyToClipboardToolStripMenuItem1
+            // 
+            this.copyToClipboardToolStripMenuItem1.Name = "copyToClipboardToolStripMenuItem1";
+            this.copyToClipboardToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.copyToClipboardToolStripMenuItem1.Text = "Copy to clipboard";
+            this.copyToClipboardToolStripMenuItem1.Click += new System.EventHandler(this.copyToClipboardToolStripMenuItem1_Click);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearToolStripMenuItem.Text = "Clear";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            // 
+            // audioViewer
+            // 
+            this.audioViewer.AudioData = null;
+            this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.audioViewer.Location = new System.Drawing.Point(3, 3);
+            this.audioViewer.Name = "audioViewer";
+            this.audioViewer.Size = new System.Drawing.Size(1081, 349);
+            this.audioViewer.TabIndex = 0;
+            // 
+            // debugPlot1
+            // 
+            this.debugPlot1.AudioData = null;
+            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot1.Name = "debugPlot1";
+            this.debugPlot1.Size = new System.Drawing.Size(1081, 349);
+            this.debugPlot1.TabIndex = 0;
+            // 
+            // debugPlot2
+            // 
+            this.debugPlot2.AudioData = null;
+            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot2.Name = "debugPlot2";
+            this.debugPlot2.Size = new System.Drawing.Size(1081, 349);
+            this.debugPlot2.TabIndex = 0;
+            // 
+            // debugPlot3
+            // 
+            this.debugPlot3.AudioData = null;
+            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot3.Name = "debugPlot3";
+            this.debugPlot3.Size = new System.Drawing.Size(1081, 349);
+            this.debugPlot3.TabIndex = 0;
+            // 
+            // debugPlot4
+            // 
+            this.debugPlot4.AudioData = null;
+            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot4.Name = "debugPlot4";
+            this.debugPlot4.Size = new System.Drawing.Size(1081, 349);
+            this.debugPlot4.TabIndex = 0;
             // 
             // debugPlot5
             // 
@@ -341,124 +432,8 @@
             this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot5.Location = new System.Drawing.Point(3, 3);
             this.debugPlot5.Name = "debugPlot5";
-            this.debugPlot5.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot5.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot5.TabIndex = 0;
-            // 
-            // toolPanel
-            // 
-            this.toolPanel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.toolPanel.Controls.Add(this.testButton);
-            this.toolPanel.Controls.Add(this.copyTimingButton);
-            this.toolPanel.Controls.Add(this.label3);
-            this.toolPanel.Controls.Add(this.label2);
-            this.toolPanel.Controls.Add(this.label1);
-            this.toolPanel.Controls.Add(this.calcTimingButton);
-            this.toolPanel.Controls.Add(this.clearOutputButton);
-            this.toolPanel.Controls.Add(this.openButton);
-            this.toolPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolPanel.Location = new System.Drawing.Point(933, 3);
-            this.toolPanel.Name = "toolPanel";
-            this.toolPanel.Size = new System.Drawing.Size(177, 579);
-            this.toolPanel.TabIndex = 1;
-            // 
-            // testButton
-            // 
-            this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.testButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.testButton.Location = new System.Drawing.Point(6, 475);
-            this.testButton.Name = "testButton";
-            this.testButton.Size = new System.Drawing.Size(165, 29);
-            this.testButton.TabIndex = 8;
-            this.testButton.Text = "TestButton";
-            this.testButton.UseVisualStyleBackColor = false;
-            // 
-            // copyTimingButton
-            // 
-            this.copyTimingButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.copyTimingButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.copyTimingButton.Enabled = false;
-            this.copyTimingButton.Location = new System.Drawing.Point(3, 133);
-            this.copyTimingButton.Name = "copyTimingButton";
-            this.copyTimingButton.Size = new System.Drawing.Size(165, 29);
-            this.copyTimingButton.TabIndex = 7;
-            this.copyTimingButton.Text = "Copy timing";
-            this.copyTimingButton.UseVisualStyleBackColor = false;
-            this.copyTimingButton.Click += new System.EventHandler(this.copyTimingButton_Click);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(49, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(63, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "File Related";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 528);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Console";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(49, 74);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Timing Related";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // calcTimingButton
-            // 
-            this.calcTimingButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.calcTimingButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.calcTimingButton.Enabled = false;
-            this.calcTimingButton.Location = new System.Drawing.Point(3, 98);
-            this.calcTimingButton.Name = "calcTimingButton";
-            this.calcTimingButton.Size = new System.Drawing.Size(165, 29);
-            this.calcTimingButton.TabIndex = 2;
-            this.calcTimingButton.TabStop = false;
-            this.calcTimingButton.Text = "Calculate timing";
-            this.calcTimingButton.UseVisualStyleBackColor = false;
-            // 
-            // clearOutputButton
-            // 
-            this.clearOutputButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearOutputButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.clearOutputButton.Location = new System.Drawing.Point(6, 544);
-            this.clearOutputButton.Name = "clearOutputButton";
-            this.clearOutputButton.Size = new System.Drawing.Size(165, 26);
-            this.clearOutputButton.TabIndex = 1;
-            this.clearOutputButton.Text = "Clear output";
-            this.clearOutputButton.UseVisualStyleBackColor = false;
-            this.clearOutputButton.Click += new System.EventHandler(this.clearOutputButton_Click);
-            // 
-            // openButton
-            // 
-            this.openButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.openButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.openButton.Location = new System.Drawing.Point(3, 29);
-            this.openButton.Name = "openButton";
-            this.openButton.Size = new System.Drawing.Size(165, 29);
-            this.openButton.TabIndex = 0;
-            this.openButton.Text = "Open Audio";
-            this.openButton.UseVisualStyleBackColor = false;
-            this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
             // Form1
             // 
@@ -467,10 +442,12 @@
             this.ClientSize = new System.Drawing.Size(1113, 585);
             this.Controls.Add(this.tableLayoutPanel1);
             this.KeyPreview = true;
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Music Timer";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -481,8 +458,8 @@
             this.testWaveformTab3.ResumeLayout(false);
             this.testWaveformTab4.ResumeLayout(false);
             this.testWaveformTab5.ResumeLayout(false);
-            this.toolPanel.ResumeLayout(false);
-            this.toolPanel.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -491,37 +468,39 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Panel toolPanel;
-        private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.RichTextBox textOutput;
-        private System.Windows.Forms.Button clearOutputButton;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.Button playPauseButton;
         private System.Windows.Forms.Timer songPositionChangedInterrupt;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button calcTimingButton;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button copyTimingButton;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openAudioForTimingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calculateTimingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem xMLFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem osuTimingPointsToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button playPauseButton;
         private System.Windows.Forms.Button buttonSpeed1x;
         private System.Windows.Forms.Button buttonSpeed075x;
         private System.Windows.Forms.Button buttonSpeed050x;
         private System.Windows.Forms.Button buttonSpeed025x;
-        private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.TabControl waveformTabs;
         private System.Windows.Forms.TabPage songWaveformTab;
-        private System.Windows.Forms.TabPage testWaveformTab;
-        private System.Windows.Forms.TabPage testWaveformTab2;
-        private System.Windows.Forms.TabPage testWaveformTab3;
-        private System.Windows.Forms.TabPage testWaveformTab4;
-        private System.Windows.Forms.TabPage testWaveformTab5;
         private CustomWaveViewer audioViewer;
+        private System.Windows.Forms.TabPage testWaveformTab;
         private CustomWaveViewer debugPlot1;
+        private System.Windows.Forms.TabPage testWaveformTab2;
         private CustomWaveViewer debugPlot2;
+        private System.Windows.Forms.TabPage testWaveformTab3;
         private CustomWaveViewer debugPlot3;
+        private System.Windows.Forms.TabPage testWaveformTab4;
         private CustomWaveViewer debugPlot4;
+        private System.Windows.Forms.TabPage testWaveformTab5;
         private CustomWaveViewer debugPlot5;
+        private System.Windows.Forms.ToolStripMenuItem outputToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
     }
 }
 

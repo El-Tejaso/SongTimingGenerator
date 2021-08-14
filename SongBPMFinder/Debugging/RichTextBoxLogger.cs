@@ -9,6 +9,9 @@ namespace SongBPMFinder
         {
             output = textBox;
         }
+
+        public string Text => output.Text;
+
         public void Clear()
         {
             output.Text = "";

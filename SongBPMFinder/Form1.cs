@@ -35,7 +35,6 @@ namespace SongBPMFinder
 
             applyVisualChangesToSpeedButton(buttonSpeed1x);
 
-
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
         }
 
@@ -56,14 +55,15 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            calcTimingButton.Enabled = true;
             
         }
 
-        private void clearOutputButton_Click(object sender, EventArgs e)
+        private void openAudioForTimingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Logger.Clear();
+            audioPlaybackSystem.ShowOpenFilePrompt();
         }
+
+
         private void playPauseButton_Click(object sender, EventArgs e)
         {
             playPause();
@@ -84,37 +84,11 @@ namespace SongBPMFinder
             audioPlaybackSystem.PlayPause();
         }
 
-        private void openButton_Click(object sender, EventArgs e)
+
+        void copyToClipboard(string s)
         {
-            audioPlaybackSystem.ShowOpenFilePrompt();
-        }
-
-        private void copyTimingButton_Click(object sender, EventArgs e)
-        {
-            copyTimingToClipboard();
-        }
-
-        void copyTimingToClipboard()
-        {
-            if(currentTimingResult == null)
-            {
-                calculateTiming();
-            }
-
-            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(currentTimingResult);
-
-            Clipboard.SetText(osuFormattedTimingPoints);
-            Logger.Log("Copied the following to the clipboard:\n\"" + osuFormattedTimingPoints + "\n\"");
-        }
-
-
-        void calculateTiming()
-        {
-            currentTimingResult = TimingUtil.GetTiming(
-                audioPlaybackSystem.CurrentAudioFile,
-                new BeatDetector(),
-                new TestTimingGenerator()
-            );
+            Clipboard.SetText(s);
+            Logger.Log("Copied the following to the clipboard:\n\"" + s + "\n\"");
         }
 
 
@@ -154,5 +128,44 @@ namespace SongBPMFinder
             applyVisualChangesToSpeedButton(buttonSpeed025x);
         }
 
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger.Clear();
+        }
+
+        private void copyToClipboardToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            copyToClipboard(Logger.GetText());
+        }
+
+        private void calculateTimingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            calculateTiming();
+        }
+
+        void calculateTiming()
+        {
+            currentTimingResult = TimingUtil.GetTiming(
+                audioPlaybackSystem.CurrentAudioFile,
+                new BeatDetector(),
+                new TestTimingGenerator()
+            );
+        }
+
+        private void osuTimingPointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTimingResult == null)
+            {
+                calculateTiming();
+            }
+
+            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(currentTimingResult);
+            copyToClipboard(osuFormattedTimingPoints);
+        }
+
+        private void xMLFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger.Log("This feature has not yet been implemented");
+        }
     }
 }

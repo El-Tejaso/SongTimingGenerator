@@ -19,6 +19,11 @@
             output.Log(msg);
 
         }
+
+        public static string GetText()
+        {
+            return output.Text;
+        }
     }
 
 }
