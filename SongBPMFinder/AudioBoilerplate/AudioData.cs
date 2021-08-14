@@ -103,6 +103,13 @@ namespace SongBPMFinder
             this.data = channelSeperatedData;
             this.len = channelSeperatedData[0].Length;
 
+            for(int i = 0; i < channelSeperatedData.Length; i++)
+            {
+                var csdi = channelSeperatedData[i];
+                csdi.SampleRate = sampleRate;
+                channelSeperatedData[i] = csdi;
+            }
+
             this.sampleRate = sampleRate;
             this.nAudioWaveformat = new WaveFormat(sampleRate, NumChannels);
         }
