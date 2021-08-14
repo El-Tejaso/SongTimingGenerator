@@ -1,10 +1,19 @@
 ﻿namespace SongBPMFinder
 {
-    // convenience class for working with arrays in place to reduce memory allocation/deallocation
-    // It is inspired by the way python deals with arrays internally (or at least this is how I think it does)
-    // Something unique about this is that it can be given a stride into an existing array.
-    // This might make debugging hard, but it makes extracting and transforming soley the 
-    // right channel from an audio signal in-place very easy
+    /// <summary>
+    /// A convenience class for working with arrays in place to reduce memory allocation/deallocation
+    /// that I made specifically for this project (Song Timing Generator).
+    /// 
+    /// It is inspired by the way that I think python might deal with arrays internally.
+    /// 
+    /// Something unique about this that System.Span or whatever doesn't have is that 
+    /// it can be given a stride into an existing array.
+    /// This makes it easy to extract channels in audio, do simple downsampling, anything that involves interleaved
+    /// data really.
+    /// 
+    /// Honestly, I didnt know that Span was a thing until after I had already been using this for a while.
+    /// If it ever gets a Stride property, I will probably delete this class and use that instead.
+    /// </summary>
     public struct Slice<T>
     {
         int start;
@@ -20,10 +29,20 @@
 
         public int Length => len;
 
-        //Mainly for debugging purposes, but do have their convenient uses
+#if DEBUG
+        /// <summary>
+        /// Mainly for viewing in the IDE when debuging. Should not be used in production
+        /// </summary>
         public int InternalStart => start;
+        /// <summary>
+        /// Mainly for viewing in the IDE when debuging. Should not be used in production
+        /// </summary>
         public int InternalEnd => start + len * stride;
+        /// <summary>
+        /// Mainly for viewing in the IDE when debuging. Should not be used in production
+        /// </summary>
         public int InternalStride => stride;
+#endif
 
         public T this[int index] {
             get {

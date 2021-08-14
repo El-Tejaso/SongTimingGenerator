@@ -104,9 +104,9 @@ namespace SongBPMFinder
         private void drawStdevStatistics(Graphics g, Rectangle region, AudioSlice specificData)
         {
             Slice<float> range = specificData.Slice;
-            float mean = FloatSliceUtil.Average(range, false);
-            float meanAbs = FloatSliceUtil.Average(range, true);
-            float stdev = FloatSliceUtil.StdDev(range);
+            float mean = MathUtilSliceF.Average(range);
+            float meanAbs = MathUtilSliceF.Mean(range, Math.Abs);
+            float stdev = MathUtilSliceF.StandardDeviation(range);
 
             float rectTop = region.Top;
             float rectBottom = region.Bottom;

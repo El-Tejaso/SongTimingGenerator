@@ -10,5 +10,7 @@ namespace SongBPMFinder
     public static class Conventions
     {
         public static readonly Color TimingPointColor = Color.DarkRed;
+
+        public static readonly double BeatDuration = 0.02;
     }
 }

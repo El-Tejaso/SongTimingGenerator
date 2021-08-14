@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SongBPMFinder
 {
-    public class BeatDetector : IBeatDetector
+    public class DefaultBeatDetector : BeatDetector
     {
-        public SortedList<Beat> GetEveryBeat(AudioSlice audioSlice)
+        protected override SortedList<Beat> GetEveryBeat(AudioSlice audioSlice)
         {
             SortedList<Beat> beats = new SortedList<Beat>();
 

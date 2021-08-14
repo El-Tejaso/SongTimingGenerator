@@ -2,6 +2,6 @@
 {
     public interface ITimingGenerator
     {
-        TimingPointList GenerateTiming(SortedList<Beat> beats);
+        TimingPointList GenerateTiming(SortedList<Beat>[] beatsInEachChannel);
     }
 }

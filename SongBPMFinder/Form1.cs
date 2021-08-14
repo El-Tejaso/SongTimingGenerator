@@ -158,7 +158,7 @@ namespace SongBPMFinder
             Logger.Log("Calculating timing...");
             CurrentTimingResult = TimingUtil.GetTiming(
                 audioPlaybackSystem.CurrentAudioFile,
-                new BeatDetector(),
+                new DefaultBeatDetector(),
                 new TestTimingGenerator()
             );
 
