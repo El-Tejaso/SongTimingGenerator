@@ -94,23 +94,29 @@ namespace SongBPMFinder
             copyTimingToClipboard();
         }
 
-        //TODO: abstract this out, possibly to a static helper class
         void copyTimingToClipboard()
         {
-            if (currentTimingResult == null)
+            if(currentTimingResult == null)
             {
-                copyTimingButton.Enabled = false;
-                Logger.Log("Oops that button wasn't supposed to be enabled, sorry. Open a song, calculate the timing, then click here again");
-                return;
+                calculateTiming();
             }
 
-            OsuTimingPointFormatter formatter = new OsuTimingPointFormatter();
+            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(currentTimingResult);
 
-            string osuFormattedTimingPoints = formatter.FormatTiming(currentTimingResult);
             Clipboard.SetText(osuFormattedTimingPoints);
-
             Logger.Log("Copied the following to the clipboard:\n\"" + osuFormattedTimingPoints + "\n\"");
         }
+
+
+        void calculateTiming()
+        {
+            currentTimingResult = TimingUtil.GetTiming(
+                audioPlaybackSystem.CurrentAudioFile,
+                new BeatDetector(),
+                new TestTimingGenerator()
+            );
+        }
+
 
         void applyVisualChangesToSpeedButton(Button b)
         {
@@ -147,5 +153,6 @@ namespace SongBPMFinder
             audioPlaybackSystem.Playback = PlaybackRate.Quartertime;
             applyVisualChangesToSpeedButton(buttonSpeed025x);
         }
+
     }
 }

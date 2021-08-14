@@ -43,15 +43,18 @@
             this.songWaveformTab = new System.Windows.Forms.TabPage();
             this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab = new System.Windows.Forms.TabPage();
+            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
+            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab3 = new System.Windows.Forms.TabPage();
+            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab4 = new System.Windows.Forms.TabPage();
+            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
+            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.toolPanel = new System.Windows.Forms.Panel();
-            this.freezeView = new System.Windows.Forms.CheckBox();
             this.testButton = new System.Windows.Forms.Button();
             this.copyTimingButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -59,11 +62,6 @@
             this.clearOutputButton = new System.Windows.Forms.Button();
             this.openButton = new System.Windows.Forms.Button();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
-            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
-            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
-            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
-            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
-            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -239,6 +237,7 @@
             // 
             // audioViewer
             // 
+            this.audioViewer.AudioData = null;
             this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.audioViewer.Location = new System.Drawing.Point(3, 3);
             this.audioViewer.Name = "audioViewer";
@@ -256,6 +255,15 @@
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
             // 
+            // debugPlot1
+            // 
+            this.debugPlot1.AudioData = null;
+            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot1.Name = "debugPlot1";
+            this.debugPlot1.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot1.TabIndex = 0;
+            // 
             // testWaveformTab2
             // 
             this.testWaveformTab2.Controls.Add(this.debugPlot2);
@@ -266,6 +274,15 @@
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
+            // 
+            // debugPlot2
+            // 
+            this.debugPlot2.AudioData = null;
+            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot2.Name = "debugPlot2";
+            this.debugPlot2.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot2.TabIndex = 0;
             // 
             // testWaveformTab3
             // 
@@ -278,6 +295,15 @@
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
             // 
+            // debugPlot3
+            // 
+            this.debugPlot3.AudioData = null;
+            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot3.Name = "debugPlot3";
+            this.debugPlot3.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot3.TabIndex = 0;
+            // 
             // testWaveformTab4
             // 
             this.testWaveformTab4.Controls.Add(this.debugPlot4);
@@ -288,6 +314,15 @@
             this.testWaveformTab4.TabIndex = 4;
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
+            // 
+            // debugPlot4
+            // 
+            this.debugPlot4.AudioData = null;
+            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot4.Name = "debugPlot4";
+            this.debugPlot4.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot4.TabIndex = 0;
             // 
             // testWaveformTab5
             // 
@@ -300,13 +335,20 @@
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
             // 
+            // debugPlot5
+            // 
+            this.debugPlot5.AudioData = null;
+            this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot5.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot5.Name = "debugPlot5";
+            this.debugPlot5.Size = new System.Drawing.Size(898, 367);
+            this.debugPlot5.TabIndex = 0;
+            // 
             // toolPanel
             // 
             this.toolPanel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.toolPanel.Controls.Add(this.freezeView);
             this.toolPanel.Controls.Add(this.testButton);
             this.toolPanel.Controls.Add(this.copyTimingButton);
-            this.toolPanel.Controls.Add(this.label4);
             this.toolPanel.Controls.Add(this.label3);
             this.toolPanel.Controls.Add(this.label2);
             this.toolPanel.Controls.Add(this.label1);
@@ -318,16 +360,6 @@
             this.toolPanel.Name = "toolPanel";
             this.toolPanel.Size = new System.Drawing.Size(177, 579);
             this.toolPanel.TabIndex = 1;
-            // 
-            // freezeView
-            // 
-            this.freezeView.AutoSize = true;
-            this.freezeView.Location = new System.Drawing.Point(6, 437);
-            this.freezeView.Name = "freezeView";
-            this.freezeView.Size = new System.Drawing.Size(83, 17);
-            this.freezeView.TabIndex = 9;
-            this.freezeView.Text = "Freeze view";
-            this.freezeView.UseVisualStyleBackColor = true;
             // 
             // testButton
             // 
@@ -355,23 +387,17 @@
             this.copyTimingButton.UseVisualStyleBackColor = false;
             this.copyTimingButton.Click += new System.EventHandler(this.copyTimingButton_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(48, 176);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Parameters";
-            // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 6);
+            this.label3.Location = new System.Drawing.Point(49, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(63, 13);
             this.label3.TabIndex = 5;
             this.label3.Text = "File Related";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label2
             // 
@@ -384,12 +410,15 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 82);
+            this.label1.Location = new System.Drawing.Point(49, 74);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(78, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Timing Related";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // calcTimingButton
             // 
@@ -430,49 +459,6 @@
             this.openButton.Text = "Open Audio";
             this.openButton.UseVisualStyleBackColor = false;
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
-            // 
-            // songPositionChangedInterrupt
-            // 
-            // 
-            // debugPlot1
-            // 
-            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot1.Name = "debugPlot1";
-            this.debugPlot1.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot1.TabIndex = 0;
-            // 
-            // debugPlot2
-            // 
-            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot2.Name = "debugPlot2";
-            this.debugPlot2.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot2.TabIndex = 0;
-            // 
-            // debugPlot3
-            // 
-            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot3.Name = "debugPlot3";
-            this.debugPlot3.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot3.TabIndex = 0;
-            // 
-            // debugPlot4
-            // 
-            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot4.Name = "debugPlot4";
-            this.debugPlot4.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot4.TabIndex = 0;
-            // 
-            // debugPlot5
-            // 
-            this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot5.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot5.Name = "debugPlot5";
-            this.debugPlot5.Size = new System.Drawing.Size(898, 367);
-            this.debugPlot5.TabIndex = 0;
             // 
             // Form1
             // 
@@ -516,7 +502,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button calcTimingButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button copyTimingButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button buttonSpeed1x;
@@ -524,7 +509,6 @@
         private System.Windows.Forms.Button buttonSpeed050x;
         private System.Windows.Forms.Button buttonSpeed025x;
         private System.Windows.Forms.Button testButton;
-        private System.Windows.Forms.CheckBox freezeView;
         private System.Windows.Forms.TabControl waveformTabs;
         private System.Windows.Forms.TabPage songWaveformTab;
         private System.Windows.Forms.TabPage testWaveformTab;

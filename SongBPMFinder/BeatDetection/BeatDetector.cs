@@ -13,7 +13,7 @@ namespace SongBPMFinder
             SortedList<Beat> beats = new SortedList<Beat>();
 
             //code here
-
+            beats.Add(new Beat(1, 1));
 
             return beats;
         }

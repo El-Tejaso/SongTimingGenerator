@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace SongBPMFinder
 {
+    //TODO: delete this later
     public class TestTimingGenerator : ITimingGenerator
     {
-        //Just spit out whereever the beats are
+        //Just spit out whereever the beats are, generate no real timing
         public TimingPointList GenerateTiming(SortedList<Beat> beats)
         {
             SortedList<TimingPoint> timingPointList = new SortedList<TimingPoint>();

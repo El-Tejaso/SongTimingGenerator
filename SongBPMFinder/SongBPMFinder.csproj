@@ -102,6 +102,7 @@
     <Compile Include="BeatDetection\OsuTimingPointFormatter.cs" />
     <Compile Include="BeatDetection\TestTimingGenerator.cs" />
     <Compile Include="BeatDetection\TimingPointList.cs" />
+    <Compile Include="BeatDetection\TimingUtil.cs" />
     <Compile Include="Debugging\Plotting.cs" />
     <Compile Include="Gui\CustomWaveViewer.cs">
       <SubType>UserControl</SubType>
