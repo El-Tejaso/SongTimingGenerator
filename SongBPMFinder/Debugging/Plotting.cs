@@ -7,6 +7,9 @@ using System.Windows.Forms;
 
 namespace SongBPMFinder
 {
+    /// <summary>
+    /// A hack that uses the existing waveform drawing code to plot anything else
+    /// </summary>
     internal static class Plotting
     {
         private static List<CustomWaveViewer> plots = new List<CustomWaveViewer>();
@@ -19,10 +22,14 @@ namespace SongBPMFinder
         }
 
 
-        //A hack that uses the existing waveform drawing code to plot anything else
         public static void Plot(int graphNumber, string title, AudioSlice data)
         {
             AudioData audioData = new AudioData(new AudioSlice[] { data }, 2*data.Length);
+            Plot(graphNumber, title, audioData);
+        }
+
+        public static void Plot(int graphNumber, string title, AudioData audioData)
+        {
             plots[graphNumber].AudioData = audioData;
             plotContainers[graphNumber].Text = title;
         }

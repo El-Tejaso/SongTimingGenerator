@@ -95,7 +95,7 @@
     <Compile Include="AudioBoilerplate\AudioPlaybackSystem.cs" />
     <Compile Include="AudioBoilerplate\AudioPlayer.cs" />
     <Compile Include="BeatDetection\Beat.cs" />
-    <Compile Include="BeatDetection\ConcreteBeatDetector.cs" />
+    <Compile Include="BeatDetection\DefaultBeatDetector.cs" />
     <Compile Include="BeatDetection\Conventions.cs" />
     <Compile Include="BeatDetection\Interfaces\BeatDetector.cs" />
     <Compile Include="BeatDetection\Interfaces\ITimingPointFormatter.cs" />
@@ -116,6 +116,7 @@
     <Compile Include="Gui\WaveformDrawer.cs" />
     <Compile Include="Debugging\ILogger.cs" />
     <Compile Include="Debugging\RichTextBoxLogger.cs" />
+    <Compile Include="SignalProcessing\FourierTransform.cs" />
     <Compile Include="Util\AudioSlice.cs" />
     <Compile Include="Util\Slice\MathUtilSliceF.cs" />
     <Compile Include="Util\Slice\Slice.cs" />
@@ -170,7 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MainProgram\" />
-    <Folder Include="SignalProcessing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Accord.3.8.0\build\Accord.targets" Condition="Exists('..\packages\Accord.3.8.0\build\Accord.targets')" />

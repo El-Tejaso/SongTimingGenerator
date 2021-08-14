@@ -33,9 +33,9 @@ namespace SongBPMFinder
 #endif
         }
 
-        public static Slice<float> ZeroesLike(Slice<float> x)
+        public static Slice<T> ZeroesLike<T>(Slice<T> x)
         {
-            return new Slice<float>(new float[x.Length]);
+            return new Slice<T>(new T[x.Length]);
         }
 
         public static T None<T>(T a)

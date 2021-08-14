@@ -11,6 +11,8 @@ namespace SongBPMFinder
         TimingPointList currentTimingResult;
         AudioPlaybackSystem audioPlaybackSystem;
 
+        AudioData fourierTransformData;
+
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
 
@@ -43,6 +45,11 @@ namespace SongBPMFinder
 
             applyVisualChangesToSpeedButton(buttonSpeed1x);
 
+            fourierTransformData = new AudioData(
+                new AudioSlice[] { new AudioSlice(new Slice<float>(new float[8200]), 44100) }, 
+                44100
+            );
+
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
         }
 
@@ -58,7 +65,18 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnPositionChanged()
         {
-            
+            AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
+
+            AudioSlice currentFile = currentAudioFile[0];
+
+            int windowLength = fourierTransformData[0].Slice.Length;
+
+            int start = currentAudioFile.CurrentSample;
+            int end = Math.Min(currentAudioFile.CurrentSample + windowLength, currentFile.Length);
+            Slice<float> window = currentFile.Slice.GetSlice(start, end);
+
+            FourierTransform.FourierTransformMagnitudes(window, fourierTransformData[0].Slice);
+            Plotting.Plot(0, "Fourier transform", fourierTransformData);
         }
 
         private void AudioPlaybackSystem_OnNewSongLoad()
