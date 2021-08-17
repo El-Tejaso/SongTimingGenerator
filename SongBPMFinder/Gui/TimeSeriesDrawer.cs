@@ -24,6 +24,28 @@ namespace SongBPMFinder
             Times = new List<double>();
             Values = new List<float>();
         }
+
+        internal void Add(double t, float v)
+        {
+            Times.Add(t);
+            Values.Add(v);
+        }
+
+        public void Normalize()
+        {
+            float max = Math.Abs(Values[0]);
+            for(int i = 0; i < Values.Count; i++)
+            {
+                float m2 = Math.Abs(Values[i]);
+                if (m2 > max)
+                    max = m2;
+            }
+
+            for (int i = 0; i < Values.Count; i++)
+            {
+                Values[i] /= max;
+            }
+        }
     }
 
     public class TimeSeriesDrawer

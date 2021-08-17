@@ -2,17 +2,7 @@
 {
     /// <summary>
     /// A convenience class for working with arrays in place to reduce memory allocation/deallocation
-    /// that I made specifically for this project (Song Timing Generator).
-    /// 
-    /// It is inspired by the way that I think python might deal with arrays internally.
-    /// 
-    /// Something unique about this that System.Span or whatever doesn't have is that 
-    /// it can be given a stride into an existing array.
-    /// This makes it easy to extract channels in audio, do simple downsampling, anything that involves interleaved
-    /// data really.
-    /// 
-    /// Honestly, I didnt know that Span was a thing until after I had already been using this for a while.
-    /// If it ever gets a Stride property, I will probably delete this class and use that instead.
+    /// that ended up doing more damage than good. I will delete it and all dependancies in the next commit if I can.
     /// </summary>
     public struct Slice<T>
     {

@@ -33,7 +33,10 @@ namespace SongBPMFinder
                     audioData = value;
                     viewport.AudioData = value;
 
-                    audioData.OnPositionManuallyChanged += AudioData_OnPositionManuallyChanged;
+                    if (audioData != null)
+                    {
+                        audioData.OnPositionManuallyChanged += AudioData_OnPositionManuallyChanged;
+                    }
                 }
             }
         }

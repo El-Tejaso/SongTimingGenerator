@@ -26,7 +26,10 @@ namespace SongBPMFinder
 
                     currentAudioFile = value;
 
-                    currentAudioFile.OnPositionManuallyChanged += CurrentAudioFile_OnPositionManuallyChanged;
+                    if (currentAudioFile != null)
+                    {
+                        currentAudioFile.OnPositionManuallyChanged += CurrentAudioFile_OnPositionManuallyChanged;
+                    }
                 }
             }
         }

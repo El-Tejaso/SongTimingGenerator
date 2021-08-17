@@ -11,8 +11,6 @@ namespace SongBPMFinder
         TimingPointList currentTimingResult;
         AudioPlaybackSystem audioPlaybackSystem;
 
-        AudioData fourierTransformData;
-
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
 
@@ -45,11 +43,6 @@ namespace SongBPMFinder
 
             applyVisualChangesToSpeedButton(buttonSpeed1x);
 
-            fourierTransformData = new AudioData(
-                new AudioSlice[] { new AudioSlice(new Slice<float>(new float[600]), 44100) }, 
-                44100
-            );
-
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
         }
 
@@ -66,18 +59,7 @@ namespace SongBPMFinder
         //TODO: remove this
         private void AudioPlaybackSystem_OnPositionChanged()
         {
-            AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
 
-            AudioSlice currentFile = currentAudioFile[0];
-
-            int windowLength = fourierTransformData[0].Slice.Length*2;
-
-            int start = currentAudioFile.CurrentSample;
-            int end = Math.Min(currentAudioFile.CurrentSample + windowLength, currentFile.Length);
-            Slice<float> window = currentFile.Slice.GetSlice(start, end);
-
-            FourierTransform.FourierTransformMagnitudes(window, fourierTransformData[0].Slice);
-            Plotting.Plot(0, "Fourier transform", fourierTransformData);
         }
 
 
@@ -86,15 +68,42 @@ namespace SongBPMFinder
         {
             TimeSeries series = new TimeSeries();
             Random r = new Random();
+            AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
 
-            for (double i = 0; i < audioPlaybackSystem.CurrentAudioFile.Duration; i+=0.1)
+            int windowSize = 1024;
+            Slice<float> lastFT = new Slice<float>(new float[windowSize/2]);
+            Slice<float> thisFT = new Slice<float>(new float[windowSize/2]);
+
+
+            for (int i = 0; i + windowSize/2 < currentAudioFile.Length; i+=windowSize/2)
             {
-                series.Times.Add(i);
+                Slice<float> slice = currentAudioFile[0].GetSlice(i, i + windowSize).Slice;
 
-                float value = (float)(1.0 - 2 * r.NextDouble());
-                series.Values.Add(value);
+                if(i == 0)
+                {
+                    FourierTransform.FourierTransformMagnitudes(slice, lastFT);
+                    continue;
+                }
+
+                FourierTransform.FourierTransformMagnitudes(slice, thisFT);
+
+                float sumSquaresDifference = 0;
+
+                for(int j = 0; j < lastFT.Length; j++)
+                {
+                    float delta = thisFT[j] - lastFT[j];
+                    sumSquaresDifference += delta * delta;
+                }
+
+                Slice<float> temp = thisFT;
+                thisFT = lastFT;
+                lastFT = temp;
+
+                double t = currentAudioFile.SampleToSeconds(i);
+                series.Add(t, sumSquaresDifference);
             }
 
+            series.Normalize();
             audioViewer.TimeSeries = series;
         }
 
