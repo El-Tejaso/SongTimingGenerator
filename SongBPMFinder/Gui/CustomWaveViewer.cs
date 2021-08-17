@@ -13,6 +13,11 @@ namespace SongBPMFinder
             set { viewport.TimingPoints = value; }
         }
 
+        public TimeSeries TimeSeries {
+            get { return viewport.TimeSeries; }
+            set { viewport.TimeSeries = value; }
+        }
+
         public AudioData AudioData {
             get {
                 return audioData;
@@ -100,7 +105,7 @@ namespace SongBPMFinder
             Invalidate();
         }
 
-        private void ScrollAudio(int dir)
+        public void ScrollAudio(int dir)
         {
             if (audioData == null)
                 return;

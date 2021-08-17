@@ -111,6 +111,7 @@
     <Compile Include="Gui\CustomWaveViewer.Designer.cs">
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\TimeSeriesDrawer.cs" />
     <Compile Include="Gui\TimingPointDrawer.cs" />
     <Compile Include="Gui\WaveformCoordinates.cs" />
     <Compile Include="Gui\WaveformDrawer.cs" />

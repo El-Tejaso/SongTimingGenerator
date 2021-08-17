@@ -6,14 +6,7 @@ using System.Threading.Tasks;
 
 namespace SongBPMFinder
 {
-    /// <summary>
-    ///Implemented with Naive intuition from the 3Blue1Brown video.
-    ///Awesome video, would have been cool to know that the magnitude of the 'center of mass' vector 
-    ///is actually the strength of a frequency, and the angle is the phase.
-    ///So there is actually utility in splitting those two apart.
-    ///
-    /// Runs in O(input_size^2)
-    /// </summary>
+
     public static class FourierTransform
     {
         static float[] sinTable;
@@ -74,16 +67,37 @@ namespace SongBPMFinder
 
         private static void fourierTransformInternal(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
         {
-            SliceFunctional.AssertEqualLength(input, magnitudesDest, phasesDest);
+            SliceFunctional.AssertEqualLength(magnitudesDest, phasesDest);
 
-            for (int i = 0; i < input.Length; i++)
+            naiveFFT(input, magnitudesDest, phasesDest, calculatePhases, calculateMagnitudes);
+        }
+
+
+        private static void fastFFT(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
+        {
+
+        }
+
+
+        /// <summary>
+        /// Implemented with Naive intuition from the 3Blue1Brown video.
+        /// Awesome video, would have been cool to know that the magnitude of the 'center of mass' vector 
+        /// is actually the strength of a frequency, and the angle is the phase.
+        ///
+        /// Runs in O(input_size^2)
+        /// </summary>
+        private static void naiveFFT(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
+        {
+            int n = Math.Min(magnitudesDest.Length, input.Length / 2);
+
+            for (int i = 0; i < n; i++)
             {
                 float period = i + 2;
 
                 float x = 0;
                 float y = 0;
 
-                for(int pos = 0; pos < input.Length; pos++)
+                for (int pos = 0; pos < n; pos++)
                 {
                     float angle = (2f * (float)Math.PI) * (pos / period);
                     float magnitude = input[pos];
@@ -92,7 +106,7 @@ namespace SongBPMFinder
                     y += magnitude * Sin(angle);
                 }
 
-                if(calculateMagnitudes)
+                if (calculateMagnitudes)
                 {
                     magnitudesDest[i] = (float)Math.Sqrt(x * x + y * y);
                 }

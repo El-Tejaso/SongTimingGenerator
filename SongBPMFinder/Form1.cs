@@ -46,7 +46,7 @@ namespace SongBPMFinder
             applyVisualChangesToSpeedButton(buttonSpeed1x);
 
             fourierTransformData = new AudioData(
-                new AudioSlice[] { new AudioSlice(new Slice<float>(new float[8200]), 44100) }, 
+                new AudioSlice[] { new AudioSlice(new Slice<float>(new float[600]), 44100) }, 
                 44100
             );
 
@@ -63,13 +63,14 @@ namespace SongBPMFinder
             playPauseButton.Text = ";";
         }
 
+        //TODO: remove this
         private void AudioPlaybackSystem_OnPositionChanged()
         {
             AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
 
             AudioSlice currentFile = currentAudioFile[0];
 
-            int windowLength = fourierTransformData[0].Slice.Length;
+            int windowLength = fourierTransformData[0].Slice.Length*2;
 
             int start = currentAudioFile.CurrentSample;
             int end = Math.Min(currentAudioFile.CurrentSample + windowLength, currentFile.Length);
@@ -79,9 +80,22 @@ namespace SongBPMFinder
             Plotting.Plot(0, "Fourier transform", fourierTransformData);
         }
 
+
+        //TODO: remove this
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            
+            TimeSeries series = new TimeSeries();
+            Random r = new Random();
+
+            for (double i = 0; i < audioPlaybackSystem.CurrentAudioFile.Duration; i+=0.1)
+            {
+                series.Times.Add(i);
+
+                float value = (float)(1.0 - 2 * r.NextDouble());
+                series.Values.Add(value);
+            }
+
+            audioViewer.TimeSeries = series;
         }
 
         private void openAudioForTimingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -95,14 +109,41 @@ namespace SongBPMFinder
             playPause();
         }
 
+        bool isPressing = false;
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (isPressing)
+                return;
+
+            bool handled = true;
+
             if (e.KeyCode == Keys.Space)
             {
                 playPauseButton.Focus();
                 playPause();
+            }
+            else if(e.KeyCode == Keys.Left)
+            {
+                audioViewer.ScrollAudio(-1);
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                audioViewer.ScrollAudio(1);
+            }
+            else
+            {
+                handled = false;
+            }
+
+            if (handled)
+            {
                 e.Handled = true;
             }
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            isPressing = false;
         }
 
         void playPause()
@@ -199,5 +240,7 @@ namespace SongBPMFinder
         {
             Logger.Log("This feature has not yet been implemented");
         }
+
+        
     }
 }

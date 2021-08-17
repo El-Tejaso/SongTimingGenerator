@@ -34,12 +34,18 @@ namespace SongBPMFinder
             }
         }
 
-        private TimingPointList timingPoints;
-        public TimingPointList TimingPoints { 
-            get => timingPoints;
+        public TimingPointList TimingPoints {
+            get => timingPointDrawer.TimingPoints;
             set {
-                timingPoints = value;
                 timingPointDrawer.TimingPoints = value;
+                Invalidate();
+            }
+        }
+
+        public TimeSeries TimeSeries {
+            get => timeSeriesDrawer.TimeSeries;
+            set {
+                timeSeriesDrawer.TimeSeries = value;
                 Invalidate();
             }
         }
@@ -65,6 +71,7 @@ namespace SongBPMFinder
 
         WaveformDrawer waveformDrawer;
         TimingPointDrawer timingPointDrawer;
+        TimeSeriesDrawer timeSeriesDrawer;
 
         public CustomWaveViewerViewport()
         {
@@ -83,7 +90,8 @@ namespace SongBPMFinder
             coordinates = new WaveformCoordinates(audioData, this);
 
             waveformDrawer = new WaveformDrawer(this, textFont, audioData, coordinates);
-            timingPointDrawer = new TimingPointDrawer(this, textFont, coordinates, timingPoints);
+            timingPointDrawer = new TimingPointDrawer(this, textFont, coordinates, null);
+            timeSeriesDrawer = new TimeSeriesDrawer(this, coordinates);
         }
 
         /// <summary>
@@ -99,6 +107,8 @@ namespace SongBPMFinder
             waveformDrawer.DrawAudioWaveform(e.Graphics);
 
             timingPointDrawer.DrawTimingPoints(e.Graphics);
+
+            timeSeriesDrawer.DrawTimeSeries(e.Graphics);
 
             drawCurrentPositionText(e);
 

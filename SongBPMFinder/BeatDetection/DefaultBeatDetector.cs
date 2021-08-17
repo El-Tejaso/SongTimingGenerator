@@ -13,6 +13,8 @@ namespace SongBPMFinder
             SortedList<Beat> beats = new SortedList<Beat>();
 
             
+            //FFT stuff
+
 
             return beats;
         }

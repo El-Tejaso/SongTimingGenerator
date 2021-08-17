@@ -331,7 +331,7 @@
             // calculateTimingToolStripMenuItem
             // 
             this.calculateTimingToolStripMenuItem.Name = "calculateTimingToolStripMenuItem";
-            this.calculateTimingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.calculateTimingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.calculateTimingToolStripMenuItem.Text = "Calculate timing";
             this.calculateTimingToolStripMenuItem.Click += new System.EventHandler(this.calculateTimingToolStripMenuItem_Click);
             // 
@@ -347,14 +347,14 @@
             // xMLFileToolStripMenuItem
             // 
             this.xMLFileToolStripMenuItem.Name = "xMLFileToolStripMenuItem";
-            this.xMLFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xMLFileToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.xMLFileToolStripMenuItem.Text = "XML file";
             this.xMLFileToolStripMenuItem.Click += new System.EventHandler(this.xMLFileToolStripMenuItem_Click);
             // 
             // osuTimingPointsToolStripMenuItem
             // 
             this.osuTimingPointsToolStripMenuItem.Name = "osuTimingPointsToolStripMenuItem";
-            this.osuTimingPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.osuTimingPointsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.osuTimingPointsToolStripMenuItem.Text = "osu! timing points";
             this.osuTimingPointsToolStripMenuItem.Click += new System.EventHandler(this.osuTimingPointsToolStripMenuItem_Click);
             // 
@@ -370,14 +370,14 @@
             // copyToClipboardToolStripMenuItem1
             // 
             this.copyToClipboardToolStripMenuItem1.Name = "copyToClipboardToolStripMenuItem1";
-            this.copyToClipboardToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.copyToClipboardToolStripMenuItem1.Size = new System.Drawing.Size(169, 22);
             this.copyToClipboardToolStripMenuItem1.Text = "Copy to clipboard";
             this.copyToClipboardToolStripMenuItem1.Click += new System.EventHandler(this.copyToClipboardToolStripMenuItem1_Click);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -389,6 +389,7 @@
             this.audioViewer.Name = "audioViewer";
             this.audioViewer.Size = new System.Drawing.Size(1081, 349);
             this.audioViewer.TabIndex = 0;
+            this.audioViewer.TimingPoints = null;
             // 
             // debugPlot1
             // 
@@ -398,6 +399,7 @@
             this.debugPlot1.Name = "debugPlot1";
             this.debugPlot1.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot1.TabIndex = 0;
+            this.debugPlot1.TimingPoints = null;
             // 
             // debugPlot2
             // 
@@ -407,6 +409,7 @@
             this.debugPlot2.Name = "debugPlot2";
             this.debugPlot2.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot2.TabIndex = 0;
+            this.debugPlot2.TimingPoints = null;
             // 
             // debugPlot3
             // 
@@ -416,6 +419,7 @@
             this.debugPlot3.Name = "debugPlot3";
             this.debugPlot3.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot3.TabIndex = 0;
+            this.debugPlot3.TimingPoints = null;
             // 
             // debugPlot4
             // 
@@ -425,6 +429,7 @@
             this.debugPlot4.Name = "debugPlot4";
             this.debugPlot4.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot4.TabIndex = 0;
+            this.debugPlot4.TimingPoints = null;
             // 
             // debugPlot5
             // 
@@ -434,6 +439,7 @@
             this.debugPlot5.Name = "debugPlot5";
             this.debugPlot5.Size = new System.Drawing.Size(1081, 349);
             this.debugPlot5.TabIndex = 0;
+            this.debugPlot5.TimingPoints = null;
             // 
             // Form1
             // 
@@ -446,6 +452,7 @@
             this.Name = "Form1";
             this.Text = "Music Timer";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
