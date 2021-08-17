@@ -71,13 +71,13 @@ namespace SongBPMFinder
             AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
 
             int windowSize = 1024;
-            Slice<float> lastFT = new Slice<float>(new float[windowSize/2]);
-            Slice<float> thisFT = new Slice<float>(new float[windowSize/2]);
+            float[] lastFT = new float[windowSize/2];
+            float[] thisFT = new float[windowSize/2];
 
 
-            for (int i = 0; i + windowSize/2 < currentAudioFile.Length; i+=windowSize/2)
+            for (int i = 0; i + windowSize < currentAudioFile.Length; i+=windowSize/2)
             {
-                Slice<float> slice = currentAudioFile[0].GetSlice(i, i + windowSize).Slice;
+                Span<float> slice = currentAudioFile[0].GetSlice(i, i + windowSize);
 
                 if(i == 0)
                 {
@@ -95,7 +95,7 @@ namespace SongBPMFinder
                     sumSquaresDifference += delta * delta;
                 }
 
-                Slice<float> temp = thisFT;
+                float[] temp = thisFT;
                 thisFT = lastFT;
                 lastFT = temp;
 

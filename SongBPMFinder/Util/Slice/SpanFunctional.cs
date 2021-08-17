@@ -9,15 +9,15 @@ namespace SongBPMFinder
     /// <summary>
     /// An attempt at creating a (mostly) zero-allocation functional API
     /// </summary>
-    public static class SliceFunctional
+    public static class SpanFunctional
     {
-        public static void AssertEqualLength<T1, T2, T3>(Slice<T1> a, Slice<T2> b, Slice<T3> c)
+        public static void AssertEqualLength<T1, T2, T3>(Span<T1> a, Span<T2> b, Span<T3> c)
         {
             AssertEqualLength(a, b);
             AssertEqualLength(a, c);
         }
 
-        public static void AssertEqualLength<T1, T2>(Slice<T1> a, Slice<T2> b)
+        public static void AssertEqualLength<T1, T2>(Span<T1> a, Span<T2> b)
         {
 #if DEBUG
             if (a.Length != b.Length)
@@ -25,17 +25,12 @@ namespace SongBPMFinder
 #endif
         }
 
-        public static void AssertASmallerThanB<T>(Slice<T> a, Slice<T> b, int amount)
+        public static void AssertASmallerThanB<T>(Span<T> a, Span<T> b, int amount)
         {
 #if DEBUG
             if (a.Length + amount >= b.Length)
                 throw new Exception("Slice a must be smaller than b by " + amount);
 #endif
-        }
-
-        public static Slice<T> ZeroesLike<T>(Slice<T> x)
-        {
-            return new Slice<T>(new T[x.Length]);
         }
 
         public static T None<T>(T a)
@@ -47,7 +42,7 @@ namespace SongBPMFinder
         /// <summary>
         /// Check documentation for the other overload
         /// </summary>
-        public static void Map<T0, T1>(Slice<T0> a, Slice<T0> b, Slice<T1> dst, Func<T0, T0, T1> function)
+        public static void Map<T0, T1>(Span<T0> a, Span<T0> b, Span<T1> dst, Func<T0, T0, T1> function)
         {
             Map(a, b, dst, function, None, None);
         }
@@ -58,7 +53,7 @@ namespace SongBPMFinder
         /// Most of the time, function will be a compile time constant, so it 
         /// can be unrolled by the into a normal for-loop with zero peformance overhead(hopefully)
         /// </summary>
-        public static void Map<T0, T1>(Slice<T0> a, Slice<T0> b, Slice<T1> dst, Func<T0, T0, T1> function, Func<T0, T0> aOp, Func<T0, T0> bOp)
+        public static void Map<T0, T1>(Span<T0> a, Span<T0> b, Span<T1> dst, Func<T0, T0, T1> function, Func<T0, T0> aOp, Func<T0, T0> bOp)
         {
             AssertEqualLength(a, b, dst);
 
@@ -75,12 +70,12 @@ namespace SongBPMFinder
         /// Imagine a list the same length as a but filled with a single value, and calling Map with that.
         /// The result is the same but with way less memory usage
         /// </summary>
-        public static void Map<T0, T1>(Slice<T0> a, T0 scalar, Slice<T1> dst, Func<T0, T0, T1> function)
+        public static void Map<T0, T1>(Span<T0> a, T0 scalar, Span<T1> dst, Func<T0, T0, T1> function)
         {
             Map(a, scalar, dst, function, None, None);
         }
 
-        public static void Map<T0, T1>(Slice<T0> a, T0 scalar, Slice<T1> dst, Func<T0, T0, T1> function, Func<T0, T0> aOp, Func<T0, T0> bOp)
+        public static void Map<T0, T1>(Span<T0> a, T0 scalar, Span<T1> dst, Func<T0, T0, T1> function, Func<T0, T0> aOp, Func<T0, T0> bOp)
         {
             T0 s = bOp(scalar);
             for (int i = 0; i < dst.Length; i++)
@@ -92,7 +87,7 @@ namespace SongBPMFinder
         /// <summary>
         /// Same as the other overload, but aOp is None
         /// </summary>
-        public static T Reduce<T>(Slice<T> a, T defaultReturn, Func<T, T, T> function)
+        public static T Reduce<T>(Span<T> a, T defaultReturn, Func<T, T, T> function)
         {
             return Reduce(a, defaultReturn, function, None);
         }
@@ -103,7 +98,7 @@ namespace SongBPMFinder
         /// 
         /// if a is empty, something needs to be returned, which is specified with defaultReturn
         /// </summary>
-        public static T Reduce<T>(Slice<T> a, T defaultReturn, Func<T, T, T> function, Func<T, T> aOp)
+        public static T Reduce<T>(Span<T> a, T defaultReturn, Func<T, T, T> function, Func<T, T> aOp)
         {
             if (a.Length == 0)
                 return defaultReturn;

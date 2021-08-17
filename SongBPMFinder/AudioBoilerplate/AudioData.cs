@@ -9,7 +9,7 @@ namespace SongBPMFinder
     /// </summary>
     public class AudioData
     {
-        AudioSlice[] data;
+        AudioChannel[] data;
         private int len;
         private int sampleRate;
         private int currentSample = 0;
@@ -22,7 +22,7 @@ namespace SongBPMFinder
             }
         }
 
-        public AudioSlice this[int channel] {
+        public AudioChannel this[int channel] {
             get {
                 return data[channel];
             }
@@ -98,7 +98,7 @@ namespace SongBPMFinder
         /// the sampleRate provided to this class's constructor will override the sample rates
         /// used in either channel of channelSeperatedData
         /// </summary>
-        public AudioData(AudioSlice[] channelSeperatedData, int sampleRate)
+        public AudioData(AudioChannel[] channelSeperatedData, int sampleRate)
         {
             this.data = channelSeperatedData;
             this.len = channelSeperatedData[0].Length;
@@ -137,7 +137,7 @@ namespace SongBPMFinder
             int numChannels = metadata.Channels;
 
             float[] rawData = audioFileToFloatArray(media, sampleRate, numChannels);
-            AudioSlice[] channelSeperatedData = floatArrayToChannelSeperatedData(sampleRate, numChannels, rawData);
+            AudioChannel[] channelSeperatedData = floatArrayToChannelSeperatedData(sampleRate, numChannels, rawData);
 
             AudioData result = new AudioData(channelSeperatedData, sampleRate);
 
@@ -157,15 +157,22 @@ namespace SongBPMFinder
             return rawData;
         }
 
-        private static AudioSlice[] floatArrayToChannelSeperatedData(int sampleRate, int numChannels, float[] rawData)
+        private static AudioChannel[] floatArrayToChannelSeperatedData(int sampleRate, int numChannels, float[] rawData)
         {
-            Slice<float> rawDataSlice = new Slice<float>(rawData);
+            Span<float> rawDataSlice = new Span<float>(rawData);
 
-            AudioSlice[] channelSeperatedData = new AudioSlice[numChannels];
+            AudioChannel[] channelSeperatedData = new AudioChannel[numChannels];
+            int channelLength = rawData.Length / numChannels;
+
             for (int i = 0; i < numChannels; i++)
             {
-                Slice<float> currentChannel = rawDataSlice.GetSlice(i, rawData.Length - numChannels + i + 1, numChannels);
-                channelSeperatedData[i] = new AudioSlice(currentChannel, sampleRate);
+                float[] currentChannelData = new float[channelLength];
+                for(int rawDataIdx = i, currChannelDataIdx = 0; rawDataIdx < rawData.Length; rawDataIdx+= numChannels, currChannelDataIdx++)
+                {
+                    currentChannelData[currChannelDataIdx] = rawData[rawDataIdx];
+                }
+
+                channelSeperatedData[i] = new AudioChannel(currentChannelData, sampleRate);
             }
 
             return channelSeperatedData;
@@ -181,7 +188,7 @@ namespace SongBPMFinder
 
         public AudioData DeepCopy()
         {
-            AudioSlice[] deepCopyOfData = new AudioSlice[NumChannels];
+            AudioChannel[] deepCopyOfData = new AudioChannel[NumChannels];
             for(int i = 0; i < data.Length; i++)
             {
                 deepCopyOfData[i] = data[i].DeepCopy();

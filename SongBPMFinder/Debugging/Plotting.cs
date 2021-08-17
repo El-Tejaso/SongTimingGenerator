@@ -22,9 +22,9 @@ namespace SongBPMFinder
         }
 
 
-        public static void Plot(int graphNumber, string title, AudioSlice data)
+        public static void Plot(int graphNumber, string title, AudioChannel data)
         {
-            AudioData audioData = new AudioData(new AudioSlice[] { data }, 2*data.Length);
+            AudioData audioData = new AudioData(new AudioChannel[] { data }, 2*data.Length);
             Plot(graphNumber, title, audioData);
         }
 

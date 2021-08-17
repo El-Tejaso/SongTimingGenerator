@@ -2,7 +2,7 @@
 {
     public abstract class BeatDetector
     {
-        protected abstract SortedList<Beat> GetEveryBeat(AudioSlice audioSlice);
+        protected abstract SortedList<Beat> GetEveryBeat(AudioChannel audioSlice);
 
         public SortedList<Beat>[] GetEveryBeat(AudioData data)
         {

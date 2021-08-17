@@ -63,7 +63,7 @@ namespace SongBPMFinder
             }
         }
 
-        public AudioSlice GetActiveAudioSlice(int channel) {
+        public Span<float> GetActiveAudioSlice(int channel) {
             return audioData[channel].GetSlice(VeryLeftSample, VeryRightSample);
         }
 
@@ -114,7 +114,7 @@ namespace SongBPMFinder
             if (audioData == null)
                 return;
 
-            float biggestVisibleSample = MathUtilSliceF.Max(GetActiveAudioSlice(0).Slice);
+            float biggestVisibleSample = MathUtilSpanF.Max(GetActiveAudioSlice(0));
             viewportMax = Math.Max(0.00001f, biggestVisibleSample);
         }
 

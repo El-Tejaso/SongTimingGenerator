@@ -57,7 +57,7 @@ namespace SongBPMFinder
             int bottom = top + height;
 
             Rectangle region = new Rectangle(ClientRectangle.X, top, ClientRectangle.Width, bottom - top);
-            AudioSlice data = audioData[0];
+            AudioChannel data = audioData[0];
 
             int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
             if (ForceIndividualView || samplesPerPixel <= 1)
@@ -72,7 +72,7 @@ namespace SongBPMFinder
             drawAxes(region, g);
         }
 
-        void drawIndividualSamples(Rectangle region, AudioSlice entireChannel, Graphics g)
+        void drawIndividualSamples(Rectangle region, AudioChannel entireChannel, Graphics g)
         {
             int leftMost = coordinates.VeryLeftSample;
             int rightMost = coordinates.VeryRightSample;
@@ -101,12 +101,11 @@ namespace SongBPMFinder
             drawStdevStatistics(g, region, entireChannel.GetSlice(coordinates.VeryLeftSample, coordinates.VeryRightSample));
         }
 
-        private void drawStdevStatistics(Graphics g, Rectangle region, AudioSlice specificData)
+        private void drawStdevStatistics(Graphics g, Rectangle region, Span<float> specificRange)
         {
-            Slice<float> range = specificData.Slice;
-            float mean = MathUtilSliceF.Average(range);
-            float meanAbs = MathUtilSliceF.Mean(range, Math.Abs);
-            float stdev = MathUtilSliceF.StandardDeviation(range);
+            float mean = MathUtilSpanF.Average(specificRange);
+            float meanAbs = MathUtilSpanF.Mean(specificRange, Math.Abs);
+            float stdev = MathUtilSpanF.StandardDeviation(specificRange);
 
             float rectTop = region.Top;
             float rectBottom = region.Bottom;
@@ -136,7 +135,7 @@ namespace SongBPMFinder
             }
         }
 
-        void drawCondensedWaveform(Rectangle region, AudioSlice entireChannel, Graphics g)
+        void drawCondensedWaveform(Rectangle region, AudioChannel entireChannel, Graphics g)
         {
             float rectTop = region.Top;
             float rectBottom = region.Bottom;

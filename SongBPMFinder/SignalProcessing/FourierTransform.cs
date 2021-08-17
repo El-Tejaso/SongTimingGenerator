@@ -49,31 +49,31 @@ namespace SongBPMFinder
             return (float)Math.Atan2(y, x);
         }
 
-        public static void FourierTransformMagnitudesAndPhases(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest)
+        public static void FourierTransformMagnitudesAndPhases(Span<float> input, Span<float> magnitudesDest, Span<float> phasesDest)
         {
             fourierTransformInternal(input, magnitudesDest, phasesDest, true, true);
         }
 
-        public static void FourierTransformMagnitudes(Slice<float> input, Slice<float> magnitudesDest)
+        public static void FourierTransformMagnitudes(Span<float> input, Span<float> magnitudesDest)
         {
             fourierTransformInternal(input, magnitudesDest, magnitudesDest, false, true);
         }
 
-        public static void FourierTransformPhases(Slice<float> input, Slice<float> phasesDest)
+        public static void FourierTransformPhases(Span<float> input, Span<float> phasesDest)
         {
             fourierTransformInternal(input, phasesDest, phasesDest, true, false);
         }
 
 
-        private static void fourierTransformInternal(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
+        private static void fourierTransformInternal(Span<float> input, Span<float> magnitudesDest, Span<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
         {
-            SliceFunctional.AssertEqualLength(magnitudesDest, phasesDest);
+            SpanFunctional.AssertEqualLength(magnitudesDest, phasesDest);
 
             naiveFFT(input, magnitudesDest, phasesDest, calculatePhases, calculateMagnitudes);
         }
 
 
-        private static void fastFFT(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
+        private static void fastFFT(Span<float> input, Span<float> magnitudesDest, Span<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
         {
 
         }
@@ -86,7 +86,7 @@ namespace SongBPMFinder
         ///
         /// Runs in O(input_size^2)
         /// </summary>
-        private static void naiveFFT(Slice<float> input, Slice<float> magnitudesDest, Slice<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
+        private static void naiveFFT(Span<float> input, Span<float> magnitudesDest, Span<float> phasesDest, bool calculatePhases, bool calculateMagnitudes)
         {
             int n = Math.Min(magnitudesDest.Length, input.Length / 2);
 

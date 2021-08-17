@@ -8,7 +8,7 @@ namespace SongBPMFinder
 {
     public class DefaultBeatDetector : BeatDetector
     {
-        protected override SortedList<Beat> GetEveryBeat(AudioSlice audioSlice)
+        protected override SortedList<Beat> GetEveryBeat(AudioChannel audioSlice)
         {
             SortedList<Beat> beats = new SortedList<Beat>();
 
@@ -19,13 +19,13 @@ namespace SongBPMFinder
             return beats;
         }
 
-        Slice<float> FourierTransformHistogram(AudioSlice slice, double position, float timeWindow)
+        float[] FourierTransformHistogram(AudioChannel slice, double position, float timeWindow)
         {
             int start = slice.ToSamples(position);
             int histogramSize = slice.ToSamples(timeWindow);
-            Slice<float> timePortion = slice.GetSlice(start, start + histogramSize).Slice;
+            Span<float> timePortion = slice.GetSlice(start, start + histogramSize);
 
-            Slice<float> magnitudes = SliceFunctional.ZeroesLike(timePortion);
+            float[] magnitudes = new float[timePortion.Length];
 
             FourierTransform.FourierTransformMagnitudes(timePortion, magnitudes);
 
