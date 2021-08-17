@@ -21,7 +21,8 @@ namespace SongBPMFinder
             set {
                 audioData = value;
 
-                SecondsPerPixel = MAXIMUM_ZOOM;
+                if (SecondsPerPixel < 0)
+                    secondsPerPixel = MAXIMUM_ZOOM;
             }
         }
 

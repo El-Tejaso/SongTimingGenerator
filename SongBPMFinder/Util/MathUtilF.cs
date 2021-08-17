@@ -2,8 +2,13 @@
 
 namespace SongBPMFinder
 {
-    class MathUtilF
+    public static class MathUtilF
     {
+        public static float Magnitude(float x, float y)
+        {
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+
         public static bool IsIntegerMultiple(double a, double b, double tolerance = 0.000001)
         {
             if (a < b)

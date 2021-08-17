@@ -23,12 +23,12 @@ namespace SongBPMFinder
             return new Span<float>(data, start, end - start);
         }
 
-        public double ToSeconds(int timeInSamples)
+        public double SamplesToSeconds(int timeInSamples)
         {
             return timeInSamples / (double)SampleRate;
         }
 
-        public int ToSamples(double timeInSeconds)
+        public int SecondsToSamples(double timeInSeconds)
         {
             return (int)(SampleRate * timeInSeconds);
         }

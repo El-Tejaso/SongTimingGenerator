@@ -95,7 +95,7 @@ namespace SongBPMFinder
             int top = ClientRectangle.Top;
             int bottom = ClientRectangle.Bottom;
 
-            for(int i = firstVisible; i <  timeSeries.Times.Count-1; i++)
+            for(int i = firstVisible; i+1 <  timeSeries.Times.Count; i++)
             {
                 float x0 = coordinates.GetWaveformXSeconds(timeSeries.Times[i]);
                 float x1 = coordinates.GetWaveformXSeconds(timeSeries.Times[i+1]);
@@ -103,7 +103,14 @@ namespace SongBPMFinder
                 float y0 = coordinates.GetWaveformY(timeSeries.Values[i], top, bottom);
                 float y1 = coordinates.GetWaveformY(timeSeries.Values[i + 1], top, bottom);
 
-                g.DrawLine(linePen, x0, y0, x1, y1);
+                try
+                {
+                    g.DrawLine(linePen, x0, y0, x1, y1);
+                }
+                catch(Exception e)
+                {
+                    break;
+                }
             }
         }
     }

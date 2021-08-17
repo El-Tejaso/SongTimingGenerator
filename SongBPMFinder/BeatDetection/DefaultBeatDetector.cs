@@ -21,13 +21,13 @@ namespace SongBPMFinder
 
         float[] FourierTransformHistogram(AudioChannel slice, double position, float timeWindow)
         {
-            int start = slice.ToSamples(position);
-            int histogramSize = slice.ToSamples(timeWindow);
+            int start = slice.SecondsToSamples(position);
+            int histogramSize = slice.SecondsToSamples(timeWindow);
             Span<float> timePortion = slice.GetSlice(start, start + histogramSize);
 
             float[] magnitudes = new float[timePortion.Length];
 
-            FourierTransform.FourierTransformMagnitudes(timePortion, magnitudes);
+            //SignalHistogram.GenerateSignalHistogram(timePortion, magnitudes);
 
             return magnitudes;
         }

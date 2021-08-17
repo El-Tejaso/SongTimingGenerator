@@ -65,7 +65,7 @@ namespace SongBPMFinder
         private void PlaybackSystem_OnNewSongLoad()
         {
             AudioData = playbackSystem.CurrentAudioFile;
-
+            
             UpdateScrollExtents();
         }
 
@@ -76,7 +76,7 @@ namespace SongBPMFinder
 
             int windowLength = viewport.Coordinates.WindowLengthSamples;
             hScrollBar.Minimum = -windowLength / 2;
-            hScrollBar.Maximum = Math.Max(0, audioData.Length - windowLength / 2);
+            hScrollBar.Maximum = Math.Max(0, audioData.Length + windowLength / 2);
             hScrollBar.Value = hScrollBar.Minimum + audioData.CurrentSample;
         }
 
@@ -105,6 +105,8 @@ namespace SongBPMFinder
         {
             viewport.Coordinates.Zoom(dir, 2.0f);
 
+            UpdateScrollExtents();
+
             Invalidate();
         }
 
@@ -126,6 +128,9 @@ namespace SongBPMFinder
             int windowLengthInSamples = viewport.Coordinates.WindowLengthSamples;
             int newPosition = audioData.CurrentSample - (int)(amount * windowLengthInSamples / 20);
             audioData.SetCurrentSampleWithEvent(newPosition);
+
+
+            hScrollBar.Value = audioData.CurrentSample;
 
             Invalidate();
         }
