@@ -118,6 +118,7 @@
     <Compile Include="Gui\CustomWaveViewer.Designer.cs">
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Util\TimeSeries.cs" />
     <Compile Include="Gui\TimeSeriesDrawer.cs" />
     <Compile Include="Gui\TimingPointDrawer.cs" />
     <Compile Include="Gui\WaveformCoordinates.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="Debugging\RichTextBoxLogger.cs" />
     <Compile Include="SignalProcessing\FourierTransform.cs" />
     <Compile Include="Util\AudioChannel.cs" />
-    <Compile Include="Util\Slice\MathUtilSpanF.cs" />
+    <Compile Include="Util\Span\MathUtilSpanF.cs" />
     <Compile Include="BeatDetection\TimingPoint.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -141,7 +142,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Debugging\Logger.cs" />
     <Compile Include="Util\MathUtilF.cs" />
-    <Compile Include="Util\Slice\SpanFunctional.cs" />
+    <Compile Include="Util\Span\SpanFunctional.cs" />
     <Compile Include="Util\SortedList.cs" />
     <Compile Include="Util\TimingPointExtensions.cs" />
     <EmbeddedResource Include="Form1.resx">

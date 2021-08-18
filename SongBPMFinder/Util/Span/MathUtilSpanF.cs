@@ -10,7 +10,6 @@ namespace SongBPMFinder
     /// </summary>
     public static class MathUtilSpanF
     {
-
         public static void Add(Span<float> a, Span<float> b, Span<float> dst)
         {
             SpanFunctional.Map(a, b, dst, (float x1, float x2) => {
@@ -35,6 +34,35 @@ namespace SongBPMFinder
         public static void Divide(Span<float> a, Span<float> b, Span<float> dst)
         {
             SpanFunctional.Map(a, b, dst, (float x1, float x2) => {
+                return x1 / x2;
+            });
+        }
+
+
+        public static void Add(Span<float> a, float scalar, Span<float> dst)
+        {
+            SpanFunctional.Map(a, scalar, dst, (float x1, float x2) => {
+                return x1 + x2;
+            });
+        }
+
+        public static void Subtract(Span<float> a, float scalar, Span<float> dst)
+        {
+            SpanFunctional.Map(a, scalar, dst, (float x1, float x2) => {
+                return x1 - x2;
+            });
+        }
+
+        public static void Multiply(Span<float> a, float scalar, Span<float> dst)
+        {
+            SpanFunctional.Map(a, scalar, dst, (float x1, float x2) => {
+                return x1 * x2;
+            });
+        }
+
+        public static void Divide(Span<float> a, float scalar, Span<float> dst)
+        {
+            SpanFunctional.Map(a, scalar, dst, (float x1, float x2) => {
                 return x1 / x2;
             });
         }
@@ -125,7 +153,7 @@ namespace SongBPMFinder
         /// Also allocates a new array for the arguments.
         /// Currently implemented with Array.Sort(keys, items)
         /// </summary>
-        public static int[] DeepCopyArgSort(Span<float> input)
+        public static int[] ArgSortNotInPlace(Span<float> input)
         {
             int[] args = new int[input.Length];
             for(int i = 0; i < args.Length; i++)

@@ -77,11 +77,35 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            //TODO: remove everything after this line
+            TimeSeries s1 = testDifferentiatorSettings(1024, 256, Color.Pink);
+            TimeSeries s2 = testDifferentiatorSettings(1024, 512, Color.Red);
+            TimeSeries s3 = testDifferentiatorSettings(1024, 768, Color.Yellow);
+            TimeSeries s4 = testDifferentiatorSettings(1024, 1024,Color.Orange);
+            TimeSeries s5 = testDifferentiatorSettings(1024, 2048, Color.Green);
 
-            TimeSeries series = dx.Differentiate(audioPlaybackSystem.CurrentAudioFile[0]);
+            /*
+            TimeSeries envelope = TimeSeries.CalculateEnvelope(s1, s2, s3, s4);
+            envelope.Color = Color.Black;
+            envelope.Width = 3;
+            addTimeSeries(envelope);
+            */
+        }
+
+        private TimeSeries testDifferentiatorSettings(int sampleWindow, int stride, Color c)
+        {
+            FourierAudioDifferentiator firstSetting = new FourierAudioDifferentiator(sampleWindow, stride);
+            TimeSeries series = firstSetting.Differentiate(audioPlaybackSystem.CurrentAudioFile[0]);
             series.Normalize();
-            audioViewer.TimeSeries = series;
+            series.Color = c;
+
+            addTimeSeries(series);
+
+            return series;
+        }
+
+        private void addTimeSeries(TimeSeries series)
+        {
+            audioViewer.AddTimeSeries(series);
         }
 
         private void openAudioForTimingToolStripMenuItem_Click(object sender, EventArgs e)

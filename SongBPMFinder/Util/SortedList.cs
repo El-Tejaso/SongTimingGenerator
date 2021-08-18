@@ -17,11 +17,19 @@ namespace SongBPMFinder
             get { return _elements.Count; }
         }
 
-        public void Add(T obj)
+        public T[] ToArray()
+        {
+            return _elements.ToArray();
+        }
+
+        /// <summary>
+        /// returns the index that the object was added to
+        /// </summary>
+        public int Add(T obj)
         {
             _elements.Add(obj);
 
-            ensureSorted(obj, _elements.Count - 1);
+            return ensureSorted(obj, _elements.Count - 1);
         }
 
         public SortedList()
@@ -61,7 +69,7 @@ namespace SongBPMFinder
             _elements.Clear();
         }
 
-        private void ensureSorted(T obj, int index)
+        private int ensureSorted(T obj, int index)
         {
             if (index == -1)
             {
@@ -76,16 +84,18 @@ namespace SongBPMFinder
                 //It is possible to do this with just one function but I cant be arsed
                 if (shouldBeMovedDown)
                 {
-                    moveDown(index);
+                    return moveDown(index);
                 }
                 else if (shouldBeMovedUp)
                 {
-                    moveUp(index);
+                    return moveUp(index);
                 }
             }
+
+            return index;
         }
 
-        private void moveDown(int index)
+        private int moveDown(int index)
         {
             for (int i = index; i > 0; i--)
             {
@@ -97,12 +107,14 @@ namespace SongBPMFinder
                 }
                 else
                 {
-                    break;
+                    return i;
                 }
             }
+
+            return 0;
         }
 
-        private void moveUp(int index)
+        private int moveUp(int index)
         {
             for (int i = index; i < _elements.Count - 1; i++)
             {
@@ -114,9 +126,12 @@ namespace SongBPMFinder
                 }
                 else
                 {
-                    break;
+                    return i;
                 }
+
             }
+
+            return _elements.Count - 1;
         }
     }
 }

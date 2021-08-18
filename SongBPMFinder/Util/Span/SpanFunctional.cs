@@ -84,6 +84,7 @@ namespace SongBPMFinder
             }
         }
 
+
         /// <summary>
         /// Same as the other overload, but aOp is None
         /// </summary>

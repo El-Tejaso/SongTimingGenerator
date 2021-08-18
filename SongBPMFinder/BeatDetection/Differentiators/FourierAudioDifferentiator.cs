@@ -12,7 +12,8 @@ namespace SongBPMFinder
     /// </summary>
     public class FourierAudioDifferentiator : IAudioDifferentiator
     {
-        public int SampleWindow => sampleWindow;
+        public int SampleWindow { get => sampleWindow; set => sampleWindow = value; }
+        public int Stride { get => stride; set => stride = value; }
 
         private int sampleWindow = 1024;
         private int stride = 512;
@@ -22,8 +23,8 @@ namespace SongBPMFinder
 
         public FourierAudioDifferentiator(int sampleWindow, int stride)
         {
-            this.sampleWindow = sampleWindow;
-            this.stride = stride;
+            this.SampleWindow = sampleWindow;
+            this.Stride = stride;
 
             lastFT = new float[sampleWindow * 2];
             thisFT = new float[sampleWindow * 2];
@@ -32,11 +33,11 @@ namespace SongBPMFinder
         //Implements IAudioDifferentiator.Differentiate
         public TimeSeries Differentiate(AudioChannel audioChannel)
         {
-            TimeSeries series = new TimeSeries();
+            TimeSeriesBuilder series = new TimeSeriesBuilder();
 
             audioChannel = doFirstFourierTransform(audioChannel);
 
-            for (int i = stride; i + sampleWindow < audioChannel.Length; i += stride)
+            for (int i = Stride; i + SampleWindow < audioChannel.Length; i += Stride)
             {
                 audioChannel = doNextFourierTransform(audioChannel, i);
 
@@ -48,19 +49,19 @@ namespace SongBPMFinder
                 swapFirstNextBuffers();
             }
 
-            return series;
+            return series.ToTimeSeries();
         }
 
         private AudioChannel doNextFourierTransform(AudioChannel audioChannel, int i)
         {
-            Span<float> slice = audioChannel.GetSlice(i, i + sampleWindow);
+            Span<float> slice = audioChannel.GetSlice(i, i + SampleWindow);
             FourierTransform.FFTForwardsMagnitudes(slice, thisFT);
             return audioChannel;
         }
 
         private AudioChannel doFirstFourierTransform(AudioChannel audioChannel)
         {
-            Span<float> firstSlice = audioChannel.GetSlice(0, sampleWindow);
+            Span<float> firstSlice = audioChannel.GetSlice(0, SampleWindow);
             FourierTransform.FFTForwardsMagnitudes(firstSlice, lastFT);
             return audioChannel;
         }

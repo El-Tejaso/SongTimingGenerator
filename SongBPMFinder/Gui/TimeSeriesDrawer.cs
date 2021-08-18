@@ -8,65 +8,17 @@ using System.Windows.Forms;
 
 namespace SongBPMFinder
 {
-    public class TimeSeries
-    {
-        public List<double> Times;
-        public List<float> Values;
-
-        public TimeSeries(List<double> times, List<float> values)
-        {
-            Times = times;
-            Values = values;
-        }
-
-        public TimeSeries()
-        {
-            Times = new List<double>();
-            Values = new List<float>();
-        }
-
-        internal void Add(double t, float v)
-        {
-            Times.Add(t);
-            Values.Add(v);
-        }
-
-        public void Normalize()
-        {
-            float max = Math.Abs(Values[0]);
-            for(int i = 0; i < Values.Count; i++)
-            {
-                float m2 = Math.Abs(Values[i]);
-                if (m2 > max)
-                    max = m2;
-            }
-
-            for (int i = 0; i < Values.Count; i++)
-            {
-                Values[i] /= max;
-            }
-        }
-    }
 
     public class TimeSeriesDrawer
     {
-        TimeSeries timeSeries;
-
-        public TimeSeries TimeSeries {
-            get { return timeSeries; }
-            set {
-                timeSeries = value;
-
-                //something something
-            }
-        }
+        List<TimeSeries> timeSeriesList = new List<TimeSeries>();
 
         Control winformControl;
-        Pen linePen;
         WaveformCoordinates coordinates;
-
+        Pen linePen;
 
         Rectangle ClientRectangle { get => winformControl.ClientRectangle; }
+        public int SeriesCount { get => timeSeriesList.Count; }
 
         public TimeSeriesDrawer(Control winformControl, WaveformCoordinates coordinates)
         {
@@ -76,15 +28,39 @@ namespace SongBPMFinder
             linePen = new Pen(Color.Red);
         }
 
+        public void AddTimeSeries(TimeSeries t)
+        {
+            timeSeriesList.Add(t);
+        }
+
+
+        public void RemoveTimeSeries(TimeSeries t)
+        {
+            timeSeriesList.Remove(t);
+        }
+
+        public void ClearTimeSeriesList()
+        {
+            timeSeriesList.Clear();
+        }
 
         public void DrawTimeSeries(Graphics g)
         {
-            if (timeSeries == null)
-                return;
+            for(int i = 0; i < timeSeriesList.Count; i++)
+            {
+                drawSingleTimeSeries(g, i);
+            }
+        }
+
+        public void drawSingleTimeSeries(Graphics g, int timeSeriesIndex)
+        {
+            TimeSeries timeSeries = timeSeriesList[timeSeriesIndex];
+            linePen.Color = timeSeries.Color;
+            linePen.Width = timeSeries.Width;
 
             int firstVisible = 0;
             double windowLeftSeconds = coordinates.WindowLeftSeconds;
-            while (firstVisible < timeSeries.Times.Count)
+            while (firstVisible < timeSeries.Times.Length)
             {
                 if (timeSeries.Times[firstVisible] >= windowLeftSeconds)
                     break;
@@ -95,7 +71,7 @@ namespace SongBPMFinder
             int top = ClientRectangle.Top;
             int bottom = ClientRectangle.Bottom;
 
-            for(int i = firstVisible; i+1 <  timeSeries.Times.Count; i++)
+            for(int i = firstVisible; i+1 <  timeSeries.Times.Length; i++)
             {
                 float x0 = coordinates.GetWaveformXSeconds(timeSeries.Times[i]);
                 float x1 = coordinates.GetWaveformXSeconds(timeSeries.Times[i+1]);
@@ -113,5 +89,6 @@ namespace SongBPMFinder
                 }
             }
         }
+
     }
 }

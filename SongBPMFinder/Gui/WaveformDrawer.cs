@@ -39,7 +39,7 @@ namespace SongBPMFinder
             this.audioData = audioData;
             this.coordinates = coordinates;
 
-            wavePen = new Pen(Color.Blue);
+            wavePen = new Pen(Color.FromArgb(150, 0, 0, 255));
         }
 
         public void DrawAudioWaveform(Graphics g)

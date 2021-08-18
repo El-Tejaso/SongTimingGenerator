@@ -27,7 +27,9 @@ namespace SongBPMFinder
                     audioData = value;
                     coordinates.AudioData = value;
                     waveformDrawer.AudioData = value;
+
                     timingPointDrawer.TimingPoints = null;
+                    timeSeriesDrawer.ClearTimeSeriesList();
                 }
 
                 Invalidate();
@@ -42,12 +44,15 @@ namespace SongBPMFinder
             }
         }
 
-        public TimeSeries TimeSeries {
-            get => timeSeriesDrawer.TimeSeries;
-            set {
-                timeSeriesDrawer.TimeSeries = value;
-                Invalidate();
-            }
+
+        public void AddTimeSeries(TimeSeries t)
+        {
+            timeSeriesDrawer.AddTimeSeries(t);
+        }
+
+        public void RemoveTimeSeries(TimeSeries t)
+        {
+            timeSeriesDrawer.RemoveTimeSeries(t);
         }
 
         public bool ForceIndividualView {

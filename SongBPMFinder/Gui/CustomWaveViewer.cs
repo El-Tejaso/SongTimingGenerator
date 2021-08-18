@@ -13,9 +13,14 @@ namespace SongBPMFinder
             set { viewport.TimingPoints = value; }
         }
 
-        public TimeSeries TimeSeries {
-            get { return viewport.TimeSeries; }
-            set { viewport.TimeSeries = value; }
+        public void AddTimeSeries(TimeSeries t)
+        {
+            viewport.AddTimeSeries(t);
+        }
+
+        public void RemoveTimeSeries(TimeSeries t)
+        {
+            viewport.RemoveTimeSeries(t);
         }
 
         public AudioData AudioData {

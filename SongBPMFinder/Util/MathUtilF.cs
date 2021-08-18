@@ -4,6 +4,20 @@ namespace SongBPMFinder
 {
     public static class MathUtilF
     {
+        public static float Max(float a, float b)
+        {
+            if (a > b)
+                return a;
+            return b;
+        }
+
+        public static float Min(float a, float b)
+        {
+            if (a < b)
+                return a;
+            return b;
+        }
+
         public static float Magnitude(float x, float y)
         {
             return (float)Math.Sqrt(x * x + y * y);
