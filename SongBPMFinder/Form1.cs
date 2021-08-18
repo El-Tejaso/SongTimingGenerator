@@ -57,11 +57,13 @@ namespace SongBPMFinder
             playPauseButton.Text = ";";
         }
 
-        float[] fourierTransformData = new float[FourierAudioDifferentiator.FOURIER_WINDOW];
+        FourierAudioDifferentiator dx = new FourierAudioDifferentiator(1024, 512);
 
         //TODO: remove this
         private void AudioPlaybackSystem_OnPositionChanged()
         {
+            float[] fourierTransformData = new float[dx.SampleWindow];
+
             AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
             AudioChannel currentFile = currentAudioFile[0];
             int windowLength = fourierTransformData.Length;
@@ -76,7 +78,6 @@ namespace SongBPMFinder
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
             //TODO: remove everything after this line
-            FourierAudioDifferentiator dx = new FourierAudioDifferentiator();
 
             TimeSeries series = dx.Differentiate(audioPlaybackSystem.CurrentAudioFile[0]);
             series.Normalize();

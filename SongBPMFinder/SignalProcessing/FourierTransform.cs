@@ -14,10 +14,25 @@ namespace SongBPMFinder
     /// </summary>
     public static class FourierTransform
     {
+        private static bool _ibLocked = false;
         private static float[] _intermediateBuffer = null;
+        private static int _complexNumbersInBuffer = 0;
+
+        private static void getIBLock()
+        {
+            while (_ibLocked)
+            { }
+        }
+
+        private static void releaseIBLock()
+        {
+            _ibLocked = false;
+        }
 
         private static void syncIntermediateBuffer(int requiredLength)
         {
+            getIBLock();
+
             if (_intermediateBuffer == null)
             {
                 _intermediateBuffer = new float[requiredLength];
@@ -29,6 +44,8 @@ namespace SongBPMFinder
                 int newSize = Math.Max(_intermediateBuffer.Length * 2, requiredLength);
                 _intermediateBuffer = new float[newSize];
             }
+
+            releaseIBLock();
         }
 
 
@@ -52,24 +69,38 @@ namespace SongBPMFinder
         {
             syncIntermediateBuffer(input.Length * 2);
 
+            getIBLock();
+
             for (int i = 0; i < input.Length; i++)
             {
                 _intermediateBuffer[i * 2] = input[i];
                 _intermediateBuffer[i * 2 + 1] = 0;
             }
+
+            _complexNumbersInBuffer = input.Length;
+
+            releaseIBLock();
         }
 
         private static void exocortexFFTOnIB()
         {
-            Fourier.FFT(_intermediateBuffer, _intermediateBuffer.Length/2, FourierDirection.Forward);
+            getIBLock();
+
+            Fourier.FFT(_intermediateBuffer, _complexNumbersInBuffer, FourierDirection.Forward);
+
+            releaseIBLock();
         }
 
         private static void copyMagnitudesFromIBToFloatArray(float[] output)
         {
-            for (int i = 0; i < _intermediateBuffer.Length; i += 2)
+            getIBLock();
+
+            for (int i = 0; i < _complexNumbersInBuffer; i += 2)
             {
                 output[i / 2] = MathUtilF.Magnitude(_intermediateBuffer[i], _intermediateBuffer[i + 1]);
             }
+
+            releaseIBLock();
         }
     }
 }

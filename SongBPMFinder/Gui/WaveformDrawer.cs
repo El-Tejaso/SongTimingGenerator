@@ -114,6 +114,9 @@ namespace SongBPMFinder
             //e.Graphics.DrawString("STDev = " + stdev.ToString("0.0000"), textFont, Brushes.Black, new PointF(ClientRectangle.Left, ClientRectangle.Top + 140));
             float meanY = coordinates.GetWaveformY(mean, rectTop, rectBottom);
 
+            if (float.IsNaN(meanY))
+                return;
+
             g.DrawLine(Pens.Orange, ClientRectangle.Left, meanY, ClientRectangle.Right, meanY);
 
             drawStdevGradiation(g, rectTop, rectBottom, mean, stdev, Pens.Orange);
