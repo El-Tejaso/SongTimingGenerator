@@ -57,31 +57,28 @@ namespace SongBPMFinder
             playPauseButton.Text = ";";
         }
 
-        FourierAudioDifferentiator dx = new FourierAudioDifferentiator(1024, 512);
 
-        //TODO: remove this
         private void AudioPlaybackSystem_OnPositionChanged()
         {
-            float[] fourierTransformData = new float[dx.SampleWindow];
 
-            AudioData currentAudioFile = audioPlaybackSystem.CurrentAudioFile;
-            AudioChannel currentFile = currentAudioFile[0];
-            int windowLength = fourierTransformData.Length;
-            int start = currentAudioFile.CurrentSample;
-            int end = Math.Min(currentAudioFile.CurrentSample + windowLength, currentFile.Length);
-            Span<float> window = currentFile.GetSlice(start, end);
-            FourierTransform.FFTForwardsMagnitudes(window, fourierTransformData);
-            Plotting.Plot(0, "Fourier transform", new AudioChannel(fourierTransformData, 44100));
         }
 
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            TimeSeries s1 = testDifferentiatorSettings(1024, 256, Color.Pink);
-            TimeSeries s2 = testDifferentiatorSettings(1024, 512, Color.Red);
-            TimeSeries s3 = testDifferentiatorSettings(1024, 768, Color.Yellow);
-            TimeSeries s4 = testDifferentiatorSettings(1024, 1024,Color.Orange);
-            TimeSeries s5 = testDifferentiatorSettings(1024, 2048, Color.Green);
+            int windowSize = 1024;
+
+            AudioData audio = audioPlaybackSystem.CurrentAudioFile;
+
+            //TimeSeries s1 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.005), Color.Pink);
+            //TimeSeries s2 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.01), Color.Red);
+            //TimeSeries s3 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.015), Color.Yellow);
+            //TimeSeries s4 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.02), Color.Aqua);
+            TimeSeries s5 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.025), Color.Green);
+            //TimeSeries s6 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.030), Color.Gold);
+
+            //testDifferentiatorSettingsVariedFrequencies(windowSize, audio.SecondsToSamples(0.025), Color.Green, 8);
+            //testDifferentiatorSettingsVariedFrequencies(windowSize, audio.SecondsToSamples(0.015), Color.Yellow, 5);
 
             /*
             TimeSeries envelope = TimeSeries.CalculateEnvelope(s1, s2, s3, s4);
@@ -91,11 +88,30 @@ namespace SongBPMFinder
             */
         }
 
+        private void testDifferentiatorSettingsVariedFrequencies(int sampleWindow, int stride, Color c, int segmentCount)
+        {
+            for(int i =0; i < segmentCount; i++)
+            {
+                FourierAudioDifferentiator segment = new FourierAudioDifferentiator(sampleWindow, stride, i* sampleWindow / segmentCount, (i+1)* sampleWindow / segmentCount);
+                testCreateAndAddTimeseries(c, segment);
+            }
+        }
+
         private TimeSeries testDifferentiatorSettings(int sampleWindow, int stride, Color c)
         {
             FourierAudioDifferentiator firstSetting = new FourierAudioDifferentiator(sampleWindow, stride);
+            return testCreateAndAddTimeseries(c, firstSetting);
+        }
+
+        private TimeSeries testCreateAndAddTimeseries(Color c, FourierAudioDifferentiator firstSetting)
+        {
             TimeSeries series = firstSetting.Differentiate(audioPlaybackSystem.CurrentAudioFile[0]);
+
+            //Use if we ever end up adaptively normalizing anything
+            //double windowSize = audioPlaybackSystem.CurrentAudioFile.SampleToSeconds(sampleWindow);
+            //series.AdaptiveNormalize(windowSize);
             series.Normalize();
+
             series.Color = c;
 
             addTimeSeries(series);

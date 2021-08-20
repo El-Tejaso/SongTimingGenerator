@@ -17,17 +17,27 @@ namespace SongBPMFinder
 
         private int sampleWindow = 1024;
         private int stride = 512;
+        private int minimumFrequency;
+        private int maximumFrequency;
 
         float[] lastFT;
         float[] thisFT;
 
-        public FourierAudioDifferentiator(int sampleWindow, int stride)
+        public FourierAudioDifferentiator(int sampleWindow, int stride, int minimumFrequency=-1, int maximumFrequency=-1)
         {
             this.SampleWindow = sampleWindow;
             this.Stride = stride;
 
-            lastFT = new float[sampleWindow * 2];
-            thisFT = new float[sampleWindow * 2];
+            if (minimumFrequency < 0)
+                minimumFrequency = 0;
+            if (maximumFrequency < 0 || maximumFrequency > sampleWindow-1)
+                maximumFrequency = sampleWindow-1;
+
+            this.minimumFrequency = minimumFrequency;
+            this.maximumFrequency = maximumFrequency;
+
+            lastFT = new float[sampleWindow];
+            thisFT = new float[sampleWindow];
         }
 
         //Implements IAudioDifferentiator.Differentiate
@@ -69,8 +79,9 @@ namespace SongBPMFinder
         private float calculateDifference()
         {
             float sumDifference = 0;
+            
 
-            for (int j = 0; j < lastFT.Length; j++)
+            for (int j = minimumFrequency; j <= maximumFrequency; j++)
             {
                 float delta = thisFT[j] - lastFT[j];
                 sumDifference += delta * delta;

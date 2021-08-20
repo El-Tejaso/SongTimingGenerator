@@ -58,6 +58,8 @@ namespace SongBPMFinder
         /// </summary>
         public static void FFTForwardsMagnitudes(Span<float> input, float[] output)
         {
+            SpanFunctional.AssertEqualLength<float, float>(input, output);
+
             copyRealsToIB(input);
 
             exocortexFFTOnIB();

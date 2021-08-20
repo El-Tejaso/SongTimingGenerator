@@ -59,7 +59,7 @@ namespace SongBPMFinder
             Rectangle region = new Rectangle(ClientRectangle.X, top, ClientRectangle.Width, bottom - top);
             AudioChannel data = audioData[0];
 
-            int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
+            int samplesPerPixel = audioData.SecondsToSamples(coordinates.SecondsPerPixel);
             if (ForceIndividualView || samplesPerPixel <= 1)
             {
                 drawIndividualSamples(region, data, g);
@@ -155,7 +155,7 @@ namespace SongBPMFinder
                     break;
                 }
 
-                int samplesPerPixel = audioData.ToSample(coordinates.SecondsPerPixel);
+                int samplesPerPixel = audioData.SecondsToSamples(coordinates.SecondsPerPixel);
                 int rangeEnd = rangeStart + samplesPerPixel;
 
                 float low = 0;

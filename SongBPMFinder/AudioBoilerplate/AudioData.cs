@@ -72,7 +72,7 @@ namespace SongBPMFinder
             return sample / (double)sampleRate;
         }
 
-        public int ToSample(double seconds)
+        public int SecondsToSamples(double seconds)
         {
             return (int)(seconds * sampleRate);
         }

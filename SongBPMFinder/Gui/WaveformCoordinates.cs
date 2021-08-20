@@ -148,7 +148,7 @@ namespace SongBPMFinder
                 if (audioData == null)
                     return 0;
 
-                return (int)(audioData.ToSample(WindowLengthSeconds));
+                return (int)(audioData.SecondsToSamples(WindowLengthSeconds));
             }
             set {
                 if (audioData == null)
@@ -170,7 +170,7 @@ namespace SongBPMFinder
 
         public float GetWaveformXSeconds(double time)
         {
-            return GetWaveformXSamples(audioData.ToSample(time));
+            return GetWaveformXSamples(audioData.SecondsToSamples(time));
         }
 
         public int WaveformToDataX(float waveformX)

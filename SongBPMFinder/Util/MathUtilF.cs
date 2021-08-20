@@ -4,6 +4,15 @@ namespace SongBPMFinder
 {
     public static class MathUtilF
     {
+        static readonly float SQRT_TWO_PI = (float)Math.Sqrt(2 * Math.PI);
+
+        public static float Gaussian(float x)
+        {
+            float a = 1f / SQRT_TWO_PI;
+            return a * (float)Math.Exp(-0.5 * x * x);
+        }
+
+
         public static float Max(float a, float b)
         {
             if (a > b)
