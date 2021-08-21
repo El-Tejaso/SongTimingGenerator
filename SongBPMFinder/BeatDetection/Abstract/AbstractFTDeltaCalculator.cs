@@ -35,12 +35,12 @@ namespace SongBPMFinder
                 throw new Exception("This delta calculator is not compatible with the fourier transform deltas given");
             }
 
-            int start = minimumFrequency < 0 ? 0 : minimumFrequency;
-            int end = maximumFrequency < 0 ? lastFourierTransform.Length : maximumFrequency;
+            int lowerFrequency = minimumFrequency < 0 ? 0 : minimumFrequency;
+            int upperFrequency = maximumFrequency < 0 ? lastFourierTransform.Length : maximumFrequency;
 
 
             float acc = 0;
-            for (int j = start; j < end; j++)
+            for (int j = lowerFrequency; j < upperFrequency; j++)
             {
                 acc = this.deltaInternal(lastFourierTransform[j], thisFourierTransform[j], acc);
             }

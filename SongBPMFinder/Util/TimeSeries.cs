@@ -65,6 +65,12 @@ namespace SongBPMFinder
             });
         }
 
+
+        /// <summary>
+        /// EXPERIMENTAL, DOESN'T YET WORK.
+        /// ALSO, THIS IS PROBABLY A VERY DOMAIN SPECIFIC THING THAT YOU SHOULD CODE YOURSELF
+        /// </summary>
+        /// <param name="windowSizeSeconds"></param>
         public void AdaptiveNormalize(double windowSizeSeconds)
         {
             if (Times.Length == 0)

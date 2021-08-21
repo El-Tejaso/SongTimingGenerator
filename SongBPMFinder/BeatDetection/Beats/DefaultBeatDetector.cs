@@ -31,7 +31,7 @@ namespace SongBPMFinder
 
             TimeSeries[] fourierDerivatives = differentiateWithVariedFrequencies(audioSlice, windowSize, audioSlice.SecondsToSamples(0.015), Color.Yellow, 4);
 
-            for(int i = 0; i < fourierDerivatives.Length; i++)
+            for (int i = 1; i < fourierDerivatives.Length; i++)
             {
                 addTimeSeries(fourierDerivatives[i], Color.Yellow);
             }
@@ -48,6 +48,22 @@ namespace SongBPMFinder
             return beats;
         }
 
+        public AbstractFTDeltaCalculator createDeltaCalculator(int minFrequ, int maxFrequ)
+        {
+            return new MaxDifferenceFTDeltaCalculator(minFrequ, maxFrequ);
+        }
+
+        private void sumAndAddTimeseries(TimeSeries[] fourierDerivatives)
+        {
+            for (int i = 1; i < fourierDerivatives.Length; i++)
+            {
+                MathUtilSpanF.Add(fourierDerivatives[0].Values, fourierDerivatives[i].Values, fourierDerivatives[0].Values);
+            }
+
+            fourierDerivatives[0].Normalize();
+            addTimeSeries(fourierDerivatives[0], Color.Yellow);
+        }
+
         private TimeSeries[] differentiateWithVariedFrequencies(AudioChannel audio, int sampleWindow, int evalDistance, Color c, int segmentCount)
         {
             int stride = audio.SecondsToSamples(0.0005);
@@ -59,7 +75,7 @@ namespace SongBPMFinder
 
             for (int i = 0; i < segmentCount; i++)
             {
-                bands[i] = new MaxDifferenceFTDeltaCalculator(i * sampleWindow / segmentCount, (i + 1) * sampleWindow / segmentCount);
+                bands[i] = createDeltaCalculator(i * sampleWindow / segmentCount, (i + 1) * sampleWindow / segmentCount);
                 timeSeries[i] = new TimeSeriesBuilder();
             }
 
@@ -89,7 +105,7 @@ namespace SongBPMFinder
             int stride = audio.SecondsToSamples(0.001);
 
             FourierAudioDifferentiator differentiator = new FourierAudioDifferentiator(sampleWindow, evalDistance, stride);
-            AbstractFTDeltaCalculator calc = new MaxDifferenceFTDeltaCalculator(-1, -1);
+            AbstractFTDeltaCalculator calc = createDeltaCalculator(-1, -1);
             TimeSeriesBuilder tsb = new TimeSeriesBuilder();
 
             foreach (FTDelta delta in differentiator.AllFourierTransforms(audio))
