@@ -52,21 +52,28 @@ namespace SongBPMFinder
             }
         }
 
+        int lastWindowStart = 0;
+
         public void drawSingleTimeSeries(Graphics g, int timeSeriesIndex)
         {
             TimeSeries timeSeries = timeSeriesList[timeSeriesIndex];
             linePen.Color = timeSeries.Color;
             linePen.Width = timeSeries.Width;
 
-            int firstVisible = 0;
+            int firstVisible = lastWindowStart;
             double windowLeftSeconds = coordinates.WindowLeftSeconds;
-            while (firstVisible < timeSeries.Times.Length)
-            {
-                if (timeSeries.Times[firstVisible] >= windowLeftSeconds)
-                    break;
 
+            while (firstVisible > 0 && timeSeries.Times[firstVisible] > windowLeftSeconds)
+            {
+                firstVisible--;
+            }
+
+            while (firstVisible < timeSeries.Times.Length && timeSeries.Times[firstVisible] < windowLeftSeconds)
+            {
                 firstVisible++;
             }
+
+            lastWindowStart = firstVisible;
 
             int top = ClientRectangle.Top;
             int bottom = ClientRectangle.Bottom;

@@ -8,89 +8,75 @@ using System.Threading.Tasks;
 namespace SongBPMFinder
 {
     /// <summary>
-    /// Keep this instance around so you can reuse the differentiate function with fewer allocations
+    /// Make sure that you use this to iterate through the fourier transforms in a time series only once, and then
+    /// if you need to differentiate it in more than one way, do it while you are iterating, i.e
+    /// 
+    /// <code>
+    /// foreach(FTDelta ft in differentiator){
+    ///     timeSeries0.Add(frequencyBand0To100.Differentiate(ft));
+    ///     timeSeries1.Add(frequencyBand100To200.Differentiate(ft));
+    ///     
+    ///     //etc.
+    /// }
+    /// </code>
     /// </summary>
-    public class FourierAudioDifferentiator : IAudioDifferentiator
+
+
+    public struct FTDelta
+    {
+        public readonly float[] LastFT;
+        public readonly float[] ThisFT;
+        public readonly double Time;
+
+        public FTDelta(float[] lastFT, float[] thisFT, double time)
+        {
+            LastFT = lastFT;
+            ThisFT = thisFT;
+            Time = time;
+        }
+    }
+
+    public class FourierAudioDifferentiator
     {
         public int SampleWindow { get => sampleWindow; set => sampleWindow = value; }
         public int Stride { get => stride; set => stride = value; }
 
         private int sampleWindow = 1024;
         private int stride = 512;
-        private int minimumFrequency;
-        private int maximumFrequency;
+        private int evalDistance = 512;
 
         float[] lastFT;
         float[] thisFT;
 
-        public FourierAudioDifferentiator(int sampleWindow, int stride, int minimumFrequency=-1, int maximumFrequency=-1)
+        public FourierAudioDifferentiator(int sampleWindow, int evalDistance, int stride)
         {
             this.SampleWindow = sampleWindow;
             this.Stride = stride;
-
-            if (minimumFrequency < 0)
-                minimumFrequency = 0;
-            if (maximumFrequency < 0 || maximumFrequency > sampleWindow-1)
-                maximumFrequency = sampleWindow-1;
-
-            this.minimumFrequency = minimumFrequency;
-            this.maximumFrequency = maximumFrequency;
+            this.evalDistance = evalDistance;
 
             lastFT = new float[sampleWindow];
             thisFT = new float[sampleWindow];
         }
 
-        //Implements IAudioDifferentiator.Differentiate
-        public TimeSeries Differentiate(AudioChannel audioChannel)
+
+        public IEnumerable<FTDelta> AllFourierTransforms(AudioChannel audioChannel)
         {
-            TimeSeriesBuilder series = new TimeSeriesBuilder();
-
-            audioChannel = doFirstFourierTransform(audioChannel);
-
-            for (int i = Stride; i + SampleWindow < audioChannel.Length; i += Stride)
+            for (int i = evalDistance; i + SampleWindow < audioChannel.Length; i += Stride)
             {
-                audioChannel = doNextFourierTransform(audioChannel, i);
+                doFourierTransform(audioChannel, i-evalDistance, lastFT);
+                doFourierTransform(audioChannel, i, thisFT);
 
-                float sumDifference = calculateDifference();
-
-                double t = audioChannel.SamplesToSeconds(i);
-                series.Add(t, sumDifference);
-
-                swapFirstNextBuffers();
+                yield return new FTDelta(lastFT, thisFT, audioChannel.SamplesToSeconds(i));
             }
-
-            return series.ToTimeSeries();
         }
 
-        private AudioChannel doNextFourierTransform(AudioChannel audioChannel, int i)
+        private void doFourierTransform(AudioChannel c, int i, float[] resultBuffer)
         {
-            Span<float> slice = audioChannel.GetSlice(i, i + SampleWindow);
-            FourierTransform.FFTForwardsMagnitudes(slice, thisFT);
-            return audioChannel;
+            Span<float> slice = c.GetSlice(i, i + SampleWindow);
+            FourierTransform.FFTForwardsMagnitudes(slice, resultBuffer);
         }
 
-        private AudioChannel doFirstFourierTransform(AudioChannel audioChannel)
-        {
-            Span<float> firstSlice = audioChannel.GetSlice(0, SampleWindow);
-            FourierTransform.FFTForwardsMagnitudes(firstSlice, lastFT);
-            return audioChannel;
-        }
-
-        private float calculateDifference()
-        {
-            float sumDifference = 0;
-            
-
-            for (int j = minimumFrequency; j <= maximumFrequency; j++)
-            {
-                float delta = thisFT[j] - lastFT[j];
-                sumDifference += delta * delta;
-            }
-
-            return sumDifference;
-        }
-
-        private void swapFirstNextBuffers()
+        private void swapThisLastBuffers()
         {
             float[] temp = thisFT;
             thisFT = lastFT;

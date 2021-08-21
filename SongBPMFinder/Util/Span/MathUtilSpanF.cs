@@ -118,6 +118,12 @@ namespace SongBPMFinder
         }
 
 
+        public static float Variance(Span<float> input)
+        {
+            return Variance(input, SpanFunctional.None);
+        }
+
+
         public static float Variance(Span<float> input, Func<float, float> op)
         {
             float mean = Mean(input, op);
@@ -145,6 +151,27 @@ namespace SongBPMFinder
         public static float StandardDeviation(Span<float> input, Func<float, float> op)
         {
             return (float)Math.Sqrt(Variance(input, op));
+        }
+
+
+        public static void MovingAverage(Span<float> input, Span<float> output, int windowSize)
+        {
+            Asserting.Assert(output.Length >= input.Length - windowSize + 1);
+
+            float currentSum = 0;
+            for(int i = 0; i < windowSize; i++)
+            {
+                currentSum += input[i];
+            }
+
+            for(int i = windowSize; i < input.Length; i++)
+            {
+                float temp = output[i - windowSize];
+                output[i - windowSize] = currentSum / (float)windowSize;
+
+                currentSum -= temp;
+                currentSum += input[i];
+            }
         }
 
 

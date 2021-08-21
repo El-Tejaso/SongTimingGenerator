@@ -1,6 +1,6 @@
 ﻿namespace SongBPMFinder
 {
-    public abstract class BeatDetector
+    public abstract class AbstractBeatDetector
     {
         protected abstract SortedList<Beat> GetEveryBeat(AudioChannel audioSlice);
 

@@ -58,6 +58,11 @@ namespace SongBPMFinder
         {
             float max = MathUtilSpanF.Max(Values);
             MathUtilSpanF.Divide(Values, max, Values);
+            SpanFunctional.Map(Values, Values, Values, (float a, float b) => {
+                if (float.IsNaN(a) || float.IsInfinity(a))
+                    return 0;
+                return a;
+            });
         }
 
         public void AdaptiveNormalize(double windowSizeSeconds)

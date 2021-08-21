@@ -39,7 +39,7 @@ namespace SongBPMFinder
             this.audioData = audioData;
             this.coordinates = coordinates;
 
-            wavePen = new Pen(Color.FromArgb(150, 0, 0, 255));
+            wavePen = new Pen(Color.FromArgb(155, 0, 0, 255));
         }
 
         public void DrawAudioWaveform(Graphics g)
@@ -162,7 +162,11 @@ namespace SongBPMFinder
                 float high = low;
 
                 bool reachedEnd = false;
-                for (int i = rangeStart; i < rangeEnd; i++)
+
+                //Some sort of optimization
+                int stride = Math.Max(1, (rangeEnd - rangeStart) / 50);
+
+                for (int i = rangeStart; i < rangeEnd; i+= stride)
                 {
                     if (i >= entireChannel.Length)
                     {

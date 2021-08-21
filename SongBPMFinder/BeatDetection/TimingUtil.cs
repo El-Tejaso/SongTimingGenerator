@@ -8,7 +8,7 @@ namespace SongBPMFinder
 {
     public static class TimingUtil
     {
-        public static TimingPointList GetTiming(AudioData data, BeatDetector beatDetector, ITimingGenerator timingGenerator)
+        public static TimingPointList GetTiming(AudioData data, AbstractBeatDetector beatDetector, ITimingGenerator timingGenerator)
         {
             SortedList<Beat>[] beats = beatDetector.GetEveryBeat(data);
 
@@ -17,7 +17,7 @@ namespace SongBPMFinder
             return timing;
         }
 
-        public static string GetTimingOsuString(AudioData data, BeatDetector beatDetector, ITimingGenerator timingGenerator)
+        public static string GetTimingOsuString(AudioData data, AbstractBeatDetector beatDetector, ITimingGenerator timingGenerator)
         {
             return new OsuTimingPointFormatter().FormatTiming(GetTiming(data, beatDetector, timingGenerator));
         }
