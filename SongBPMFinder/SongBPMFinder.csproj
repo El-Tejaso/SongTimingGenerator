@@ -96,8 +96,8 @@
     <Compile Include="AudioBoilerplate\AudioPlaybackSystem.cs" />
     <Compile Include="AudioBoilerplate\AudioPlayer.cs" />
     <Compile Include="BeatDetection\Abstract\AbstractFTDeltaCalculator.cs" />
-    <Compile Include="BeatDetection\Beat.cs" />
-    <Compile Include="BeatDetection\DefaultBeatDetector.cs" />
+    <Compile Include="BeatDetection\Beats\Beat.cs" />
+    <Compile Include="BeatDetection\Beats\DefaultBeatDetector.cs" />
     <Compile Include="BeatDetection\Conventions.cs" />
     <Compile Include="BeatDetection\Differentiators\FourierAudioDifferentiator.cs" />
     <Compile Include="BeatDetection\Abstract\AbstractBeatDetector.cs" />
@@ -105,10 +105,11 @@
     <Compile Include="BeatDetection\Abstract\ITimingGenerator.cs" />
     <Compile Include="BeatDetection\Differentiators\MaxDifferenceFTDeltaCalculator.cs" />
     <Compile Include="BeatDetection\Differentiators\SumSquareDifferencesFTDeltaCalculator.cs" />
-    <Compile Include="BeatDetection\OsuTimingPointFormatter.cs" />
-    <Compile Include="BeatDetection\TestTimingGenerator.cs" />
-    <Compile Include="BeatDetection\TimingPointList.cs" />
-    <Compile Include="BeatDetection\TimingUtil.cs" />
+    <Compile Include="BeatDetection\Formatting\OsuTimingPointFormatter.cs" />
+    <Compile Include="BeatDetection\SongTiming\TimingGenerator.cs" />
+    <Compile Include="BeatDetection\SongTiming\TimingPointList.cs" />
+    <Compile Include="BeatDetection\SongTiming\TimingUtil.cs" />
+    <Compile Include="BeatDetection\TimingPipeline.cs" />
     <Compile Include="Debugging\Asserting.cs" />
     <Compile Include="Debugging\Plotting.cs" />
     <Compile Include="External\Exocortex\Complex.cs" />
@@ -131,7 +132,7 @@
     <Compile Include="SignalProcessing\FourierTransform.cs" />
     <Compile Include="Util\AudioChannel.cs" />
     <Compile Include="Util\Span\MathUtilSpanF.cs" />
-    <Compile Include="BeatDetection\TimingPoint.cs" />
+    <Compile Include="BeatDetection\SongTiming\TimingPoint.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

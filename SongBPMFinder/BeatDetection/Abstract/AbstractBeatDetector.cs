@@ -1,7 +1,17 @@
-﻿namespace SongBPMFinder
+﻿using System.Collections.Generic;
+using System.Drawing;
+
+namespace SongBPMFinder
 {
     public abstract class AbstractBeatDetector
     {
+        protected List<TimeSeries> debugTimeSeries;
+
+        protected AbstractBeatDetector(List<TimeSeries> debugTimeSeries)
+        {
+            this.debugTimeSeries = debugTimeSeries;
+        }
+
         protected abstract SortedList<Beat> GetEveryBeat(AudioChannel audioSlice);
 
         public SortedList<Beat>[] GetEveryBeat(AudioData data)
@@ -15,5 +25,6 @@
 
             return channelResults;
         }
+
     }
 }

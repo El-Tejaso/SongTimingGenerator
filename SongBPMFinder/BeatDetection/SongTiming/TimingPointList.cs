@@ -9,6 +9,12 @@ namespace SongBPMFinder
     public class TimingPointList
     {
         SortedList<TimingPoint> timingPoints = new SortedList<TimingPoint>();
+        List<TimeSeries> debugTimeSeries;
+
+        public TimingPointList(List<TimeSeries> debugTimeSeries)
+        {
+            this.debugTimeSeries = debugTimeSeries;
+        }
 
         public int Count => timingPoints.Count;
         public TimingPoint this[int index] => timingPoints[index];

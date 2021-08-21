@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 namespace SongBPMFinder
 {
     //TODO: delete this later
-    public class TestTimingGenerator : ITimingGenerator
+    public class TimingGenerator : ITimingGenerator
     {
+        List<TimeSeries> debugTimeSeries;
+
+        public TimingGenerator(List<TimeSeries> debugTimeSeries)
+        {
+            this.debugTimeSeries = debugTimeSeries;
+        }
+
         //Just spit out whereever the beats are, generate no real timing
         public TimingPointList GenerateTiming(SortedList<Beat>[] beatsInEachChannel)
         {

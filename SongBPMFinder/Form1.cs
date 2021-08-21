@@ -11,6 +11,7 @@ namespace SongBPMFinder
     {
         TimingPointList currentTimingResult;
         AudioPlaybackSystem audioPlaybackSystem;
+        TimingPipeline timingPipeline;
 
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
@@ -28,8 +29,10 @@ namespace SongBPMFinder
             InitializeComponent();
 
             Logger.SetOutput(new RichTextBoxLogger(textOutput));
-
             audioPlaybackSystem = new AudioPlaybackSystem();
+            timingPipeline = new TimingPipeline();
+
+
             audioViewer.LinkPlaybackSystem(audioPlaybackSystem);
             audioPlaybackSystem.OnNewSongLoad += AudioPlaybackSystem_OnNewSongLoad;
             audioPlaybackSystem.OnPositionChanged += AudioPlaybackSystem_OnPositionChanged;
@@ -66,107 +69,13 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            int windowSize = 1024;
-
-            AudioData audio = audioPlaybackSystem.CurrentAudioFile;
-
-            //TimeSeries s1 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.005), Color.Pink);
-            //TimeSeries s2 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.01), Color.Red);
-            //TimeSeries s3 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.015), Color.Yellow);
-            //TimeSeries s4 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.02), Color.Aqua);
-            //TimeSeries s5 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.025), Color.Green);
-            //TimeSeries s6 = testDifferentiatorSettings(windowSize, audio.SecondsToSamples(0.030), Color.Gold);
-
-            testDifferentiatorSettingsVariedFrequencies(windowSize, audio.SecondsToSamples(0.025), Color.Green, 4);
-            //testDifferentiatorSettingsVariedFrequencies(windowSize, audio.SecondsToSamples(0.015), Color.Yellow, 4);
-
-            /*
-            TimeSeries envelope = TimeSeries.CalculateEnvelope(s1, s2, s3, s4);
-            envelope.Color = Color.Black;
-            envelope.Width = 3;
-            addTimeSeries(envelope);
-            */
+            calculateTiming();
         }
 
-        private void testDifferentiatorSettingsVariedFrequencies(int sampleWindow, int evalDistance, Color c, int segmentCount)
+
+        private void addTimeSeries(TimeSeries series)
         {
-            AudioData audio = audioPlaybackSystem.CurrentAudioFile;
-            int stride = audio.SecondsToSamples(0.0005);
-
-            FourierAudioDifferentiator differentiator = new FourierAudioDifferentiator(sampleWindow, evalDistance, stride);
-
-            AbstractFTDeltaCalculator[] bands = new AbstractFTDeltaCalculator[segmentCount];
-            TimeSeriesBuilder[] timeSeries = new TimeSeriesBuilder[segmentCount];
-
-            for (int i = 0; i < segmentCount; i++)
-            {
-                bands[i] = new MaxDifferenceFTDeltaCalculator(i * sampleWindow / segmentCount, (i + 1) * sampleWindow / segmentCount);
-                timeSeries[i] = new TimeSeriesBuilder();
-            }
-
-            foreach (FTDelta delta in differentiator.AllFourierTransforms(audio[0]))
-            {
-                for(int i = 0; i < segmentCount; i++)
-                {
-                    float result = bands[i].Delta(delta.LastFT, delta.ThisFT);
-                    timeSeries[i].Add(delta.Time, result);
-                }
-            }
-
-
-            TimeSeries[] allTS = new TimeSeries[timeSeries.Length];
-
-            for(int i = 0; i < timeSeries.Length; i++)
-            {
-                allTS[i] = timeSeries[i].ToTimeSeries();
-                allTS[i].Normalize();
-
-                MathUtilSpanF.MovingAverage(allTS[i].Values, allTS[i].Values, 10);
-                addTimeSeries(allTS[i], c);
-            }
-
-
-        }
-
-        private TimeSeries testDifferentiatorSettings(int sampleWindow, int evalDistance, Color c)
-        {
-            AudioData audio = audioPlaybackSystem.CurrentAudioFile;
-            int stride = audio.SecondsToSamples(0.001);
-
-            FourierAudioDifferentiator firstSetting = new FourierAudioDifferentiator(sampleWindow, evalDistance, stride);
-            return testCreateAndAddTimeseries(c, firstSetting);
-        }
-
-        private TimeSeries testCreateAndAddTimeseries(Color c, FourierAudioDifferentiator firstSetting)
-        {
-            AbstractFTDeltaCalculator calc = new MaxDifferenceFTDeltaCalculator(-1, -1);
-            TimeSeriesBuilder tsb = new TimeSeriesBuilder();
-
-            foreach (FTDelta delta in firstSetting.AllFourierTransforms(audioPlaybackSystem.CurrentAudioFile[0]))
-            {
-                float result = calc.Delta(delta.LastFT, delta.ThisFT);
-                tsb.Add(delta.Time, result);
-            }
-
-            TimeSeries series = tsb.ToTimeSeries();
-
-            addTimeSeries(series, c);
-
-            return series;
-        }
-
-        private void addTimeSeries(TimeSeries series, Color c)
-        {
-            //Use if we ever end up adaptively normalizing anything
-            //double windowSize = audioPlaybackSystem.CurrentAudioFile.SampleToSeconds(sampleWindow);
-            //series.AdaptiveNormalize(windowSize);
             series.Normalize();
-
-
-            float variance = MathUtilSpanF.Variance(series.Values);
-
-            series.Color = c;
-
             audioViewer.AddTimeSeries(series);
         }
 
@@ -282,20 +191,6 @@ namespace SongBPMFinder
             calculateTiming();
         }
 
-        void calculateTiming()
-        {
-            DateTime t = DateTime.Now;
-
-            Logger.Log("Calculating timing...");
-            CurrentTimingResult = TimingUtil.GetTiming(
-                audioPlaybackSystem.CurrentAudioFile,
-                new DefaultBeatDetector(),
-                new TestTimingGenerator()
-            );
-
-            TimeSpan delta = DateTime.Now - t;
-            Logger.Log("Calculated timing in " + delta.TotalMilliseconds + " ms");
-        }
 
         private void osuTimingPointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -313,6 +208,24 @@ namespace SongBPMFinder
             Logger.Log("This feature has not yet been implemented");
         }
 
-        
+
+        void calculateTiming()
+        {
+            DateTime t = DateTime.Now;
+
+            Logger.Log("Calculating timing...");
+
+
+            currentTimingResult = timingPipeline.TimeSong(audioPlaybackSystem.CurrentAudioFile);
+
+            for (int i = 0; i < timingPipeline.DebugTimeSeries.Count; i++)
+            {
+                addTimeSeries(timingPipeline.DebugTimeSeries[i]);
+            }
+
+
+            TimeSpan delta = DateTime.Now - t;
+            Logger.Log("Calculated timing in " + delta.TotalMilliseconds + " ms");
+        }
     }
 }
