@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -28,32 +29,13 @@ namespace SongBPMFinder
                     coordinates.AudioData = value;
                     waveformDrawer.AudioData = value;
 
-                    timingPointDrawer.TimingPoints = null;
-                    timeSeriesDrawer.ClearTimeSeriesList();
+                    ClearDrawables();
                 }
 
                 Invalidate();
             }
         }
 
-        public TimingPointList TimingPoints {
-            get => timingPointDrawer.TimingPoints;
-            set {
-                timingPointDrawer.TimingPoints = value;
-                Invalidate();
-            }
-        }
-
-
-        public void AddTimeSeries(TimeSeries t)
-        {
-            timeSeriesDrawer.AddTimeSeries(t);
-        }
-
-        public void RemoveTimeSeries(TimeSeries t)
-        {
-            timeSeriesDrawer.RemoveTimeSeries(t);
-        }
 
         public bool ForceIndividualView {
             get {
@@ -75,8 +57,9 @@ namespace SongBPMFinder
         public WaveformCoordinates Coordinates { get => coordinates; }
 
         WaveformDrawer waveformDrawer;
-        TimingPointDrawer timingPointDrawer;
-        TimeSeriesDrawer timeSeriesDrawer;
+
+        List<IDrawable> drawables = new List<IDrawable>();
+       
 
         public CustomWaveViewerViewport()
         {
@@ -95,9 +78,24 @@ namespace SongBPMFinder
             coordinates = new WaveformCoordinates(audioData, this);
 
             waveformDrawer = new WaveformDrawer(this, textFont, audioData, coordinates);
-            timingPointDrawer = new TimingPointDrawer(this, textFont, coordinates, null);
-            timeSeriesDrawer = new TimeSeriesDrawer(this, coordinates);
         }
+
+
+        public void AddDrawableItem(IDrawable d)
+        {
+            drawables.Add(d);
+        }
+
+        public void RemoveDrawableItem(IDrawable d)
+        {
+            drawables.Remove(d);
+        }
+
+        public void ClearDrawables()
+        {
+            drawables.Clear();
+        }
+
 
         /// <summary>
         /// <see cref="Control.OnPaint"/>
@@ -111,9 +109,11 @@ namespace SongBPMFinder
 
             waveformDrawer.DrawAudioWaveform(e.Graphics);
 
-            timingPointDrawer.DrawTimingPoints(e.Graphics);
+            for(int i = 0; i < drawables.Count; i++)
+            {
+                drawables[i].Draw(this, coordinates, e.Graphics);
+            }
 
-            timeSeriesDrawer.DrawTimeSeries(e.Graphics);
 
             drawCurrentPositionText(e);
 

@@ -122,11 +122,12 @@
     <Compile Include="Gui\CustomWaveViewer.Designer.cs">
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\IDrawable.cs" />
     <Compile Include="Util\PeakDetectContinuous.cs" />
     <Compile Include="Util\TimeSeriesPeak.cs" />
     <Compile Include="Util\TimeSeries.cs" />
-    <Compile Include="Gui\TimeSeriesDrawer.cs" />
-    <Compile Include="Gui\TimingPointDrawer.cs" />
+    <Compile Include="Gui\DrawableTimeSeries.cs" />
+    <Compile Include="Gui\DrawableTimingPoints.cs" />
     <Compile Include="Gui\WaveformCoordinates.cs" />
     <Compile Include="Gui\WaveformDrawer.cs" />
     <Compile Include="Debugging\ILogger.cs" />

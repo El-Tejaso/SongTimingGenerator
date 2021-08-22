@@ -325,7 +325,6 @@
             this.audioViewer.Name = "audioViewer";
             this.audioViewer.Size = new System.Drawing.Size(1087, 387);
             this.audioViewer.TabIndex = 0;
-            this.audioViewer.TimingPoints = null;
             // 
             // testWaveformTab
             // 
@@ -346,7 +345,6 @@
             this.debugPlot1.Name = "debugPlot1";
             this.debugPlot1.Size = new System.Drawing.Size(1081, 283);
             this.debugPlot1.TabIndex = 0;
-            this.debugPlot1.TimingPoints = null;
             // 
             // testWaveformTab2
             // 
@@ -367,7 +365,6 @@
             this.debugPlot2.Name = "debugPlot2";
             this.debugPlot2.Size = new System.Drawing.Size(1081, 283);
             this.debugPlot2.TabIndex = 0;
-            this.debugPlot2.TimingPoints = null;
             // 
             // testWaveformTab3
             // 
@@ -388,7 +385,6 @@
             this.debugPlot3.Name = "debugPlot3";
             this.debugPlot3.Size = new System.Drawing.Size(1081, 283);
             this.debugPlot3.TabIndex = 0;
-            this.debugPlot3.TimingPoints = null;
             // 
             // testWaveformTab4
             // 
@@ -409,7 +405,6 @@
             this.debugPlot4.Name = "debugPlot4";
             this.debugPlot4.Size = new System.Drawing.Size(1081, 283);
             this.debugPlot4.TabIndex = 0;
-            this.debugPlot4.TimingPoints = null;
             // 
             // testWaveformTab5
             // 
@@ -430,7 +425,6 @@
             this.debugPlot5.Name = "debugPlot5";
             this.debugPlot5.Size = new System.Drawing.Size(1081, 283);
             this.debugPlot5.TabIndex = 0;
-            this.debugPlot5.TimingPoints = null;
             // 
             // splitContainer2
             // 

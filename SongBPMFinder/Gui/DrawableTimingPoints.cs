@@ -8,51 +8,35 @@ using System.Windows.Forms;
 
 namespace SongBPMFinder
 {
-    public class TimingPointDrawer
+    public class DrawableTimingPoints : IDrawable
     {
         TimingPointList timingPoints;
-        public TimingPointList TimingPoints {
-            get {
-                return timingPoints;
-            }
-
-            set {
-                timingPoints = value;
-                //invoke event or someth
-            }
-        }
-
-        Control client;
-        Rectangle ClientRectangle { get => client.ClientRectangle; }
-
-
-        WaveformCoordinates coordinates;
-
+        
         Font textFont;
         StringFormat format;
         Pen drawingPen;
         SolidBrush textBrush;
 
-        public TimingPointDrawer(Control client, Font font, WaveformCoordinates coordinates, TimingPointList tpList)
+        public DrawableTimingPoints(TimingPointList timingPoints)
         {
-            this.client = client;
-            this.textFont = font;
-            this.coordinates = coordinates;
-            this.timingPoints = tpList;
-
             drawingPen = new Pen(Color.Gray, 3);
             textBrush = new SolidBrush(Color.Gray);
 
             format = new StringFormat();
             format.Alignment = StringAlignment.Center;
+
+            textFont = new Font(SystemFonts.DefaultFont.FontFamily, 12.0f, FontStyle.Regular);
+
+            this.timingPoints = timingPoints;
         }
 
 
-        public void DrawTimingPoints(Graphics g)
+        public void Draw(Control control, WaveformCoordinates coordinates, Graphics g)
         {
             if (timingPoints == null || timingPoints.Count == 0)
                 return;
 
+            Rectangle clientRectangle = control.ClientRectangle;
 
             int startIndex = timingPoints.FirstVisible(coordinates.WindowLeftSeconds);
             double prevTime = timingPoints[Math.Max(startIndex - 1, 0)].TimeSeconds;
@@ -69,12 +53,12 @@ namespace SongBPMFinder
                 drawingPen.Color = tp.Color;
                 textBrush.Color = tp.Color;
 
-                g.DrawLine(drawingPen, x, ClientRectangle.Top, x, ClientRectangle.Bottom - 60);
+                g.DrawLine(drawingPen, x, clientRectangle.Top, x, clientRectangle.Bottom - 60);
 
                 string desc = formatTimingPoint(prevTime, tp);
 
-                g.DrawString(desc, textFont, textBrush, new PointF(x, ClientRectangle.Bottom - 20), format);
-                g.DrawString("W:" + tp.Weight.ToString("0.000"), textFont, Brushes.Red, new PointF(x, ClientRectangle.Bottom - 40), format);
+                g.DrawString(desc, textFont, textBrush, new PointF(x, clientRectangle.Bottom - 20), format);
+                g.DrawString("W:" + tp.Weight.ToString("0.000"), textFont, Brushes.Red, new PointF(x, clientRectangle.Bottom - 40), format);
 
                 prevTime = tp.TimeSeconds;
             }

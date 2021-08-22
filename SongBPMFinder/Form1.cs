@@ -9,20 +9,14 @@ namespace SongBPMFinder
 {
     public partial class Form1 : Form
     {
-        TimingPointList currentTimingResult;
         AudioPlaybackSystem audioPlaybackSystem;
+
+        TimingPointList currentTimingResult;
         TimingPipeline timingPipeline;
+
 
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
-
-        public TimingPointList CurrentTimingResult {
-            get { return currentTimingResult; }
-            set {
-                currentTimingResult = value;
-                audioViewer.TimingPoints = currentTimingResult;
-            }
-        }
 
         public Form1()
         {
@@ -75,7 +69,7 @@ namespace SongBPMFinder
 
         private void addTimeSeries(TimeSeries series)
         {
-            audioViewer.AddTimeSeries(series);
+            audioViewer.AddDrawable(new DrawableTimeSeries(series));
         }
 
         private void openAudioForTimingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -193,12 +187,12 @@ namespace SongBPMFinder
 
         private void osuTimingPointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentTimingResult == null)
+            if (currentTimingResult == null)
             {
                 calculateTiming();
             }
 
-            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(CurrentTimingResult);
+            string osuFormattedTimingPoints = new OsuTimingPointFormatter().FormatTiming(currentTimingResult);
             copyToClipboard(osuFormattedTimingPoints);
         }
 

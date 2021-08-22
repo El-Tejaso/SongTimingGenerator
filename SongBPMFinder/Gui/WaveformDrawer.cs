@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace SongBPMFinder
 {
+    /// <summary>
+    /// Only one waveform at a time. Dont make this an IDrawable or something
+    /// </summary>
     public class WaveformDrawer
     {
         AudioData audioData;

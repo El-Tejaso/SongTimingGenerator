@@ -8,19 +8,19 @@ namespace SongBPMFinder
         AudioData audioData;
         AudioPlaybackSystem playbackSystem;
 
-        public TimingPointList TimingPoints {
-            get { return viewport.TimingPoints; }
-            set { viewport.TimingPoints = value; }
+        public void AddDrawable(IDrawable d)
+        {
+            viewport.AddDrawableItem(d);
         }
 
-        public void AddTimeSeries(TimeSeries t)
+        public void RemoveDrawable(IDrawable d)
         {
-            viewport.AddTimeSeries(t);
+            viewport.RemoveDrawableItem(d);
         }
 
-        public void RemoveTimeSeries(TimeSeries t)
+        public void ClearDrawables()
         {
-            viewport.RemoveTimeSeries(t);
+            viewport.ClearDrawables();
         }
 
         public AudioData AudioData {
