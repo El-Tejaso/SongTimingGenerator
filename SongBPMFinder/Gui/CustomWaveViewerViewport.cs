@@ -84,6 +84,7 @@ namespace SongBPMFinder
         public void AddDrawableItem(IDrawable d)
         {
             drawables.Add(d);
+            Invalidate();
         }
 
         public void RemoveDrawableItem(IDrawable d)

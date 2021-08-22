@@ -8,6 +8,10 @@ namespace SongBPMFinder
         AudioData audioData;
         AudioPlaybackSystem playbackSystem;
 
+        public WaveformCoordinates Coordinates {
+            get => viewport.Coordinates;
+        }
+
         public void AddDrawable(IDrawable d)
         {
             viewport.AddDrawableItem(d);

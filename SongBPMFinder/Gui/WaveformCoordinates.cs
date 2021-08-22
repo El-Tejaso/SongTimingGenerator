@@ -65,7 +65,7 @@ namespace SongBPMFinder
         }
 
         public Span<float> GetActiveAudioSlice(int channel) {
-            return audioData[channel].GetSlice(VeryLeftSample, VeryRightSample);
+            return audioData[channel].GetFloatSlice(VeryLeftSample, VeryRightSample);
         }
 
 

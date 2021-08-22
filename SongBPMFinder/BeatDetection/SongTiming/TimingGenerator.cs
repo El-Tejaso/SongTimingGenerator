@@ -11,6 +11,9 @@ namespace SongBPMFinder
     {
         List<TimeSeries> debugTimeSeries;
 
+        public double Start = -1;
+        public double End = -1;
+
         public TimingGenerator(List<TimeSeries> debugTimeSeries)
         {
             this.debugTimeSeries = debugTimeSeries;

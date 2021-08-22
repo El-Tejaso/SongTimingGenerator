@@ -101,7 +101,7 @@ namespace SongBPMFinder
                 }
             }
 
-            drawStdevStatistics(g, region, entireChannel.GetSlice(coordinates.VeryLeftSample, coordinates.VeryRightSample));
+            drawStdevStatistics(g, region, entireChannel.GetFloatSlice(coordinates.VeryLeftSample, coordinates.VeryRightSample));
         }
 
         private void drawStdevStatistics(Graphics g, Rectangle region, Span<float> specificRange)

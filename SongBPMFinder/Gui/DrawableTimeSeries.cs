@@ -65,19 +65,14 @@ namespace SongBPMFinder
 
         private void alignDrawWindowStartToTime(double windowLeftSeconds)
         {
-            while (drawWindowStart > 0 && timeSeries.Times[drawWindowStart] > windowLeftSeconds)
+            while (drawWindowStart-1 >= 0 && timeSeries.Times[drawWindowStart-1] > windowLeftSeconds)
             {
                 drawWindowStart--;
             }
 
-            while (drawWindowStart < timeSeries.Times.Length && timeSeries.Times[drawWindowStart] < windowLeftSeconds)
+            while (drawWindowStart+1 < timeSeries.Times.Length && timeSeries.Times[drawWindowStart+1] < windowLeftSeconds)
             {
                 drawWindowStart++;
-            }
-
-            if (drawWindowStart > timeSeries.Times.Length)
-            {
-                drawWindowStart = timeSeries.Times.Length - 1;
             }
         }
     }

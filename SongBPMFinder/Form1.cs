@@ -14,6 +14,12 @@ namespace SongBPMFinder
         TimingPointList currentTimingResult;
         TimingPipeline timingPipeline;
 
+        bool timeWithActiveWindow {
+            get {
+                return localizedTimingCheckbox.Checked;
+            }
+        }
+
 
         //move to an array of a custom Struct/class
         Button currentSpeedButton = null;
@@ -26,6 +32,12 @@ namespace SongBPMFinder
             audioPlaybackSystem = new AudioPlaybackSystem();
             timingPipeline = new TimingPipeline();
 
+            Logger.Log("Press Ctrl+Shift+R to quickly recalculate the timing. " +
+                "The program is in it's early days so it will be extremely slow. " +
+                "Nor is there a progress-bar. " +
+                "sorry about that");
+
+            InitializePipelineParameters();
 
             audioViewer.LinkPlaybackSystem(audioPlaybackSystem);
             audioPlaybackSystem.OnNewSongLoad += AudioPlaybackSystem_OnNewSongLoad;
@@ -42,6 +54,29 @@ namespace SongBPMFinder
             applyVisualChangesToSpeedButton(buttonSpeed1x);
 
             audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
+        }
+
+        private void InitializePipelineParameters()
+        {
+            fourierWindowCombobox.SelectedIndex = 2;
+            addAllFreqCheckbox.Checked = false;
+            leftChannelCheckbox.Checked = true;
+            rightChannelCheckbox.Checked = true;
+            evalDistanceNumeric.Value = (decimal)0.01;
+            binaryPeakCheckbox.Checked = false;
+            numFreqBandsNumeric.Value = 1;
+            strideNumeric.Value = 0.0005M;
+            differenceFunctionCombobox.SelectedIndex = 0;
+
+            FourierWindowCombobox_OnSelectedIndexChanged(null, null);
+            AddAllFrequ_OnCheckChanded(null, null);
+            leftChannelLeckbox_CheckedChanged(null, null);
+            rightChannelCheckbox_CheckedChanged(null, null);
+            evalDistanceNumeric_OnValueChanged(null, null);
+            binaryPeakCheckbox_CheckedChanged(null, null);
+            numFrequNumeric_OnValueChanged(null, null);
+            strideNumeric_ValueChanged(null, null);
+            differenceFunctionCombobox_SelectedIndexChanged(null, null);
         }
 
         private void AudioPlaybackSystem_OnSongPause()
@@ -63,7 +98,6 @@ namespace SongBPMFinder
 
         private void AudioPlaybackSystem_OnNewSongLoad()
         {
-            calculateTiming();
         }
 
 
@@ -204,21 +238,122 @@ namespace SongBPMFinder
 
         void calculateTiming()
         {
+            if (localizedTimingCheckbox.Checked)
+            {
+                timingPipeline.Start = audioViewer.Coordinates.WindowLeftSeconds;
+                timingPipeline.End = audioViewer.Coordinates.WindowRightSeconds;
+            }
+            else
+            {
+                timingPipeline.Start = -1;
+                timingPipeline.End = -1;
+            }
+
+
             DateTime t = DateTime.Now;
 
             Logger.Log("Calculating timing...");
 
-
             currentTimingResult = timingPipeline.TimeSong(audioPlaybackSystem.CurrentAudioFile);
+
+            TimeSpan delta = DateTime.Now - t;
+            Logger.Log("Calculated timing in " + delta.TotalMilliseconds + " ms");
+
+
+            audioViewer.ClearDrawables();
+
 
             for (int i = 0; i < timingPipeline.DebugTimeSeries.Count; i++)
             {
                 addTimeSeries(timingPipeline.DebugTimeSeries[i]);
             }
+        }
 
+        private void recalcTimingButton_Click(object sender, EventArgs e)
+        {
+            calculateTiming();
+        }
 
-            TimeSpan delta = DateTime.Now - t;
-            Logger.Log("Calculated timing in " + delta.TotalMilliseconds + " ms");
+        private void FourierWindowCombobox_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            int newFourierWindow = 1024;
+            switch (fourierWindowCombobox.SelectedIndex)
+            {
+                case 0:
+                    newFourierWindow = 256;
+                    break;
+                case 1:
+                    newFourierWindow = 512;
+                    break;
+                case 2:
+                    newFourierWindow = 1024;
+                    break;
+                case 3:
+                    newFourierWindow = 2048;
+                    break;
+                case 4:
+                    newFourierWindow = 4096;
+                    break;
+            }
+
+            timingPipeline.FourierWindow = newFourierWindow;
+        }
+
+        private void evalDistanceNumeric_OnValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.EvalDistanceSeconds = (double)evalDistanceNumeric.Value;
+        }
+
+        private void numFrequNumeric_OnValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.NumFrequencyBands = (int)numFreqBandsNumeric.Value;
+        }
+
+        private void AddAllFrequ_OnCheckChanded(object sender, EventArgs e)
+        {
+            timingPipeline.AddAllFrequenciesAtTheEnd = addAllFreqCheckbox.Checked;
+        }
+
+        private void leftChannelLeckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            timingPipeline.LeftChannel = leftChannelCheckbox.Checked;
+        }
+
+        private void rightChannelCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            timingPipeline.RightChannel = rightChannelCheckbox.Checked;
+        }
+
+        private void binaryPeakCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            timingPipeline.BinaryPeaks = binaryPeakCheckbox.Checked;
+        }
+
+        private void strideNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.Stride = (double)strideNumeric.Value;
+        }
+
+        private void differenceFunctionCombobox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FourierDifferenceType newDifferenceFunction = FourierDifferenceType.SumSquares;
+
+            switch (differenceFunctionCombobox.SelectedIndex)
+            {
+                case 0:
+                    newDifferenceFunction = FourierDifferenceType.SumSquares;
+                    break;
+                case 1:
+                    newDifferenceFunction = FourierDifferenceType.MaxSample;
+                    break;
+            }
+
+            timingPipeline.DifferenceFunction = newDifferenceFunction;
+        }
+
+        private void localizedTimingCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

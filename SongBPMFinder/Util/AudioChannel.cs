@@ -4,23 +4,33 @@ namespace SongBPMFinder
 {
     public struct AudioChannel
     {
-        private float[] data;
+        private Memory<float> data;
         public int SampleRate;
 
         public float this[int index] {
             get {
-                return data[index];
+                return data.Span[index];
             }
             set {
-                data[index] = value;
+                data.Span[index] = value;
             }
         }
 
         public int Length { get { return data.Length; } }
 
-        public Span<float> GetSlice(int start, int end)
+        public AudioChannel GetSlice(int start, int end)
         {
-            return new Span<float>(data, start, end - start);
+            if (start < 0)
+                start = 0;
+            if (end >= data.Length)
+                end = data.Length - 1;
+
+            return new AudioChannel(data.Slice(start, end - start), SampleRate);
+        }
+
+        public Span<float> GetFloatSlice(int start, int end)
+        {
+            return data.Span.Slice(start, end - start);
         }
 
         public double SamplesToSeconds(int timeInSamples)
@@ -33,15 +43,16 @@ namespace SongBPMFinder
             return (int)(SampleRate * timeInSeconds);
         }
 
-        public AudioChannel(float[] data, int sampleRate)
+        public AudioChannel(Memory<float> data, int sampleRate)
         {
             this.data = data;
             SampleRate = sampleRate;
         }
+
         public AudioChannel DeepCopy()
         {
             float[] dataCopy = new float[data.Length];
-            data.CopyTo(dataCopy, 0);
+            data.Span.CopyTo(dataCopy);
 
             return new AudioChannel(dataCopy, SampleRate);
         }

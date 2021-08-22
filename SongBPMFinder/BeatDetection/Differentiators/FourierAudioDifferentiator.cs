@@ -75,7 +75,7 @@ namespace SongBPMFinder
 
         private void doFourierTransform(AudioChannel c, int i, float[] resultBuffer)
         {
-            Span<float> slice = c.GetSlice(i, i + SampleWindow);
+            Span<float> slice = c.GetFloatSlice(i, i + SampleWindow);
             fourierTransformer.FFTForwardsMagnitudes(slice, resultBuffer);
         }
     }

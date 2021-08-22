@@ -30,18 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openAudioForTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.calculateTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xMLFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.osuTimingPointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyToClipboardToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -65,8 +53,37 @@
             this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textOutput = new System.Windows.Forms.RichTextBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.localizedTimingCheckbox = new System.Windows.Forms.CheckBox();
+            this.differenceFunctionCombobox = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.strideNumeric = new System.Windows.Forms.NumericUpDown();
+            this.rightChannelCheckbox = new System.Windows.Forms.CheckBox();
+            this.leftChannelCheckbox = new System.Windows.Forms.CheckBox();
+            this.binaryPeakCheckbox = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numFreqBandsNumeric = new System.Windows.Forms.NumericUpDown();
+            this.addAllFreqCheckbox = new System.Windows.Forms.CheckBox();
+            this.evalDistanceNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.fourierWindowCombobox = new System.Windows.Forms.ComboBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAudioForTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateTimingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xMLFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.osuTimingPointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToClipboardToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -82,7 +99,14 @@
             this.testWaveformTab5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.strideNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numFreqBandsNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.evalDistanceNumeric)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -100,95 +124,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1113, 585);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.timingToolStripMenuItem,
-            this.copyToClipboardToolStripMenuItem,
-            this.outputToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1113, 23);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openAudioForTimingToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // openAudioForTimingToolStripMenuItem
-            // 
-            this.openAudioForTimingToolStripMenuItem.Name = "openAudioForTimingToolStripMenuItem";
-            this.openAudioForTimingToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.openAudioForTimingToolStripMenuItem.Text = "Open audio for timing";
-            this.openAudioForTimingToolStripMenuItem.Click += new System.EventHandler(this.openAudioForTimingToolStripMenuItem_Click);
-            // 
-            // timingToolStripMenuItem
-            // 
-            this.timingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calculateTimingToolStripMenuItem});
-            this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
-            this.timingToolStripMenuItem.Size = new System.Drawing.Size(56, 19);
-            this.timingToolStripMenuItem.Text = "Timing";
-            // 
-            // calculateTimingToolStripMenuItem
-            // 
-            this.calculateTimingToolStripMenuItem.Name = "calculateTimingToolStripMenuItem";
-            this.calculateTimingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.calculateTimingToolStripMenuItem.Text = "Calculate timing";
-            this.calculateTimingToolStripMenuItem.Click += new System.EventHandler(this.calculateTimingToolStripMenuItem_Click);
-            // 
-            // copyToClipboardToolStripMenuItem
-            // 
-            this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.xMLFileToolStripMenuItem,
-            this.osuTimingPointsToolStripMenuItem});
-            this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
-            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(114, 19);
-            this.copyToClipboardToolStripMenuItem.Text = "Copy to clipboard";
-            // 
-            // xMLFileToolStripMenuItem
-            // 
-            this.xMLFileToolStripMenuItem.Name = "xMLFileToolStripMenuItem";
-            this.xMLFileToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.xMLFileToolStripMenuItem.Text = "XML file";
-            this.xMLFileToolStripMenuItem.Click += new System.EventHandler(this.xMLFileToolStripMenuItem_Click);
-            // 
-            // osuTimingPointsToolStripMenuItem
-            // 
-            this.osuTimingPointsToolStripMenuItem.Name = "osuTimingPointsToolStripMenuItem";
-            this.osuTimingPointsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.osuTimingPointsToolStripMenuItem.Text = "osu! timing points";
-            this.osuTimingPointsToolStripMenuItem.Click += new System.EventHandler(this.osuTimingPointsToolStripMenuItem_Click);
-            // 
-            // outputToolStripMenuItem
-            // 
-            this.outputToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyToClipboardToolStripMenuItem1,
-            this.clearToolStripMenuItem});
-            this.outputToolStripMenuItem.Name = "outputToolStripMenuItem";
-            this.outputToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
-            this.outputToolStripMenuItem.Text = "Output";
-            // 
-            // copyToClipboardToolStripMenuItem1
-            // 
-            this.copyToClipboardToolStripMenuItem1.Name = "copyToClipboardToolStripMenuItem1";
-            this.copyToClipboardToolStripMenuItem1.Size = new System.Drawing.Size(169, 22);
-            this.copyToClipboardToolStripMenuItem1.Text = "Copy to clipboard";
-            this.copyToClipboardToolStripMenuItem1.Click += new System.EventHandler(this.copyToClipboardToolStripMenuItem1_Click);
-            // 
-            // clearToolStripMenuItem
-            // 
-            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-            this.clearToolStripMenuItem.Text = "Clear";
-            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -204,7 +139,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(1107, 556);
-            this.splitContainer1.SplitterDistance = 471;
+            this.splitContainer1.SplitterDistance = 350;
             this.splitContainer1.TabIndex = 5;
             // 
             // tableLayoutPanel3
@@ -220,7 +155,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1107, 471);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1107, 350);
             this.tableLayoutPanel3.TabIndex = 3;
             // 
             // flowLayoutPanel1
@@ -303,7 +238,7 @@
             this.waveformTabs.Location = new System.Drawing.Point(3, 49);
             this.waveformTabs.Name = "waveformTabs";
             this.waveformTabs.SelectedIndex = 0;
-            this.waveformTabs.Size = new System.Drawing.Size(1101, 419);
+            this.waveformTabs.Size = new System.Drawing.Size(1101, 298);
             this.waveformTabs.TabIndex = 7;
             // 
             // songWaveformTab
@@ -312,7 +247,7 @@
             this.songWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.songWaveformTab.Name = "songWaveformTab";
             this.songWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.songWaveformTab.Size = new System.Drawing.Size(1093, 393);
+            this.songWaveformTab.Size = new System.Drawing.Size(1093, 272);
             this.songWaveformTab.TabIndex = 0;
             this.songWaveformTab.Text = "Song Waveform";
             this.songWaveformTab.UseVisualStyleBackColor = true;
@@ -323,7 +258,7 @@
             this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.audioViewer.Location = new System.Drawing.Point(3, 3);
             this.audioViewer.Name = "audioViewer";
-            this.audioViewer.Size = new System.Drawing.Size(1087, 387);
+            this.audioViewer.Size = new System.Drawing.Size(1087, 266);
             this.audioViewer.TabIndex = 0;
             // 
             // testWaveformTab
@@ -332,7 +267,7 @@
             this.testWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab.Name = "testWaveformTab";
             this.testWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab.Size = new System.Drawing.Size(1087, 289);
+            this.testWaveformTab.Size = new System.Drawing.Size(1093, 272);
             this.testWaveformTab.TabIndex = 1;
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
@@ -343,7 +278,7 @@
             this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot1.Location = new System.Drawing.Point(3, 3);
             this.debugPlot1.Name = "debugPlot1";
-            this.debugPlot1.Size = new System.Drawing.Size(1081, 283);
+            this.debugPlot1.Size = new System.Drawing.Size(1087, 266);
             this.debugPlot1.TabIndex = 0;
             // 
             // testWaveformTab2
@@ -352,7 +287,7 @@
             this.testWaveformTab2.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab2.Name = "testWaveformTab2";
             this.testWaveformTab2.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab2.Size = new System.Drawing.Size(1087, 289);
+            this.testWaveformTab2.Size = new System.Drawing.Size(1093, 272);
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
@@ -363,7 +298,7 @@
             this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot2.Location = new System.Drawing.Point(3, 3);
             this.debugPlot2.Name = "debugPlot2";
-            this.debugPlot2.Size = new System.Drawing.Size(1081, 283);
+            this.debugPlot2.Size = new System.Drawing.Size(1087, 266);
             this.debugPlot2.TabIndex = 0;
             // 
             // testWaveformTab3
@@ -372,7 +307,7 @@
             this.testWaveformTab3.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab3.Name = "testWaveformTab3";
             this.testWaveformTab3.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab3.Size = new System.Drawing.Size(1087, 289);
+            this.testWaveformTab3.Size = new System.Drawing.Size(1093, 272);
             this.testWaveformTab3.TabIndex = 3;
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
@@ -383,7 +318,7 @@
             this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot3.Location = new System.Drawing.Point(3, 3);
             this.debugPlot3.Name = "debugPlot3";
-            this.debugPlot3.Size = new System.Drawing.Size(1081, 283);
+            this.debugPlot3.Size = new System.Drawing.Size(1087, 266);
             this.debugPlot3.TabIndex = 0;
             // 
             // testWaveformTab4
@@ -392,7 +327,7 @@
             this.testWaveformTab4.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab4.Name = "testWaveformTab4";
             this.testWaveformTab4.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab4.Size = new System.Drawing.Size(1087, 289);
+            this.testWaveformTab4.Size = new System.Drawing.Size(1093, 272);
             this.testWaveformTab4.TabIndex = 4;
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
@@ -403,7 +338,7 @@
             this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot4.Location = new System.Drawing.Point(3, 3);
             this.debugPlot4.Name = "debugPlot4";
-            this.debugPlot4.Size = new System.Drawing.Size(1081, 283);
+            this.debugPlot4.Size = new System.Drawing.Size(1087, 266);
             this.debugPlot4.TabIndex = 0;
             // 
             // testWaveformTab5
@@ -412,7 +347,7 @@
             this.testWaveformTab5.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab5.Name = "testWaveformTab5";
             this.testWaveformTab5.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab5.Size = new System.Drawing.Size(1087, 289);
+            this.testWaveformTab5.Size = new System.Drawing.Size(1093, 272);
             this.testWaveformTab5.TabIndex = 5;
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
@@ -423,7 +358,7 @@
             this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot5.Location = new System.Drawing.Point(3, 3);
             this.debugPlot5.Name = "debugPlot5";
-            this.debugPlot5.Size = new System.Drawing.Size(1081, 283);
+            this.debugPlot5.Size = new System.Drawing.Size(1087, 266);
             this.debugPlot5.TabIndex = 0;
             // 
             // splitContainer2
@@ -435,7 +370,11 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.textOutput);
-            this.splitContainer2.Size = new System.Drawing.Size(1107, 81);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer2.Size = new System.Drawing.Size(1107, 202);
             this.splitContainer2.SplitterDistance = 502;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -449,9 +388,363 @@
             this.textOutput.Location = new System.Drawing.Point(0, 0);
             this.textOutput.Name = "textOutput";
             this.textOutput.ReadOnly = true;
-            this.textOutput.Size = new System.Drawing.Size(502, 81);
+            this.textOutput.Size = new System.Drawing.Size(502, 202);
             this.textOutput.TabIndex = 2;
-            this.textOutput.Text = "awdwdadw";
+            this.textOutput.Text = "Woah, someone actually downloaded this";
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(601, 202);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.localizedTimingCheckbox);
+            this.tabPage1.Controls.Add(this.differenceFunctionCombobox);
+            this.tabPage1.Controls.Add(this.label5);
+            this.tabPage1.Controls.Add(this.label4);
+            this.tabPage1.Controls.Add(this.strideNumeric);
+            this.tabPage1.Controls.Add(this.rightChannelCheckbox);
+            this.tabPage1.Controls.Add(this.leftChannelCheckbox);
+            this.tabPage1.Controls.Add(this.binaryPeakCheckbox);
+            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.numFreqBandsNumeric);
+            this.tabPage1.Controls.Add(this.addAllFreqCheckbox);
+            this.tabPage1.Controls.Add(this.evalDistanceNumeric);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.fourierWindowCombobox);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(593, 176);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Beat detection";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // localizedTimingCheckbox
+            // 
+            this.localizedTimingCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.localizedTimingCheckbox.AutoSize = true;
+            this.localizedTimingCheckbox.Location = new System.Drawing.Point(402, 103);
+            this.localizedTimingCheckbox.Name = "localizedTimingCheckbox";
+            this.localizedTimingCheckbox.Size = new System.Drawing.Size(185, 17);
+            this.localizedTimingCheckbox.TabIndex = 17;
+            this.localizedTimingCheckbox.Text = "Only time the part we\'re looking at";
+            this.localizedTimingCheckbox.UseVisualStyleBackColor = true;
+            this.localizedTimingCheckbox.CheckedChanged += new System.EventHandler(this.localizedTimingCheckbox_CheckedChanged);
+            // 
+            // differenceFunctionCombobox
+            // 
+            this.differenceFunctionCombobox.DisplayMember = "(none)";
+            this.differenceFunctionCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.differenceFunctionCombobox.FormattingEnabled = true;
+            this.differenceFunctionCombobox.Items.AddRange(new object[] {
+            "Sum of Squares Difference,",
+            "Max Frequency-Gain Difference"});
+            this.differenceFunctionCombobox.Location = new System.Drawing.Point(183, 103);
+            this.differenceFunctionCombobox.Name = "differenceFunctionCombobox";
+            this.differenceFunctionCombobox.Size = new System.Drawing.Size(121, 21);
+            this.differenceFunctionCombobox.TabIndex = 16;
+            this.differenceFunctionCombobox.SelectedIndexChanged += new System.EventHandler(this.differenceFunctionCombobox_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(181, 85);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(97, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Difference function";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 111);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Stride (seconds)";
+            // 
+            // strideNumeric
+            // 
+            this.strideNumeric.Cursor = System.Windows.Forms.Cursors.Default;
+            this.strideNumeric.DecimalPlaces = 4;
+            this.strideNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.strideNumeric.Location = new System.Drawing.Point(9, 130);
+            this.strideNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.strideNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.strideNumeric.Name = "strideNumeric";
+            this.strideNumeric.Size = new System.Drawing.Size(144, 20);
+            this.strideNumeric.TabIndex = 13;
+            this.strideNumeric.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
+            this.strideNumeric.ValueChanged += new System.EventHandler(this.strideNumeric_ValueChanged);
+            // 
+            // rightChannelCheckbox
+            // 
+            this.rightChannelCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.rightChannelCheckbox.AutoSize = true;
+            this.rightChannelCheckbox.Checked = true;
+            this.rightChannelCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.rightChannelCheckbox.Location = new System.Drawing.Point(494, 130);
+            this.rightChannelCheckbox.Name = "rightChannelCheckbox";
+            this.rightChannelCheckbox.Size = new System.Drawing.Size(93, 17);
+            this.rightChannelCheckbox.TabIndex = 12;
+            this.rightChannelCheckbox.Text = "Right Channel";
+            this.rightChannelCheckbox.UseVisualStyleBackColor = true;
+            this.rightChannelCheckbox.CheckedChanged += new System.EventHandler(this.rightChannelCheckbox_CheckedChanged);
+            // 
+            // leftChannelCheckbox
+            // 
+            this.leftChannelCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.leftChannelCheckbox.AutoSize = true;
+            this.leftChannelCheckbox.Checked = true;
+            this.leftChannelCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.leftChannelCheckbox.Location = new System.Drawing.Point(501, 153);
+            this.leftChannelCheckbox.Name = "leftChannelCheckbox";
+            this.leftChannelCheckbox.Size = new System.Drawing.Size(86, 17);
+            this.leftChannelCheckbox.TabIndex = 11;
+            this.leftChannelCheckbox.Text = "Left Channel";
+            this.leftChannelCheckbox.UseVisualStyleBackColor = true;
+            this.leftChannelCheckbox.CheckedChanged += new System.EventHandler(this.leftChannelLeckbox_CheckedChanged);
+            // 
+            // binaryPeakCheckbox
+            // 
+            this.binaryPeakCheckbox.AutoSize = true;
+            this.binaryPeakCheckbox.Location = new System.Drawing.Point(367, 19);
+            this.binaryPeakCheckbox.Name = "binaryPeakCheckbox";
+            this.binaryPeakCheckbox.Size = new System.Drawing.Size(88, 17);
+            this.binaryPeakCheckbox.TabIndex = 10;
+            this.binaryPeakCheckbox.Text = "Binary Peaks";
+            this.binaryPeakCheckbox.UseVisualStyleBackColor = true;
+            this.binaryPeakCheckbox.CheckedChanged += new System.EventHandler(this.binaryPeakCheckbox_CheckedChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(181, 3);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(111, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Num frequency bands";
+            // 
+            // numFreqBandsNumeric
+            // 
+            this.numFreqBandsNumeric.Location = new System.Drawing.Point(184, 20);
+            this.numFreqBandsNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numFreqBandsNumeric.Name = "numFreqBandsNumeric";
+            this.numFreqBandsNumeric.Size = new System.Drawing.Size(120, 20);
+            this.numFreqBandsNumeric.TabIndex = 8;
+            this.numFreqBandsNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numFreqBandsNumeric.ValueChanged += new System.EventHandler(this.numFrequNumeric_OnValueChanged);
+            // 
+            // addAllFreqCheckbox
+            // 
+            this.addAllFreqCheckbox.AutoSize = true;
+            this.addAllFreqCheckbox.Location = new System.Drawing.Point(184, 51);
+            this.addAllFreqCheckbox.Name = "addAllFreqCheckbox";
+            this.addAllFreqCheckbox.Size = new System.Drawing.Size(140, 17);
+            this.addAllFreqCheckbox.TabIndex = 7;
+            this.addAllFreqCheckbox.Text = "Add all frequency bands";
+            this.addAllFreqCheckbox.UseVisualStyleBackColor = true;
+            this.addAllFreqCheckbox.CheckedChanged += new System.EventHandler(this.AddAllFrequ_OnCheckChanded);
+            // 
+            // evalDistanceNumeric
+            // 
+            this.evalDistanceNumeric.Cursor = System.Windows.Forms.Cursors.Default;
+            this.evalDistanceNumeric.DecimalPlaces = 3;
+            this.evalDistanceNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.evalDistanceNumeric.Location = new System.Drawing.Point(6, 68);
+            this.evalDistanceNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.evalDistanceNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.evalDistanceNumeric.Name = "evalDistanceNumeric";
+            this.evalDistanceNumeric.Size = new System.Drawing.Size(144, 20);
+            this.evalDistanceNumeric.TabIndex = 6;
+            this.evalDistanceNumeric.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
+            this.evalDistanceNumeric.ValueChanged += new System.EventHandler(this.evalDistanceNumeric_OnValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 52);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(161, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Fourier evaluation gap (seconds)";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 3);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(96, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Frequency window";
+            // 
+            // fourierWindowCombobox
+            // 
+            this.fourierWindowCombobox.DisplayMember = "(none)";
+            this.fourierWindowCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.fourierWindowCombobox.FormattingEnabled = true;
+            this.fourierWindowCombobox.Items.AddRange(new object[] {
+            "256",
+            "512",
+            "1024",
+            "2048",
+            "4096"});
+            this.fourierWindowCombobox.Location = new System.Drawing.Point(6, 19);
+            this.fourierWindowCombobox.Name = "fourierWindowCombobox";
+            this.fourierWindowCombobox.Size = new System.Drawing.Size(121, 21);
+            this.fourierWindowCombobox.TabIndex = 3;
+            this.fourierWindowCombobox.SelectedIndexChanged += new System.EventHandler(this.FourierWindowCombobox_OnSelectedIndexChanged);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(593, 176);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Timing generation";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.timingToolStripMenuItem,
+            this.copyToClipboardToolStripMenuItem,
+            this.outputToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1113, 23);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openAudioForTimingToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // openAudioForTimingToolStripMenuItem
+            // 
+            this.openAudioForTimingToolStripMenuItem.Name = "openAudioForTimingToolStripMenuItem";
+            this.openAudioForTimingToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.openAudioForTimingToolStripMenuItem.Text = "Open audio for timing";
+            this.openAudioForTimingToolStripMenuItem.Click += new System.EventHandler(this.openAudioForTimingToolStripMenuItem_Click);
+            // 
+            // timingToolStripMenuItem
+            // 
+            this.timingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calculateTimingToolStripMenuItem});
+            this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
+            this.timingToolStripMenuItem.Size = new System.Drawing.Size(56, 19);
+            this.timingToolStripMenuItem.Text = "Timing";
+            // 
+            // calculateTimingToolStripMenuItem
+            // 
+            this.calculateTimingToolStripMenuItem.Name = "calculateTimingToolStripMenuItem";
+            this.calculateTimingToolStripMenuItem.ShortcutKeyDisplayString = "";
+            this.calculateTimingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.R)));
+            this.calculateTimingToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            this.calculateTimingToolStripMenuItem.Text = "Calculate timing";
+            this.calculateTimingToolStripMenuItem.Click += new System.EventHandler(this.calculateTimingToolStripMenuItem_Click);
+            // 
+            // copyToClipboardToolStripMenuItem
+            // 
+            this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.xMLFileToolStripMenuItem,
+            this.osuTimingPointsToolStripMenuItem});
+            this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
+            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(114, 19);
+            this.copyToClipboardToolStripMenuItem.Text = "Copy to clipboard";
+            // 
+            // xMLFileToolStripMenuItem
+            // 
+            this.xMLFileToolStripMenuItem.Name = "xMLFileToolStripMenuItem";
+            this.xMLFileToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.xMLFileToolStripMenuItem.Text = "XML file";
+            this.xMLFileToolStripMenuItem.Click += new System.EventHandler(this.xMLFileToolStripMenuItem_Click);
+            // 
+            // osuTimingPointsToolStripMenuItem
+            // 
+            this.osuTimingPointsToolStripMenuItem.Name = "osuTimingPointsToolStripMenuItem";
+            this.osuTimingPointsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.osuTimingPointsToolStripMenuItem.Text = "osu! timing points";
+            this.osuTimingPointsToolStripMenuItem.Click += new System.EventHandler(this.osuTimingPointsToolStripMenuItem_Click);
+            // 
+            // outputToolStripMenuItem
+            // 
+            this.outputToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToClipboardToolStripMenuItem1,
+            this.clearToolStripMenuItem});
+            this.outputToolStripMenuItem.Name = "outputToolStripMenuItem";
+            this.outputToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
+            this.outputToolStripMenuItem.Text = "Output";
+            // 
+            // copyToClipboardToolStripMenuItem1
+            // 
+            this.copyToClipboardToolStripMenuItem1.Name = "copyToClipboardToolStripMenuItem1";
+            this.copyToClipboardToolStripMenuItem1.Size = new System.Drawing.Size(169, 22);
+            this.copyToClipboardToolStripMenuItem1.Text = "Copy to clipboard";
+            this.copyToClipboardToolStripMenuItem1.Click += new System.EventHandler(this.copyToClipboardToolStripMenuItem1_Click);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.clearToolStripMenuItem.Text = "Clear";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -467,8 +760,6 @@
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -483,8 +774,17 @@
             this.testWaveformTab4.ResumeLayout(false);
             this.testWaveformTab5.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.strideNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numFreqBandsNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.evalDistanceNumeric)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -527,6 +827,24 @@
         private CustomWaveViewer debugPlot5;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.RichTextBox textOutput;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox fourierWindowCombobox;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown evalDistanceNumeric;
+        private System.Windows.Forms.CheckBox addAllFreqCheckbox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown numFreqBandsNumeric;
+        private System.Windows.Forms.CheckBox binaryPeakCheckbox;
+        private System.Windows.Forms.CheckBox leftChannelCheckbox;
+        private System.Windows.Forms.CheckBox rightChannelCheckbox;
+        private System.Windows.Forms.NumericUpDown strideNumeric;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox differenceFunctionCombobox;
+        private System.Windows.Forms.CheckBox localizedTimingCheckbox;
     }
 }
 
