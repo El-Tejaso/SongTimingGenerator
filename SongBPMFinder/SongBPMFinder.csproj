@@ -122,6 +122,8 @@
     <Compile Include="Gui\CustomWaveViewer.Designer.cs">
       <DependentUpon>CustomWaveViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Util\PeakDetectContinuous.cs" />
+    <Compile Include="Util\TimeSeriesPeak.cs" />
     <Compile Include="Util\TimeSeries.cs" />
     <Compile Include="Gui\TimeSeriesDrawer.cs" />
     <Compile Include="Gui\TimingPointDrawer.cs" />
@@ -129,7 +131,7 @@
     <Compile Include="Gui\WaveformDrawer.cs" />
     <Compile Include="Debugging\ILogger.cs" />
     <Compile Include="Debugging\RichTextBoxLogger.cs" />
-    <Compile Include="SignalProcessing\FourierTransform.cs" />
+    <Compile Include="ProgramBoundary\FourierTransform.cs" />
     <Compile Include="Util\AudioChannel.cs" />
     <Compile Include="Util\Span\MathUtilSpanF.cs" />
     <Compile Include="BeatDetection\SongTiming\TimingPoint.cs" />

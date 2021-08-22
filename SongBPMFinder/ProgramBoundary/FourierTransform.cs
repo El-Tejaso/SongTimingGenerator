@@ -4,32 +4,37 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Exocortex.DSP;
 
+using Exocortex.DSP;
 
 namespace SongBPMFinder
 {
     /// <summary>
-    /// Defines boundary between this and exocortex/other FFT libraries
+    /// Defines boundary between this and exocortex/other FFT libraries.
+    /// 
+    /// Each instance should be threadsafe but having a different instance for each thread
+    /// would be way better for performance
+    /// 
+    /// TODO: Check if Exocortex is threadsafe/needs instancing for threading performance
     /// </summary>
-    public static class FourierTransform
+    public class FourierTransform
     {
-        private static bool _ibLocked = false;
-        private static float[] _intermediateBuffer = null;
-        private static int _complexNumbersInBuffer = 0;
+        private bool _ibLocked = false;
+        private float[] _intermediateBuffer = null;
+        private int _complexNumbersInBuffer = 0;
 
-        private static void getIBLock()
+        private void getIBLock()
         {
             while (_ibLocked)
             { }
         }
 
-        private static void releaseIBLock()
+        private void releaseIBLock()
         {
             _ibLocked = false;
         }
 
-        private static void syncIntermediateBuffer(int requiredLength)
+        private void syncIntermediateBuffer(int requiredLength)
         {
             getIBLock();
 
@@ -38,8 +43,8 @@ namespace SongBPMFinder
                 _intermediateBuffer = new float[requiredLength];
                 return;
             }
-            
-            if(_intermediateBuffer.Length < requiredLength)
+
+            if (_intermediateBuffer.Length < requiredLength)
             {
                 int newSize = Math.Max(_intermediateBuffer.Length * 2, requiredLength);
                 _intermediateBuffer = new float[newSize];
@@ -56,7 +61,7 @@ namespace SongBPMFinder
         /// Of course, the backwards pass requires complex numbers and cannot discard magnitudes, so 
         /// FFTBackwardsMagnitudes won't ever exist
         /// </summary>
-        public static void FFTForwardsMagnitudes(Span<float> input, float[] output)
+        public void FFTForwardsMagnitudes(Span<float> input, float[] output)
         {
             SpanFunctional.AssertEqualLength<float, float>(input, output);
 
@@ -67,7 +72,7 @@ namespace SongBPMFinder
             copyMagnitudesFromIBToFloatArray(output);
         }
 
-        private static void copyRealsToIB(Span<float> input)
+        private void copyRealsToIB(Span<float> input)
         {
             syncIntermediateBuffer(input.Length * 2);
 
@@ -84,7 +89,7 @@ namespace SongBPMFinder
             releaseIBLock();
         }
 
-        private static void exocortexFFTOnIB()
+        private void exocortexFFTOnIB()
         {
             getIBLock();
 
@@ -93,7 +98,7 @@ namespace SongBPMFinder
             releaseIBLock();
         }
 
-        private static void copyMagnitudesFromIBToFloatArray(float[] output)
+        private void copyMagnitudesFromIBToFloatArray(float[] output)
         {
             getIBLock();
 

@@ -17,9 +17,19 @@ namespace SongBPMFinder
 
         public TimeSeries ToTimeSeries()
         {
+            for (int i = 1; i < Times.Count; i++)
+            {
+                if (Times[i - 1] >= Times[i])
+                {
+                    throw new Exception("List isnt sorted bruh");
+                }
+            }
+
+
             return new TimeSeries(Times.ToArray(), Values.ToArray());
         }
     }
+
 
     public class TimeSeries
     {
@@ -27,7 +37,7 @@ namespace SongBPMFinder
         private float[] values;
 
         public Color Color;
-        public int Width = 2;
+        public int Width = 1;
 
         public double[] Times {
             get {
@@ -67,60 +77,123 @@ namespace SongBPMFinder
 
 
         /// <summary>
-        /// EXPERIMENTAL, DOESN'T YET WORK.
-        /// ALSO, THIS IS PROBABLY A VERY DOMAIN SPECIFIC THING THAT YOU SHOULD CODE YOURSELF
+        /// Cheers:
+        /// 
+        /// Brakel, J.P.G. van (2014). 
+        /// "Robust peak detection algorithm using z-scores". 
+        /// Stack Overflow. Available at: 
+        /// https://stackoverflow.com/questions/22583391/peak-signal-detection-in-realtime-timeseries-data/22640362#22640362 
+        /// (version: 2020-11-08).
+        /// 
+        /// Apparently this SO answer was referenced by a bunch of legit research papers.
+        /// Not sure if what I programmed is what they referred to, but I think it is.
+        /// 
+        /// Also it doesnt work that well when windowSize is large, or Im just not using it right.
+        /// Its ok though, I have an idea for something similar that might be better
+        /// 
+        /// Influence is going to be multiplied by the time between points aka deltatime
         /// </summary>
-        /// <param name="windowSizeSeconds"></param>
-        public void AdaptiveNormalize(double windowSizeSeconds)
+        public TimeSeries PeakDetectTimeSeries(double windowSize, float influence, float threshold, bool binary = true)
         {
-            if (Times.Length == 0)
-                return;
+            TimeSeriesBuilder signalTimeSeries = new TimeSeriesBuilder();
 
-            double halfWindowSize = windowSizeSeconds / 2;
+            int rangeStart = 0, rangeEnd = 0;
 
-            int rangeStart = 0;
-            int rangeEnd = 0;
-
-            float[] newValues = new float[Values.Length];
-
-            for (int currValueIndex = 0; currValueIndex < Values.Length; currValueIndex++)
+            while (rangeEnd + 1 < Times.Length && Times[rangeEnd + 1] - Times[rangeStart] < windowSize)
             {
-                double currentTime = Times[currValueIndex];
-
-                double lowerBound = currentTime - halfWindowSize;
-                while (rangeStart+1 < Times.Length && Times[rangeStart] < lowerBound)
-                    rangeStart++;
-
-                double upperBound = currentTime + halfWindowSize;
-                //the Times[rangeEnd+1] is different to the previous Times[rangeStart] on purpose
-                while (rangeEnd+1 < Times.Length && Times[rangeEnd+1] < upperBound)
-                    rangeEnd++;
-
-
-                //Not necessarily the same as windowSizeSeconds
-                double currentWindowSize = Times[rangeStart] + (Times[rangeEnd] - Times[rangeStart]) / 2.0;
-
-                float maxInRange = 0;
-
-                for(int j = rangeStart; j <= rangeEnd; j++)
-                {
-                    float normalizedTime = (float)(Times[j] - Times[currValueIndex] / currentWindowSize);
-                    float gaussianFactor = MathUtilF.Gaussian(4 * normalizedTime);
-                    float gaussianValue = gaussianFactor * Values[j];
-                    if(j == rangeStart)
-                    {
-                        maxInRange = gaussianValue;
-                        continue;
-                    }
-
-                    if (gaussianValue > maxInRange)
-                        maxInRange = gaussianValue;
-                }
-
-                newValues[currValueIndex] = Values[currValueIndex] / maxInRange;
+                signalTimeSeries.Add(Times[rangeEnd], 0);
+                rangeEnd++;
             }
 
-            Values = newValues;
+
+            Span<float> range = new Span<float>(Values, rangeStart, rangeEnd - rangeStart + 1);
+            float mean = MathUtilSpanF.Mean(range, SpanFunctional.None);
+            float standardDev = MathUtilSpanF.StandardDeviation(range);
+
+            float deltaTime = (float)(Times[1] - Times[0]);
+
+
+            for (; rangeEnd < Times.Length; rangeStart++, rangeEnd++)
+            {
+                range = new Span<float>(Values, rangeStart, rangeEnd - rangeStart + 1);
+
+                //Possibly inneficient, but easy to program it like this
+                float newMean = MathUtilSpanF.Mean(range, SpanFunctional.None);
+                float newStandardDev = MathUtilSpanF.StandardDeviation(range);
+
+                mean = MathUtilF.Lerp(mean, newMean, influence * deltaTime);
+                standardDev = MathUtilF.Lerp(mean, newStandardDev, influence * deltaTime);
+
+                float value = (Math.Abs(Values[rangeEnd] - mean) / standardDev) / threshold;
+
+                if (binary)
+                {
+                    signalTimeSeries.Add(Times[rangeEnd], value > 1 ? 1 : 0);
+                }
+                else
+                {
+                    signalTimeSeries.Add(Times[rangeEnd], value);
+                }
+            }
+
+            return signalTimeSeries.ToTimeSeries();
         }
+
+
+        /// <summary>
+        /// Only works if Times are uniformly spaced
+        /// </summary>
+        public void MovingAverage(int samples)
+        {
+            double deltaTime = Times[1] - Times[0];
+            double windowSizeSeconds = deltaTime * samples;
+            MathUtilSpanF.MovingAverage(Values, Values, samples);
+
+            for (int i = 0; i < Times.Length; i++)
+            {
+                Times[i] += windowSizeSeconds / 2;
+            }
+        }
+
+
+        /// <summary>
+        /// My own peak detection algorithm that works best on on smooth data with lots of datapoints.
+        /// 
+        /// ONLY WORKS IF THE TIMES ARE ALL EVENLY SPACED
+        /// </summary>
+        public TimeSeries PeakDetectContinuousTimeSeries(double windowSizeSeconds,
+            double upwardsGradientThreshold, double downwardsGradientThreshold, double inflectionTime)
+        {
+            double[] newTimes = new double[Times.Length];
+            Array.Copy(Times, 0, newTimes, 0, newTimes.Length);
+            float[] newValues = new float[Values.Length];
+
+            float deltaTime = (float)(Times[1] - Times[0]);
+            int windowSize = (int)((float)windowSizeSeconds / deltaTime);
+
+
+
+            foreach (TimeSeriesPeak peaks in PeakDetectContinuous.DetectPeaks(
+                Values, 
+                deltaTime, 
+                upwardsGradientThreshold, 
+                downwardsGradientThreshold, 
+                inflectionTime
+                ))
+            {
+                int i = peaks.IndexIntoTimeSeries;
+                int rangeStart = Math.Max(i - windowSize/2, 0);
+                int rangeEnd = Math.Min(i + windowSize / 2, Times.Length);
+
+                if (rangeEnd - rangeStart < windowSize / 2)
+                    continue;
+
+
+                newValues[i] = 1;//peaks.PeakHeight;
+            }
+
+            return new TimeSeries(newTimes, newValues);
+        }
+
     }
 }

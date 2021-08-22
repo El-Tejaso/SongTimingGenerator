@@ -19,6 +19,8 @@ namespace SongBPMFinder
 
         public TimingPointList TimeSong(AudioData audio)
         {
+            debugTimeSeries.Clear();
+
             SortedList<Beat>[] beats = new DefaultBeatDetector(debugTimeSeries).GetEveryBeat(audio);
 
             TimingPointList timingPoints = new TimingGenerator(debugTimeSeries).GenerateTiming(beats);

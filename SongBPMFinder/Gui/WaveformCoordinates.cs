@@ -115,7 +115,7 @@ namespace SongBPMFinder
             if (audioData == null)
                 return;
 
-            float biggestVisibleSample = MathUtilSpanF.Max(GetActiveAudioSlice(0));
+            float biggestVisibleSample = 1;//MathUtilSpanF.Max(GetActiveAudioSlice(0));
             viewportMax = Math.Max(0.00001f, biggestVisibleSample);
         }
 

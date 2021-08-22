@@ -136,7 +136,7 @@ namespace SongBPMFinder
             //TODO: figure this out
             for (int i = 0; i < input.Length; i++)
             {
-                float x = input[i];
+                float x = op(input[i]);
                 topPart += (x - mean) * (x - mean);
             }
 

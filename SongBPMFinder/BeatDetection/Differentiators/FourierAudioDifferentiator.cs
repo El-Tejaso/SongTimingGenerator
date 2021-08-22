@@ -48,6 +48,9 @@ namespace SongBPMFinder
         float[] lastFT;
         float[] thisFT;
 
+        //TODO: Have an array of these when this becomes multithreaded
+        public FourierTransform fourierTransformer = new FourierTransform();
+
         public FourierAudioDifferentiator(int sampleWindow, int evalDistance, int stride)
         {
             this.SampleWindow = sampleWindow;
@@ -73,14 +76,7 @@ namespace SongBPMFinder
         private void doFourierTransform(AudioChannel c, int i, float[] resultBuffer)
         {
             Span<float> slice = c.GetSlice(i, i + SampleWindow);
-            FourierTransform.FFTForwardsMagnitudes(slice, resultBuffer);
-        }
-
-        private void swapThisLastBuffers()
-        {
-            float[] temp = thisFT;
-            thisFT = lastFT;
-            lastFT = temp;
+            fourierTransformer.FFTForwardsMagnitudes(slice, resultBuffer);
         }
     }
 }

@@ -63,6 +63,7 @@ namespace SongBPMFinder
             int firstVisible = lastWindowStart;
             double windowLeftSeconds = coordinates.WindowLeftSeconds;
 
+
             while (firstVisible > 0 && timeSeries.Times[firstVisible] > windowLeftSeconds)
             {
                 firstVisible--;
@@ -71,6 +72,11 @@ namespace SongBPMFinder
             while (firstVisible < timeSeries.Times.Length && timeSeries.Times[firstVisible] < windowLeftSeconds)
             {
                 firstVisible++;
+            }
+
+            if (firstVisible > timeSeries.Times.Length)
+            {
+                firstVisible = firstVisible;
             }
 
             lastWindowStart = firstVisible;
@@ -89,6 +95,15 @@ namespace SongBPMFinder
                 try
                 {
                     g.DrawLine(linePen, x0, y0, x1, y1);
+
+                    const int rectSize = 1;
+
+                    if (i == 0)
+                    {
+                        //g.DrawRectangle(linePen, x0 - rectSize, y0 - rectSize, 2*rectSize, 2 * rectSize);
+                    }
+
+                    //g.DrawRectangle(linePen, x1 - rectSize, y1 - rectSize, 2 * rectSize, 2 * rectSize);
                 }
                 catch(Exception e)
                 {

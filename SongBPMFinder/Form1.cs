@@ -75,7 +75,6 @@ namespace SongBPMFinder
 
         private void addTimeSeries(TimeSeries series)
         {
-            series.Normalize();
             audioViewer.AddTimeSeries(series);
         }
 
