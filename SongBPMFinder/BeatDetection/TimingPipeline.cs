@@ -85,6 +85,20 @@ namespace SongBPMFinder
             }
         }
 
+        public float StandardDeviationThreshold {
+            get => beatDetector.StandardDeviationThreshold;
+            set => beatDetector.StandardDeviationThreshold = value;
+        }
+
+        public double PeakDetectWindow {
+            get => beatDetector.PeakDetectWindow;
+            set => beatDetector.PeakDetectWindow = value;
+        }
+
+        public float PeakDetectInfluence {
+            get => beatDetector.PeakDetectInfluence;
+            set => beatDetector.PeakDetectInfluence = value;
+        }
 
         public List<TimeSeries> DebugTimeSeries {
             get {

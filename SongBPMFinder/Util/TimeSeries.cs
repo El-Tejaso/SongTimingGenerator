@@ -90,8 +90,6 @@ namespace SongBPMFinder
         /// 
         /// Also it doesnt work that well when windowSize is large, or Im just not using it right.
         /// Its ok though, I have an idea for something similar that might be better
-        /// 
-        /// Influence is going to be multiplied by the time between points aka deltatime
         /// </summary>
         public TimeSeries PeakDetectTimeSeries(double windowSize, float influence, float threshold, bool binary = true)
         {
@@ -121,8 +119,8 @@ namespace SongBPMFinder
                 float newMean = MathUtilSpanF.Mean(range, SpanFunctional.None);
                 float newStandardDev = MathUtilSpanF.StandardDeviation(range);
 
-                mean = MathUtilF.Lerp(mean, newMean, influence * deltaTime);
-                standardDev = MathUtilF.Lerp(mean, newStandardDev, influence * deltaTime);
+                mean = MathUtilF.Lerp(mean, newMean, influence);
+                standardDev = MathUtilF.Lerp(mean, newStandardDev, influence);
 
                 float value = (Math.Abs(Values[rangeEnd] - mean) / standardDev) / threshold;
 

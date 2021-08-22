@@ -60,13 +60,17 @@ namespace SongBPMFinder
         {
             fourierWindowCombobox.SelectedIndex = 2;
             addAllFreqCheckbox.Checked = false;
-            leftChannelCheckbox.Checked = true;
+            leftChannelCheckbox.Checked = false;
             rightChannelCheckbox.Checked = true;
             evalDistanceNumeric.Value = (decimal)0.01;
             binaryPeakCheckbox.Checked = false;
             numFreqBandsNumeric.Value = 1;
             strideNumeric.Value = 0.0005M;
             differenceFunctionCombobox.SelectedIndex = 0;
+            peakDetectWindowSizeNumeric.Value = 0.2M;
+            peakDetectStdDevThresholdNumeric.Value = 3.5M;
+            peakDetectInfluenceNumeric.Value = 0.5M;
+            localizedTimingCheckbox.Checked = true;
 
             FourierWindowCombobox_OnSelectedIndexChanged(null, null);
             AddAllFrequ_OnCheckChanded(null, null);
@@ -77,6 +81,10 @@ namespace SongBPMFinder
             numFrequNumeric_OnValueChanged(null, null);
             strideNumeric_ValueChanged(null, null);
             differenceFunctionCombobox_SelectedIndexChanged(null, null);
+            peakDetectWindowSizeNumeric_ValueChanged(null, null);
+            peakDetectStdDevThresholdNumeric_ValueChanged(null, null);
+            peakDetectInfluenceNumeric_ValueChanged(null, null);
+            localizedTimingCheckbox_CheckedChanged(null, null);
         }
 
         private void AudioPlaybackSystem_OnSongPause()
@@ -238,17 +246,7 @@ namespace SongBPMFinder
 
         void calculateTiming()
         {
-            if (localizedTimingCheckbox.Checked)
-            {
-                timingPipeline.Start = audioViewer.Coordinates.WindowLeftSeconds;
-                timingPipeline.End = audioViewer.Coordinates.WindowRightSeconds;
-            }
-            else
-            {
-                timingPipeline.Start = -1;
-                timingPipeline.End = -1;
-            }
-
+            setTimelineRangeIfLocalizedTiming();
 
             DateTime t = DateTime.Now;
 
@@ -266,6 +264,22 @@ namespace SongBPMFinder
             for (int i = 0; i < timingPipeline.DebugTimeSeries.Count; i++)
             {
                 addTimeSeries(timingPipeline.DebugTimeSeries[i]);
+            }
+        }
+
+        private void setTimelineRangeIfLocalizedTiming()
+        {
+
+            if (localizedTimingCheckbox.Checked)
+            {
+                double excess = audioViewer.Coordinates.WindowLengthSeconds * 0.25;
+                timingPipeline.Start = Math.Max(0, audioViewer.Coordinates.WindowLeftSeconds - excess);
+                timingPipeline.End = audioViewer.Coordinates.WindowRightSeconds + excess;
+            }
+            else
+            {
+                timingPipeline.Start = -1;
+                timingPipeline.End = -1;
             }
         }
 
@@ -354,6 +368,21 @@ namespace SongBPMFinder
         private void localizedTimingCheckbox_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void peakDetectStdDevThresholdNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.StandardDeviationThreshold = (float)peakDetectStdDevThresholdNumeric.Value;
+        }
+
+        private void peakDetectInfluenceNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.PeakDetectInfluence = (float)peakDetectInfluenceNumeric.Value;
+        }
+
+        private void peakDetectWindowSizeNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            timingPipeline.PeakDetectWindow = (double)peakDetectWindowSizeNumeric.Value;
         }
     }
 }

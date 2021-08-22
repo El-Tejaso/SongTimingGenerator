@@ -19,6 +19,10 @@ namespace SongBPMFinder
         public double EvalDistance = 0.25;
         public double Stride = 0.0005;
 
+        public float StandardDeviationThreshold = 3.5f;
+        public double PeakDetectWindow = 0.2f;
+        public float PeakDetectInfluence = 1f;
+
         public int FrequencyBands = 4;
         public bool BinaryPeaks = false;
 
@@ -62,7 +66,7 @@ namespace SongBPMFinder
                 fourierDerivatives[i].Normalize();
                 addTimeSeries(fourierDerivatives[i], Color.Yellow);
 
-                TimeSeries peakDetect = fourierDerivatives[i].PeakDetectTimeSeries(0.2, 1, 3.5f, BinaryPeaks);
+                TimeSeries peakDetect = fourierDerivatives[i].PeakDetectTimeSeries(PeakDetectWindow, PeakDetectInfluence, StandardDeviationThreshold, BinaryPeaks);
 
                 peakDetectionSignals[i] = peakDetect;
                 
@@ -117,7 +121,7 @@ namespace SongBPMFinder
             int rangeStart = 0;
             int rangeEnd = audioSlice.Length;
 
-            if (Start > 0)
+            if (Start >= 0)
             {
                 rangeStart = audioSlice.SecondsToSamples(Start);
                 rangeEnd = audioSlice.SecondsToSamples(End);

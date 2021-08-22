@@ -40,21 +40,22 @@
             this.buttonSpeed025x = new System.Windows.Forms.Button();
             this.waveformTabs = new System.Windows.Forms.TabControl();
             this.songWaveformTab = new System.Windows.Forms.TabPage();
-            this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab = new System.Windows.Forms.TabPage();
-            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab2 = new System.Windows.Forms.TabPage();
-            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab3 = new System.Windows.Forms.TabPage();
-            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab4 = new System.Windows.Forms.TabPage();
-            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
             this.testWaveformTab5 = new System.Windows.Forms.TabPage();
-            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textOutput = new System.Windows.Forms.RichTextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.peakDetectWindowSizeNumeric = new System.Windows.Forms.NumericUpDown();
+            this.peakDetectInfluenceNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.peakDetectStdDevThresholdNumeric = new System.Windows.Forms.NumericUpDown();
             this.localizedTimingCheckbox = new System.Windows.Forms.CheckBox();
             this.differenceFunctionCombobox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -83,6 +84,12 @@
             this.copyToClipboardToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
+            this.audioViewer = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot3 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot4 = new SongBPMFinder.CustomWaveViewer();
+            this.debugPlot5 = new SongBPMFinder.CustomWaveViewer();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -103,6 +110,9 @@
             this.splitContainer2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectWindowSizeNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectInfluenceNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectStdDevThresholdNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.strideNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFreqBandsNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.evalDistanceNumeric)).BeginInit();
@@ -139,7 +149,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(1107, 556);
-            this.splitContainer1.SplitterDistance = 350;
+            this.splitContainer1.SplitterDistance = 320;
             this.splitContainer1.TabIndex = 5;
             // 
             // tableLayoutPanel3
@@ -155,7 +165,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1107, 350);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1107, 320);
             this.tableLayoutPanel3.TabIndex = 3;
             // 
             // flowLayoutPanel1
@@ -181,6 +191,7 @@
             this.playPauseButton.TabIndex = 0;
             this.playPauseButton.Text = "4";
             this.playPauseButton.UseVisualStyleBackColor = true;
+            this.playPauseButton.Click += new System.EventHandler(this.playPauseButton_Click);
             // 
             // buttonSpeed1x
             // 
@@ -192,6 +203,7 @@
             this.buttonSpeed1x.TabIndex = 1;
             this.buttonSpeed1x.Text = "1x";
             this.buttonSpeed1x.UseVisualStyleBackColor = true;
+            this.buttonSpeed1x.Click += new System.EventHandler(this.buttonSpeed1x_Click);
             // 
             // buttonSpeed075x
             // 
@@ -203,6 +215,7 @@
             this.buttonSpeed075x.TabIndex = 2;
             this.buttonSpeed075x.Text = "0.75x";
             this.buttonSpeed075x.UseVisualStyleBackColor = true;
+            this.buttonSpeed075x.Click += new System.EventHandler(this.buttonSpeed075x_Click);
             // 
             // buttonSpeed050x
             // 
@@ -214,6 +227,7 @@
             this.buttonSpeed050x.TabIndex = 3;
             this.buttonSpeed050x.Text = "0.5x";
             this.buttonSpeed050x.UseVisualStyleBackColor = true;
+            this.buttonSpeed050x.Click += new System.EventHandler(this.buttonSpeed050x_Click);
             // 
             // buttonSpeed025x
             // 
@@ -225,6 +239,7 @@
             this.buttonSpeed025x.TabIndex = 4;
             this.buttonSpeed025x.Text = "0.25x";
             this.buttonSpeed025x.UseVisualStyleBackColor = true;
+            this.buttonSpeed025x.Click += new System.EventHandler(this.buttonSpeed025x_Click);
             // 
             // waveformTabs
             // 
@@ -238,7 +253,7 @@
             this.waveformTabs.Location = new System.Drawing.Point(3, 49);
             this.waveformTabs.Name = "waveformTabs";
             this.waveformTabs.SelectedIndex = 0;
-            this.waveformTabs.Size = new System.Drawing.Size(1101, 298);
+            this.waveformTabs.Size = new System.Drawing.Size(1101, 268);
             this.waveformTabs.TabIndex = 7;
             // 
             // songWaveformTab
@@ -247,19 +262,10 @@
             this.songWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.songWaveformTab.Name = "songWaveformTab";
             this.songWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.songWaveformTab.Size = new System.Drawing.Size(1093, 272);
+            this.songWaveformTab.Size = new System.Drawing.Size(1093, 242);
             this.songWaveformTab.TabIndex = 0;
             this.songWaveformTab.Text = "Song Waveform";
             this.songWaveformTab.UseVisualStyleBackColor = true;
-            // 
-            // audioViewer
-            // 
-            this.audioViewer.AudioData = null;
-            this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audioViewer.Location = new System.Drawing.Point(3, 3);
-            this.audioViewer.Name = "audioViewer";
-            this.audioViewer.Size = new System.Drawing.Size(1087, 266);
-            this.audioViewer.TabIndex = 0;
             // 
             // testWaveformTab
             // 
@@ -272,15 +278,6 @@
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
             // 
-            // debugPlot1
-            // 
-            this.debugPlot1.AudioData = null;
-            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot1.Name = "debugPlot1";
-            this.debugPlot1.Size = new System.Drawing.Size(1087, 266);
-            this.debugPlot1.TabIndex = 0;
-            // 
             // testWaveformTab2
             // 
             this.testWaveformTab2.Controls.Add(this.debugPlot2);
@@ -291,15 +288,6 @@
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot2
-            // 
-            this.debugPlot2.AudioData = null;
-            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot2.Name = "debugPlot2";
-            this.debugPlot2.Size = new System.Drawing.Size(1087, 266);
-            this.debugPlot2.TabIndex = 0;
             // 
             // testWaveformTab3
             // 
@@ -312,15 +300,6 @@
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
             // 
-            // debugPlot3
-            // 
-            this.debugPlot3.AudioData = null;
-            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot3.Name = "debugPlot3";
-            this.debugPlot3.Size = new System.Drawing.Size(1087, 266);
-            this.debugPlot3.TabIndex = 0;
-            // 
             // testWaveformTab4
             // 
             this.testWaveformTab4.Controls.Add(this.debugPlot4);
@@ -332,15 +311,6 @@
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
             // 
-            // debugPlot4
-            // 
-            this.debugPlot4.AudioData = null;
-            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot4.Name = "debugPlot4";
-            this.debugPlot4.Size = new System.Drawing.Size(1087, 266);
-            this.debugPlot4.TabIndex = 0;
-            // 
             // testWaveformTab5
             // 
             this.testWaveformTab5.Controls.Add(this.debugPlot5);
@@ -351,15 +321,6 @@
             this.testWaveformTab5.TabIndex = 5;
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
-            // 
-            // debugPlot5
-            // 
-            this.debugPlot5.AudioData = null;
-            this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugPlot5.Location = new System.Drawing.Point(3, 3);
-            this.debugPlot5.Name = "debugPlot5";
-            this.debugPlot5.Size = new System.Drawing.Size(1087, 266);
-            this.debugPlot5.TabIndex = 0;
             // 
             // splitContainer2
             // 
@@ -374,8 +335,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer2.Size = new System.Drawing.Size(1107, 202);
-            this.splitContainer2.SplitterDistance = 502;
+            this.splitContainer2.Size = new System.Drawing.Size(1107, 232);
+            this.splitContainer2.SplitterDistance = 400;
             this.splitContainer2.TabIndex = 0;
             // 
             // textOutput
@@ -388,7 +349,7 @@
             this.textOutput.Location = new System.Drawing.Point(0, 0);
             this.textOutput.Name = "textOutput";
             this.textOutput.ReadOnly = true;
-            this.textOutput.Size = new System.Drawing.Size(502, 202);
+            this.textOutput.Size = new System.Drawing.Size(400, 232);
             this.textOutput.TabIndex = 2;
             this.textOutput.Text = "Woah, someone actually downloaded this";
             // 
@@ -400,11 +361,18 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(601, 202);
+            this.tabControl1.Size = new System.Drawing.Size(703, 232);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label9);
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.peakDetectWindowSizeNumeric);
+            this.tabPage1.Controls.Add(this.peakDetectInfluenceNumeric);
+            this.tabPage1.Controls.Add(this.label7);
+            this.tabPage1.Controls.Add(this.label6);
+            this.tabPage1.Controls.Add(this.peakDetectStdDevThresholdNumeric);
             this.tabPage1.Controls.Add(this.localizedTimingCheckbox);
             this.tabPage1.Controls.Add(this.differenceFunctionCombobox);
             this.tabPage1.Controls.Add(this.label5);
@@ -423,16 +391,142 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(593, 176);
+            this.tabPage1.Size = new System.Drawing.Size(695, 206);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Beat detection";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(535, 3);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(79, 13);
+            this.label9.TabIndex = 26;
+            this.label9.Text = "Peak detection";
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(465, 79);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(93, 13);
+            this.label8.TabIndex = 25;
+            this.label8.Text = "Window size (sec)";
+            // 
+            // peakDetectWindowSizeNumeric
+            // 
+            this.peakDetectWindowSizeNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.peakDetectWindowSizeNumeric.DecimalPlaces = 3;
+            this.peakDetectWindowSizeNumeric.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
+            this.peakDetectWindowSizeNumeric.Location = new System.Drawing.Point(564, 77);
+            this.peakDetectWindowSizeNumeric.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.peakDetectWindowSizeNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.peakDetectWindowSizeNumeric.Name = "peakDetectWindowSizeNumeric";
+            this.peakDetectWindowSizeNumeric.Size = new System.Drawing.Size(120, 20);
+            this.peakDetectWindowSizeNumeric.TabIndex = 24;
+            this.peakDetectWindowSizeNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.peakDetectWindowSizeNumeric.ValueChanged += new System.EventHandler(this.peakDetectWindowSizeNumeric_ValueChanged);
+            // 
+            // peakDetectInfluenceNumeric
+            // 
+            this.peakDetectInfluenceNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.peakDetectInfluenceNumeric.DecimalPlaces = 4;
+            this.peakDetectInfluenceNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.peakDetectInfluenceNumeric.Location = new System.Drawing.Point(564, 51);
+            this.peakDetectInfluenceNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.peakDetectInfluenceNumeric.Name = "peakDetectInfluenceNumeric";
+            this.peakDetectInfluenceNumeric.Size = new System.Drawing.Size(120, 20);
+            this.peakDetectInfluenceNumeric.TabIndex = 23;
+            this.peakDetectInfluenceNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.peakDetectInfluenceNumeric.ValueChanged += new System.EventHandler(this.peakDetectInfluenceNumeric_ValueChanged);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(496, 53);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(51, 13);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Influence";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(469, 27);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(89, 13);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "StdDev threshold";
+            // 
+            // peakDetectStdDevThresholdNumeric
+            // 
+            this.peakDetectStdDevThresholdNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.peakDetectStdDevThresholdNumeric.DecimalPlaces = 2;
+            this.peakDetectStdDevThresholdNumeric.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.peakDetectStdDevThresholdNumeric.Location = new System.Drawing.Point(564, 25);
+            this.peakDetectStdDevThresholdNumeric.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.peakDetectStdDevThresholdNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.peakDetectStdDevThresholdNumeric.Name = "peakDetectStdDevThresholdNumeric";
+            this.peakDetectStdDevThresholdNumeric.Size = new System.Drawing.Size(120, 20);
+            this.peakDetectStdDevThresholdNumeric.TabIndex = 18;
+            this.peakDetectStdDevThresholdNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.peakDetectStdDevThresholdNumeric.ValueChanged += new System.EventHandler(this.peakDetectStdDevThresholdNumeric_ValueChanged);
             // 
             // localizedTimingCheckbox
             // 
             this.localizedTimingCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.localizedTimingCheckbox.AutoSize = true;
-            this.localizedTimingCheckbox.Location = new System.Drawing.Point(402, 103);
+            this.localizedTimingCheckbox.Location = new System.Drawing.Point(495, 160);
             this.localizedTimingCheckbox.Name = "localizedTimingCheckbox";
             this.localizedTimingCheckbox.Size = new System.Drawing.Size(185, 17);
             this.localizedTimingCheckbox.TabIndex = 17;
@@ -508,7 +602,7 @@
             this.rightChannelCheckbox.AutoSize = true;
             this.rightChannelCheckbox.Checked = true;
             this.rightChannelCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.rightChannelCheckbox.Location = new System.Drawing.Point(494, 130);
+            this.rightChannelCheckbox.Location = new System.Drawing.Point(495, 183);
             this.rightChannelCheckbox.Name = "rightChannelCheckbox";
             this.rightChannelCheckbox.Size = new System.Drawing.Size(93, 17);
             this.rightChannelCheckbox.TabIndex = 12;
@@ -522,7 +616,7 @@
             this.leftChannelCheckbox.AutoSize = true;
             this.leftChannelCheckbox.Checked = true;
             this.leftChannelCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.leftChannelCheckbox.Location = new System.Drawing.Point(501, 153);
+            this.leftChannelCheckbox.Location = new System.Drawing.Point(603, 183);
             this.leftChannelCheckbox.Name = "leftChannelCheckbox";
             this.leftChannelCheckbox.Size = new System.Drawing.Size(86, 17);
             this.leftChannelCheckbox.TabIndex = 11;
@@ -532,8 +626,9 @@
             // 
             // binaryPeakCheckbox
             // 
+            this.binaryPeakCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.binaryPeakCheckbox.AutoSize = true;
-            this.binaryPeakCheckbox.Location = new System.Drawing.Point(367, 19);
+            this.binaryPeakCheckbox.Location = new System.Drawing.Point(538, 111);
             this.binaryPeakCheckbox.Name = "binaryPeakCheckbox";
             this.binaryPeakCheckbox.Size = new System.Drawing.Size(88, 17);
             this.binaryPeakCheckbox.TabIndex = 10;
@@ -746,6 +841,60 @@
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
+            // audioViewer
+            // 
+            this.audioViewer.AudioData = null;
+            this.audioViewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.audioViewer.Location = new System.Drawing.Point(3, 3);
+            this.audioViewer.Name = "audioViewer";
+            this.audioViewer.Size = new System.Drawing.Size(1087, 236);
+            this.audioViewer.TabIndex = 0;
+            // 
+            // debugPlot1
+            // 
+            this.debugPlot1.AudioData = null;
+            this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot1.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot1.Name = "debugPlot1";
+            this.debugPlot1.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot1.TabIndex = 0;
+            // 
+            // debugPlot2
+            // 
+            this.debugPlot2.AudioData = null;
+            this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot2.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot2.Name = "debugPlot2";
+            this.debugPlot2.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot2.TabIndex = 0;
+            // 
+            // debugPlot3
+            // 
+            this.debugPlot3.AudioData = null;
+            this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot3.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot3.Name = "debugPlot3";
+            this.debugPlot3.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot3.TabIndex = 0;
+            // 
+            // debugPlot4
+            // 
+            this.debugPlot4.AudioData = null;
+            this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot4.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot4.Name = "debugPlot4";
+            this.debugPlot4.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot4.TabIndex = 0;
+            // 
+            // debugPlot5
+            // 
+            this.debugPlot5.AudioData = null;
+            this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugPlot5.Location = new System.Drawing.Point(3, 3);
+            this.debugPlot5.Name = "debugPlot5";
+            this.debugPlot5.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot5.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -780,6 +929,9 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectWindowSizeNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectInfluenceNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.peakDetectStdDevThresholdNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.strideNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFreqBandsNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.evalDistanceNumeric)).EndInit();
@@ -845,6 +997,13 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox differenceFunctionCombobox;
         private System.Windows.Forms.CheckBox localizedTimingCheckbox;
+        private System.Windows.Forms.NumericUpDown peakDetectStdDevThresholdNumeric;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown peakDetectWindowSizeNumeric;
+        private System.Windows.Forms.NumericUpDown peakDetectInfluenceNumeric;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label6;
     }
 }
 
