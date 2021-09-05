@@ -106,6 +106,11 @@ namespace SongBPMFinder
             }
         }
 
+        public bool CorrectFrequencies {
+            get => beatDetector.CorrectFrequencies;
+            set => beatDetector.CorrectFrequencies = value;
+        }
+
         public TimingPointList TimeSong(AudioData audio)
         {
             debugTimeSeries.Clear();

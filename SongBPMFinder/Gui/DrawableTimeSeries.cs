@@ -29,11 +29,12 @@ namespace SongBPMFinder
             linePen.Color = timeSeries.Color;
             linePen.Width = timeSeries.Width;
 
+
             double windowLeftSeconds = coordinates.WindowLeftSeconds;
             alignDrawWindowStartToTime(windowLeftSeconds);
 
             int top = clientRectangle.Top;
-            int bottom = clientRectangle.Bottom;
+            int bottom = clientRectangle.Bottom - 80;
 
             for (int i = drawWindowStart; i + 1 < timeSeries.Times.Length; i++)
             {

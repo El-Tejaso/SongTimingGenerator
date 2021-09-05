@@ -84,6 +84,7 @@
             this.copyToClipboardToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.songPositionChangedInterrupt = new System.Windows.Forms.Timer(this.components);
+            this.correctFrequenciesCheckbox = new System.Windows.Forms.CheckBox();
             this.audioViewer = new SongBPMFinder.CustomWaveViewer();
             this.debugPlot1 = new SongBPMFinder.CustomWaveViewer();
             this.debugPlot2 = new SongBPMFinder.CustomWaveViewer();
@@ -273,7 +274,7 @@
             this.testWaveformTab.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab.Name = "testWaveformTab";
             this.testWaveformTab.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab.Size = new System.Drawing.Size(1093, 272);
+            this.testWaveformTab.Size = new System.Drawing.Size(1093, 242);
             this.testWaveformTab.TabIndex = 1;
             this.testWaveformTab.Text = "Debug plot";
             this.testWaveformTab.UseVisualStyleBackColor = true;
@@ -284,7 +285,7 @@
             this.testWaveformTab2.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab2.Name = "testWaveformTab2";
             this.testWaveformTab2.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab2.Size = new System.Drawing.Size(1093, 272);
+            this.testWaveformTab2.Size = new System.Drawing.Size(1093, 242);
             this.testWaveformTab2.TabIndex = 2;
             this.testWaveformTab2.Text = "Debug Plot 2";
             this.testWaveformTab2.UseVisualStyleBackColor = true;
@@ -295,7 +296,7 @@
             this.testWaveformTab3.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab3.Name = "testWaveformTab3";
             this.testWaveformTab3.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab3.Size = new System.Drawing.Size(1093, 272);
+            this.testWaveformTab3.Size = new System.Drawing.Size(1093, 242);
             this.testWaveformTab3.TabIndex = 3;
             this.testWaveformTab3.Text = "Debug plot 3";
             this.testWaveformTab3.UseVisualStyleBackColor = true;
@@ -306,7 +307,7 @@
             this.testWaveformTab4.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab4.Name = "testWaveformTab4";
             this.testWaveformTab4.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab4.Size = new System.Drawing.Size(1093, 272);
+            this.testWaveformTab4.Size = new System.Drawing.Size(1093, 242);
             this.testWaveformTab4.TabIndex = 4;
             this.testWaveformTab4.Text = "Debug plot 4";
             this.testWaveformTab4.UseVisualStyleBackColor = true;
@@ -317,7 +318,7 @@
             this.testWaveformTab5.Location = new System.Drawing.Point(4, 22);
             this.testWaveformTab5.Name = "testWaveformTab5";
             this.testWaveformTab5.Padding = new System.Windows.Forms.Padding(3);
-            this.testWaveformTab5.Size = new System.Drawing.Size(1093, 272);
+            this.testWaveformTab5.Size = new System.Drawing.Size(1093, 242);
             this.testWaveformTab5.TabIndex = 5;
             this.testWaveformTab5.Text = "Debug plot 5";
             this.testWaveformTab5.UseVisualStyleBackColor = true;
@@ -366,6 +367,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.correctFrequenciesCheckbox);
             this.tabPage1.Controls.Add(this.label9);
             this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.peakDetectWindowSizeNumeric);
@@ -454,10 +456,10 @@
             1,
             0,
             0,
-            262144});
+            65536});
             this.peakDetectInfluenceNumeric.Location = new System.Drawing.Point(564, 51);
             this.peakDetectInfluenceNumeric.Maximum = new decimal(new int[] {
-            1,
+            1000,
             0,
             0,
             0});
@@ -475,11 +477,11 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(496, 53);
+            this.label7.Location = new System.Drawing.Point(443, 55);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(51, 13);
+            this.label7.Size = new System.Drawing.Size(115, 13);
             this.label7.TabIndex = 22;
-            this.label7.Text = "Influence";
+            this.label7.Text = "Influence(velocity/sec)";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label6
@@ -541,6 +543,7 @@
             this.differenceFunctionCombobox.FormattingEnabled = true;
             this.differenceFunctionCombobox.Items.AddRange(new object[] {
             "Sum of Squares Difference,",
+            "Sum of Cubes Difference,",
             "Max Frequency-Gain Difference"});
             this.differenceFunctionCombobox.Location = new System.Drawing.Point(183, 103);
             this.differenceFunctionCombobox.Name = "differenceFunctionCombobox";
@@ -744,7 +747,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(593, 176);
+            this.tabPage2.Size = new System.Drawing.Size(695, 206);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Timing generation";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -841,6 +844,17 @@
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
+            // correctFrequenciesCheckbox
+            // 
+            this.correctFrequenciesCheckbox.AutoSize = true;
+            this.correctFrequenciesCheckbox.Location = new System.Drawing.Point(183, 148);
+            this.correctFrequenciesCheckbox.Name = "correctFrequenciesCheckbox";
+            this.correctFrequenciesCheckbox.Size = new System.Drawing.Size(118, 17);
+            this.correctFrequenciesCheckbox.TabIndex = 27;
+            this.correctFrequenciesCheckbox.Text = "Correct frequencies";
+            this.correctFrequenciesCheckbox.UseVisualStyleBackColor = true;
+            this.correctFrequenciesCheckbox.CheckedChanged += new System.EventHandler(this.correctFrequenciesCheckbox_CheckedChanged);
+            // 
             // audioViewer
             // 
             this.audioViewer.AudioData = null;
@@ -856,7 +870,7 @@
             this.debugPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot1.Location = new System.Drawing.Point(3, 3);
             this.debugPlot1.Name = "debugPlot1";
-            this.debugPlot1.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot1.Size = new System.Drawing.Size(1087, 236);
             this.debugPlot1.TabIndex = 0;
             // 
             // debugPlot2
@@ -865,7 +879,7 @@
             this.debugPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot2.Location = new System.Drawing.Point(3, 3);
             this.debugPlot2.Name = "debugPlot2";
-            this.debugPlot2.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot2.Size = new System.Drawing.Size(1087, 236);
             this.debugPlot2.TabIndex = 0;
             // 
             // debugPlot3
@@ -874,7 +888,7 @@
             this.debugPlot3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot3.Location = new System.Drawing.Point(3, 3);
             this.debugPlot3.Name = "debugPlot3";
-            this.debugPlot3.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot3.Size = new System.Drawing.Size(1087, 236);
             this.debugPlot3.TabIndex = 0;
             // 
             // debugPlot4
@@ -883,7 +897,7 @@
             this.debugPlot4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot4.Location = new System.Drawing.Point(3, 3);
             this.debugPlot4.Name = "debugPlot4";
-            this.debugPlot4.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot4.Size = new System.Drawing.Size(1087, 236);
             this.debugPlot4.TabIndex = 0;
             // 
             // debugPlot5
@@ -892,7 +906,7 @@
             this.debugPlot5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugPlot5.Location = new System.Drawing.Point(3, 3);
             this.debugPlot5.Name = "debugPlot5";
-            this.debugPlot5.Size = new System.Drawing.Size(1087, 266);
+            this.debugPlot5.Size = new System.Drawing.Size(1087, 236);
             this.debugPlot5.TabIndex = 0;
             // 
             // Form1
@@ -1004,6 +1018,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox correctFrequenciesCheckbox;
     }
 }
 

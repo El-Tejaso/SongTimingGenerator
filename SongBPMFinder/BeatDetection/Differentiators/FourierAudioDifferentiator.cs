@@ -24,14 +24,26 @@ namespace SongBPMFinder
 
     public struct FTDelta
     {
-        public readonly float[] LastFT;
-        public readonly float[] ThisFT;
+        public Span<float> LastFT {
+            get {
+                return new Span<float>(lastFT, 0, lastFT.Length / 2);
+            }
+        }
+        public Span<float> ThisFT {
+            get {
+                return new Span<float>(thisFT, 0, thisFT.Length / 2);
+            }
+        }
+
+        private float[] lastFT;
+        private float[] thisFT;
+
         public readonly double Time;
 
         public FTDelta(float[] lastFT, float[] thisFT, double time)
         {
-            LastFT = lastFT;
-            ThisFT = thisFT;
+            this.lastFT = lastFT;
+            this.thisFT = thisFT;
             Time = time;
         }
     }

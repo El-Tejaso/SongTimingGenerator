@@ -10,6 +10,7 @@ namespace SongBPMFinder
     public enum FourierDifferenceType
     {
         SumSquares,
+        SumCubes,
         MaxSample,
     }
 
@@ -32,6 +33,7 @@ namespace SongBPMFinder
         public double End = -1;
 
         public FourierDifferenceType DifferenceFunction;
+        public bool CorrectFrequencies;
 
         public DefaultBeatDetector(List<TimeSeries> debugTimeSeries)
             : base(debugTimeSeries)
@@ -78,8 +80,11 @@ namespace SongBPMFinder
 
         private static TimeSeries[] combineTimeSerieses(TimeSeries[] fourierDerivatives)
         {
+            MathUtilSpanF.Normalize(fourierDerivatives[0].Values);
+
             for (int i = 1; i < fourierDerivatives.Length; i++)
             {
+                MathUtilSpanF.Normalize(fourierDerivatives[i].Values);
                 MathUtilSpanF.Add(fourierDerivatives[0].Values, fourierDerivatives[i].Values, fourierDerivatives[0].Values);
             }
 
@@ -131,19 +136,18 @@ namespace SongBPMFinder
             return subsetOfData;
         }
 
-        public AbstractFTDeltaCalculator createDeltaCalculator(int minFrequ, int maxFrequ)
+        public AbstractFTDeltaCalculator createDeltaCalculator(int minFrequ, int maxFrequ, bool correctFrequencies)
         {
             switch (DifferenceFunction)
             {
                 case FourierDifferenceType.SumSquares:
-                    return new SumSquareDifferencesFTDeltaCalculator(minFrequ, maxFrequ);
+                    return new SumSquareDifferencesFTDeltaCalculator(minFrequ, maxFrequ, correctFrequencies);
                 case FourierDifferenceType.MaxSample:
-                    return new MaxDifferenceFTDeltaCalculator(minFrequ, maxFrequ);
+                    return new MaxDifferenceFTDeltaCalculator(minFrequ, maxFrequ, correctFrequencies);
+                case FourierDifferenceType.SumCubes:
+                    return new SumCubesDifferenceFTDeltaCalculator(minFrequ, maxFrequ, correctFrequencies);
                 default:
-#if DEBUG
-                    throw new Exception("Bruh you havent handled this type that u created lmao");
-#endif
-                    return new SumSquareDifferencesFTDeltaCalculator(minFrequ, maxFrequ);
+                    throw new Exception("Bruh you havent handled this type that u urself created lmao");
             }
         }
 
@@ -153,25 +157,24 @@ namespace SongBPMFinder
 
             FourierAudioDifferentiator differentiator = new FourierAudioDifferentiator(sampleWindow, evalDistance, stride);
 
-            AbstractFTDeltaCalculator[] bands = new AbstractFTDeltaCalculator[segmentCount];
-            TimeSeriesBuilder[] timeSeries = new TimeSeriesBuilder[segmentCount];
-
-            for (int i = 0; i < segmentCount; i++)
-            {
-                bands[i] = createDeltaCalculator(i * sampleWindow / segmentCount, (i + 1) * sampleWindow / segmentCount);
-                timeSeries[i] = new TimeSeriesBuilder();
-            }
+            AbstractFTDeltaCalculator[] bands = createBands(sampleWindow, segmentCount);
+            TimeSeriesBuilder[] timeSeries = createEmptyTimeSerieses(segmentCount);
 
             foreach (FTDelta delta in differentiator.AllFourierTransforms(audio))
             {
                 for (int i = 0; i < segmentCount; i++)
                 {
                     float result = bands[i].Delta(delta.LastFT, delta.ThisFT);
+
                     timeSeries[i].Add(delta.Time, result);
                 }
             }
 
+            return finalizeTimeSerieses(timeSeries);
+        }
 
+        private static TimeSeries[] finalizeTimeSerieses(TimeSeriesBuilder[] timeSeries)
+        {
             TimeSeries[] allTS = new TimeSeries[timeSeries.Length];
 
             for (int i = 0; i < timeSeries.Length; i++)
@@ -180,6 +183,31 @@ namespace SongBPMFinder
             }
 
             return allTS;
+        }
+
+        private static TimeSeriesBuilder[] createEmptyTimeSerieses(int segmentCount)
+        {
+            TimeSeriesBuilder[] timeSeries = new TimeSeriesBuilder[segmentCount];
+            for (int i = 0; i < segmentCount; i++)
+            {
+                timeSeries[i] = new TimeSeriesBuilder();
+            }
+
+            return timeSeries;
+        }
+
+        private AbstractFTDeltaCalculator[] createBands(int sampleWindow, int segmentCount)
+        {
+            sampleWindow /= 2;
+            AbstractFTDeltaCalculator[] bands = new AbstractFTDeltaCalculator[segmentCount];
+
+            for (int i = 0; i < segmentCount; i++)
+            {
+                bands[i] = createDeltaCalculator(
+                    i * sampleWindow / segmentCount, (i + 1) * sampleWindow / segmentCount, CorrectFrequencies);
+            }
+
+            return bands;
         }
 
         private void addTimeSeries(TimeSeries series, Color c, bool normalize = true)

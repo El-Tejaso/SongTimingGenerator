@@ -99,11 +99,13 @@
     <Compile Include="BeatDetection\Beats\Beat.cs" />
     <Compile Include="BeatDetection\Beats\DefaultBeatDetector.cs" />
     <Compile Include="BeatDetection\Conventions.cs" />
+    <Compile Include="BeatDetection\Differentiators\CoherenceFTDeltaCalculator.cs" />
     <Compile Include="BeatDetection\Differentiators\FourierAudioDifferentiator.cs" />
     <Compile Include="BeatDetection\Abstract\AbstractBeatDetector.cs" />
     <Compile Include="BeatDetection\Abstract\ITimingPointFormatter.cs" />
     <Compile Include="BeatDetection\Abstract\ITimingGenerator.cs" />
     <Compile Include="BeatDetection\Differentiators\MaxDifferenceFTDeltaCalculator.cs" />
+    <Compile Include="BeatDetection\Differentiators\SumCubesDifferenceFTDeltaCalculator.cs" />
     <Compile Include="BeatDetection\Differentiators\SumSquareDifferencesFTDeltaCalculator.cs" />
     <Compile Include="BeatDetection\Formatting\OsuTimingPointFormatter.cs" />
     <Compile Include="BeatDetection\SongTiming\TimingGenerator.cs" />

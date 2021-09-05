@@ -9,15 +9,16 @@ namespace SongBPMFinder
     public abstract class AbstractFTDeltaCalculator
     {
         int minimumFrequency, maximumFrequency;
+        protected bool correctFrequencies;
 
         /// <summary>
         /// minimum inclusive, maximum exclusive
         /// </summary>
-        protected AbstractFTDeltaCalculator(int minimumFrequency, int maximumFrequency)
+        protected AbstractFTDeltaCalculator(int minimumFrequency, int maximumFrequency, bool correctFrequencies)
         {
             this.minimumFrequency = minimumFrequency;
             this.maximumFrequency = maximumFrequency;
-
+            this.correctFrequencies = correctFrequencies;
 
             if (!(minimumFrequency < 0 && maximumFrequency < 0))
             {
@@ -28,7 +29,7 @@ namespace SongBPMFinder
             }
         }
 
-        public float Delta(float[] lastFourierTransform, float[] thisFourierTransform)
+        public float Delta(Span<float> lastFourierTransform, Span<float> thisFourierTransform)
         {
             if (maximumFrequency > lastFourierTransform.Length)
             {
@@ -37,17 +38,25 @@ namespace SongBPMFinder
 
             int lowerFrequency = minimumFrequency < 0 ? 0 : minimumFrequency;
             int upperFrequency = maximumFrequency < 0 ? lastFourierTransform.Length : maximumFrequency;
-
+            int totalFrequencies = lastFourierTransform.Length;
 
             float acc = 0;
-            for (int j = lowerFrequency; j < upperFrequency; j++)
+            for (int currentFreqIndex = lowerFrequency; currentFreqIndex < upperFrequency; currentFreqIndex++)
             {
-                acc = this.deltaInternal(lastFourierTransform[j], thisFourierTransform[j], acc);
+                float a = lastFourierTransform[currentFreqIndex];
+                float b = thisFourierTransform[currentFreqIndex];
+                if (correctFrequencies)
+                {
+                    a = a / (float)(currentFreqIndex + 1);
+                    b = b / (float)(currentFreqIndex + 1);
+                }
+
+                acc = this.deltaInternal(a, b, acc, currentFreqIndex+1);
             }
 
             return acc;
         }
 
-        protected abstract float deltaInternal(float a, float b, float accumulator);
+        protected abstract float deltaInternal(float a, float b, float accumulator, int frequency);
     }
 }

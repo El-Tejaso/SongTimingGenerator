@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SongBPMFinder
+namespace SongBPMFinder.BeatDetection.Differentiators
 {
-    public class MaxDifferenceFTDeltaCalculator : AbstractFTDeltaCalculator
+    public class CoherenceFTDeltaCalculator : AbstractFTDeltaCalculator
     {
-
-        public MaxDifferenceFTDeltaCalculator(int minimumFrequency, int maximumFrequency, bool correctFrequencies)
+        public CoherenceFTDeltaCalculator(int minimumFrequency, int maximumFrequency, bool correctFrequencies)
             : base(minimumFrequency, maximumFrequency, correctFrequencies)
         {
             this.correctFrequencies = correctFrequencies;
@@ -17,10 +16,7 @@ namespace SongBPMFinder
 
         protected override float deltaInternal(float a, float b, float acc, int frequency)
         {
-            float value = b - a;
-            if (value > acc)
-                return value;
-
+            
             return acc;
         }
     }

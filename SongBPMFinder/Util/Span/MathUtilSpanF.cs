@@ -10,6 +10,16 @@ namespace SongBPMFinder
     /// </summary>
     public static class MathUtilSpanF
     {
+        public static void Normalize(Span<float> x)
+        {
+            Normalize(x, x, SpanFunctional.None);
+        }
+
+        public static void Normalize(Span<float> x, Span<float> dst, Func<float,float> op)
+        {
+            Divide(x, Max(x, op), dst);
+        }
+
         public static void Add(Span<float> a, Span<float> b, Span<float> dst)
         {
             SpanFunctional.Map(a, b, dst, (float x1, float x2) => {

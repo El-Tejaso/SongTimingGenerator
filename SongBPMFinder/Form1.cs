@@ -60,17 +60,18 @@ namespace SongBPMFinder
         {
             fourierWindowCombobox.SelectedIndex = 2;
             addAllFreqCheckbox.Checked = false;
-            leftChannelCheckbox.Checked = false;
-            rightChannelCheckbox.Checked = true;
-            evalDistanceNumeric.Value = (decimal)0.01;
+            leftChannelCheckbox.Checked = true;
+            rightChannelCheckbox.Checked = false;
+            evalDistanceNumeric.Value = (decimal)0.025;
             binaryPeakCheckbox.Checked = false;
             numFreqBandsNumeric.Value = 1;
             strideNumeric.Value = 0.0005M;
             differenceFunctionCombobox.SelectedIndex = 0;
             peakDetectWindowSizeNumeric.Value = 0.2M;
             peakDetectStdDevThresholdNumeric.Value = 3.5M;
-            peakDetectInfluenceNumeric.Value = 0.5M;
+            peakDetectInfluenceNumeric.Value = 1M;
             localizedTimingCheckbox.Checked = true;
+            correctFrequenciesCheckbox.Checked = true;
 
             FourierWindowCombobox_OnSelectedIndexChanged(null, null);
             AddAllFrequ_OnCheckChanded(null, null);
@@ -85,6 +86,7 @@ namespace SongBPMFinder
             peakDetectStdDevThresholdNumeric_ValueChanged(null, null);
             peakDetectInfluenceNumeric_ValueChanged(null, null);
             localizedTimingCheckbox_CheckedChanged(null, null);
+            correctFrequenciesCheckbox_CheckedChanged(null, null);
         }
 
         private void AudioPlaybackSystem_OnSongPause()
@@ -358,6 +360,9 @@ namespace SongBPMFinder
                     newDifferenceFunction = FourierDifferenceType.SumSquares;
                     break;
                 case 1:
+                    newDifferenceFunction = FourierDifferenceType.SumCubes;
+                    break;
+                case 2:
                     newDifferenceFunction = FourierDifferenceType.MaxSample;
                     break;
             }
@@ -383,6 +388,11 @@ namespace SongBPMFinder
         private void peakDetectWindowSizeNumeric_ValueChanged(object sender, EventArgs e)
         {
             timingPipeline.PeakDetectWindow = (double)peakDetectWindowSizeNumeric.Value;
+        }
+
+        private void correctFrequenciesCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            timingPipeline.CorrectFrequencies = correctFrequenciesCheckbox.Checked;
         }
     }
 }

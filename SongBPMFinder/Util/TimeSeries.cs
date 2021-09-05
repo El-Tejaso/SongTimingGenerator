@@ -104,12 +104,14 @@ namespace SongBPMFinder
             }
 
 
-            Span<float> range = new Span<float>(Values, rangeStart, rangeEnd - rangeStart + 1);
+            Span<float> range = new Span<float>(Values, 0, rangeEnd);
+
             float mean = MathUtilSpanF.Mean(range, SpanFunctional.None);
+            //float mean = 0;
             float standardDev = MathUtilSpanF.StandardDeviation(range);
 
             float deltaTime = (float)(Times[1] - Times[0]);
-
+            influence *= deltaTime;
 
             for (; rangeEnd < Times.Length; rangeStart++, rangeEnd++)
             {
@@ -120,9 +122,14 @@ namespace SongBPMFinder
                 float newStandardDev = MathUtilSpanF.StandardDeviation(range);
 
                 mean = MathUtilF.Lerp(mean, newMean, influence);
-                standardDev = MathUtilF.Lerp(mean, newStandardDev, influence);
+                standardDev = MathUtilF.Lerp(standardDev, newStandardDev, influence);
 
-                float value = (Math.Abs(Values[rangeEnd] - mean) / standardDev) / threshold;
+                float value = 0;
+                if(standardDev > 0.01f)
+                {
+                    value = (Math.Abs(Values[rangeEnd] - mean) / standardDev) / threshold;
+                }
+
 
                 if (binary)
                 {
