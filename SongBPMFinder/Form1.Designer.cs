@@ -505,7 +505,7 @@
             131072});
             this.peakDetectStdDevThresholdNumeric.Location = new System.Drawing.Point(564, 25);
             this.peakDetectStdDevThresholdNumeric.Maximum = new decimal(new int[] {
-            10,
+            50,
             0,
             0,
             0});

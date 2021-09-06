@@ -67,11 +67,11 @@ namespace SongBPMFinder
             numFreqBandsNumeric.Value = 1;
             strideNumeric.Value = 0.0005M;
             differenceFunctionCombobox.SelectedIndex = 0;
-            peakDetectWindowSizeNumeric.Value = 0.2M;
+            peakDetectWindowSizeNumeric.Value = 0.1M;
             peakDetectStdDevThresholdNumeric.Value = 3.5M;
-            peakDetectInfluenceNumeric.Value = 1M;
+            peakDetectInfluenceNumeric.Value = 5M;
             localizedTimingCheckbox.Checked = true;
-            correctFrequenciesCheckbox.Checked = true;
+            correctFrequenciesCheckbox.Checked = false;
 
             FourierWindowCombobox_OnSelectedIndexChanged(null, null);
             AddAllFrequ_OnCheckChanded(null, null);

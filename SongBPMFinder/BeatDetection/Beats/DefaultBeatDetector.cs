@@ -68,11 +68,14 @@ namespace SongBPMFinder
                 fourierDerivatives[i].Normalize();
                 addTimeSeries(fourierDerivatives[i], Color.Yellow);
 
-                TimeSeries peakDetect = fourierDerivatives[i].PeakDetectTimeSeries(PeakDetectWindow, PeakDetectInfluence, StandardDeviationThreshold, BinaryPeaks);
+                TimeSeries[] peakDetect = fourierDerivatives[i].PeakDetectTimeSeries(PeakDetectWindow, PeakDetectInfluence, StandardDeviationThreshold, BinaryPeaks);
 
-                peakDetectionSignals[i] = peakDetect;
-                
-                addTimeSeries(peakDetect, Color.Red, false);
+                peakDetectionSignals[i] = peakDetect[0];
+                addTimeSeries(peakDetect[0], Color.Red, false);
+
+                //plot of standard deviation, for debug purposes
+                peakDetect[1].Normalize();
+                addTimeSeries(peakDetect[1], Color.Green, false);
             }
 
             return peakDetectionSignals;

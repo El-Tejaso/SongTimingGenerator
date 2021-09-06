@@ -91,23 +91,32 @@ namespace SongBPMFinder
         /// Also it doesnt work that well when windowSize is large, or Im just not using it right.
         /// Its ok though, I have an idea for something similar that might be better
         /// </summary>
-        public TimeSeries PeakDetectTimeSeries(double windowSize, float influence, float threshold, bool binary = true)
+        public TimeSeries[] PeakDetectTimeSeries(double windowSize, float influence, float threshold, bool binary = true)
         {
+            if (Times.Length < 2)
+            {
+                return new TimeSeries[] {
+                    new TimeSeries(new double[] { 0, 1 }, new float[] { 0, 0 }),
+                    new TimeSeries(new double[] { 0, 1 }, new float[] { 0, 0 }),
+                    new TimeSeries(new double[] { 0, 1 }, new float[] { 0, 0 }),
+                };
+            }
+
             TimeSeriesBuilder signalTimeSeries = new TimeSeriesBuilder();
+            TimeSeriesBuilder stdDevTimeSeries = new TimeSeriesBuilder();
 
             int rangeStart = 0, rangeEnd = 0;
 
             while (rangeEnd + 1 < Times.Length && Times[rangeEnd + 1] - Times[rangeStart] < windowSize)
             {
-                signalTimeSeries.Add(Times[rangeEnd], 0);
                 rangeEnd++;
             }
 
 
             Span<float> range = new Span<float>(Values, 0, rangeEnd);
 
-            float mean = MathUtilSpanF.Mean(range, SpanFunctional.None);
-            //float mean = 0;
+            //float mean = MathUtilSpanF.Mean(range, SpanFunctional.None);
+            float mean = 0;
             float standardDev = MathUtilSpanF.StandardDeviation(range);
 
             float deltaTime = (float)(Times[1] - Times[0]);
@@ -118,30 +127,36 @@ namespace SongBPMFinder
                 range = new Span<float>(Values, rangeStart, rangeEnd - rangeStart + 1);
 
                 //Possibly inneficient, but easy to program it like this
-                float newMean = MathUtilSpanF.Mean(range, SpanFunctional.None);
+                //float newMean = MathUtilSpanF.Mean(range, SpanFunctional.None);
                 float newStandardDev = MathUtilSpanF.StandardDeviation(range);
 
-                mean = MathUtilF.Lerp(mean, newMean, influence);
+                //mean = MathUtilF.Lerp(mean, newMean, influence);
                 standardDev = MathUtilF.Lerp(standardDev, newStandardDev, influence);
 
-                float value = 0;
-                if(standardDev > 0.01f)
-                {
-                    value = (Math.Abs(Values[rangeEnd] - mean) / standardDev) / threshold;
-                }
+                int evalPoint = rangeStart;
 
+                float value = 0;
+                if (standardDev > 0.01f)
+                {
+                    value = (Math.Abs(Values[evalPoint] - mean) / standardDev) / threshold;
+                }
 
                 if (binary)
                 {
-                    signalTimeSeries.Add(Times[rangeEnd], value > 1 ? 1 : 0);
+                    signalTimeSeries.Add(Times[evalPoint], value > 1 ? 1 : 0);
                 }
                 else
                 {
-                    signalTimeSeries.Add(Times[rangeEnd], value);
+                    signalTimeSeries.Add(Times[evalPoint], value);
                 }
+
+                stdDevTimeSeries.Add(Times[evalPoint], standardDev);
             }
 
-            return signalTimeSeries.ToTimeSeries();
+            return new TimeSeries[] {
+                signalTimeSeries.ToTimeSeries(),
+                stdDevTimeSeries.ToTimeSeries()
+            };
         }
 
 
@@ -150,6 +165,9 @@ namespace SongBPMFinder
         /// </summary>
         public void MovingAverage(int samples)
         {
+            if (Times.Length < 2)
+                return;
+
             double deltaTime = Times[1] - Times[0];
             double windowSizeSeconds = deltaTime * samples;
             MathUtilSpanF.MovingAverage(Values, Values, samples);
