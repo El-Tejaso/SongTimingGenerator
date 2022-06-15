@@ -52,8 +52,6 @@ namespace SongBPMFinder
             Plotting.LinkPlottingGraph(debugPlot5, testWaveformTab5);
 
             applyVisualChangesToSpeedButton(buttonSpeed1x);
-
-            audioPlaybackSystem.LoadFile("D:\\Archives\\Music\\Test\\Test0-5.mp3");
         }
 
         private void InitializePipelineParameters()
@@ -67,9 +65,9 @@ namespace SongBPMFinder
             numFreqBandsNumeric.Value = 1;
             strideNumeric.Value = 0.0005M;
             differenceFunctionCombobox.SelectedIndex = 0;
-            peakDetectWindowSizeNumeric.Value = 0.1M;
+            peakDetectWindowSizeNumeric.Value = 0.05M;
             peakDetectStdDevThresholdNumeric.Value = 3.5M;
-            peakDetectInfluenceNumeric.Value = 5M;
+            peakDetectInfluenceNumeric.Value = 10M;
             localizedTimingCheckbox.Checked = true;
             correctFrequenciesCheckbox.Checked = false;
 
